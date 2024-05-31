@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.promptInjection.name }}
+  labels:
+    app: {{ include "dynamoai.fullname" . }}-{{ .Values.promptInjection.name }}
+    {{- include "dynamoai.labels" . | nindent 4 }}
+    {{- with .Values.promptInjection.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- include "dynamoai.annotations" . | nindent 4 }}
+    {{- with .Values.promptInjection.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "dynamoai.fullname" . }}-{{ .Values.promptInjection.name }}
+      {{- include "dynamoai.selectorLabels" . | nindent 6 }}
+  {{- if not .Values.promptInjection.hpa.enabled }}
+  replicas: {{ .Values.promptInjection.replicaCount }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "dynamoai.fullname" . }}-{{ .Values.promptInjection.name }}
+        {{- include "dynamoai.labels" . | nindent 8 }}
+        {{- with .Values.promptInjection.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- include "dynamoai.annotations" . | nindent 8 }}
+        {{- with .Values.promptInjection.annotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "dynamoai.serviceAccountName" . }}
+      {{- with .Values.promptInjection.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Values.promptInjection.name }}
+          args: {{ .Values.promptInjection.containerArgs }}
+          env:
+            {{- include "dynamoai.commonEnv" . | nindent 12 }}
+            {{- include "dynamoai.generateVllmEnvVars" (dict "modelNameOrPath" .Values.models.promptInjection.path "servedModelName" .Values.models.promptInjection.name "secret" .Values.global.secrets.common "requests" .Values.promptInjection.resources.requests "maxModelLength" .Values.promptInjection.maxLength) | nindent 12 }}
+            {{- with .Values.promptInjection.extraEnv }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- if .Values.global.config.proxy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.global.config.proxy }}
+          {{- end }}
+          image: "{{ .Values.promptInjection.image.registry }}/{{ .Values.promptInjection.image.repository }}:{{ .Values.promptInjection.image.tag }}"
+          imagePullPolicy: {{ .Values.promptInjection.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.promptInjection.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.promptInjection.resources | nindent 12 }}
+          volumeMounts:
+            {{- with .Values.promptInjection.extraVolumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- if .Values.promptInjection.useShm }}
+            - mountPath: '/dev/shm'
+              name: 'dshm'
+            {{- end }}
+          startupProbe: 
+            failureThreshold: 120
+            httpGet: 
+              path: '/health'
+              port: 'http'
+              scheme: 'HTTP'
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+      restartPolicy: Always
+      volumes:
+        {{- with .Values.promptInjection.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.promptInjection.useShm }}
+        - name: 'dshm'
+          emptyDir:
+            medium: 'Memory'
+            sizeLimit: '60Gi'
+        {{- end }}
+      {{- with .Values.promptInjection.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.promptInjection.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.promptInjection.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.promptInjection.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

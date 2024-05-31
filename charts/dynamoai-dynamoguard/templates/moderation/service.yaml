@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.moderation.name }}
+  labels:
+    {{- include "dynamoai.labels" . | nindent 4 }}
+    {{- with .Values.moderation.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- include "dynamoai.annotations" . | nindent 4 }}
+    {{- with .Values.moderation.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.moderation.service.type }}
+  ports:
+    - port: {{ .Values.moderation.service.port }}
+      targetPort: {{ .Values.moderation.port }}
+      protocol: TCP
+      name: moderation
+  selector:
+    app: {{ include "dynamoai.fullname" . }}-{{ .Values.moderation.name }}
+    {{- include "dynamoai.labels" . | nindent 4 }}

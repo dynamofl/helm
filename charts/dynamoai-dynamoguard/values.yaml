@@ -1,0 +1,978 @@
+# Default values for dynamoai-dynamoguard.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  nameOverride: "dynamoai"
+  fullnameOverride: "dynamoai"
+  serviceAccount:
+    name: "dynamoai-service-account"
+  secrets:
+    mongodb: dynamoai-mongodb-secret
+    postgres: dynamoai-postgres-secret
+    redis: dynamoai-redis-secret
+    common: dynamoai-common-secret
+  config:
+    common: dynamoai-common-config
+    proxy: dynamoai-proxy-config
+
+models:
+  legalAdvice:
+    name: "abc"
+    path: "cde"
+  promptInjection:
+    name: "bed"
+    path: "cde"
+  toxicity:
+    name: "bed"
+    path: "cde"
+  dataGeneration:
+    name: ""
+  finetuning:
+    name: ""
+    path: ""
+
+promptInjection:
+  name: prompt-injection
+  maxLength: 16384
+  replicaCount: 1
+  numWorkers: 8
+  port: 8000
+  useShm: false
+
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/vllm"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  containerArgs: []
+
+  service:
+    type: ClusterIP
+    port: 8000
+
+  annotations: 
+    has_metrics_endpoint: "true"
+  labels: {}
+
+  resources:
+    limits:
+      cpu: '8'
+      memory: '30Gi'
+      ephemeral-storage: '50Gi'
+      'nvidia.com/gpu': '1'
+    requests:
+      cpu: '6'
+      memory: '20Gi'
+      ephemeral-storage: '30Gi'
+      'nvidia.com/gpu': '1'
+
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+    maxUnavailable: ""
+
+  hpa:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
+  extraEnv: []
+
+
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector:
+    'beta.kubernetes.io/instance-type': 'g5.2xlarge'
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations:
+    - key: 'nvidia.com/gpu'
+      operator: 'Exists'
+      effect: 'NoSchedule'
+    - key: 'gpu-type'
+      operator: 'Equal'
+      value: a10g
+      effect: 'NoSchedule'
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "ScheduleAnyway"
+      labelSelector:
+        matchLabels:
+          app: dynamoai-api
+
+legalAdvice:
+  name: legal-advice
+  maxLength: 16384
+  replicaCount: 1
+  numWorkers: 8
+  port: 8000
+  useShm: false
+
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/vllm"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  containerArgs: []
+
+  service:
+    type: ClusterIP
+    port: 8000
+
+  annotations: 
+    has_metrics_endpoint: "true"
+  labels: {}
+
+  resources:
+    limits:
+      cpu: '8'
+      memory: '30Gi'
+      ephemeral-storage: '50Gi'
+      'nvidia.com/gpu': '1'
+    requests:
+      cpu: '6'
+      memory: '20Gi'
+      ephemeral-storage: '30Gi'
+      'nvidia.com/gpu': '1'
+
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+    maxUnavailable: ""
+
+  hpa:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
+  extraEnv: []
+
+
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector:
+    'beta.kubernetes.io/instance-type': 'g5.2xlarge'
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations:
+    - key: 'nvidia.com/gpu'
+      operator: 'Exists'
+      effect: 'NoSchedule'
+    - key: 'gpu-type'
+      operator: 'Equal'
+      value: a10g
+      effect: 'NoSchedule'
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "ScheduleAnyway"
+      labelSelector:
+        matchLabels:
+          app: dynamoai-api
+
+toxicity:
+  name: dot-1-6b
+  maxLength: 16384
+  replicaCount: 1
+  numWorkers: 8
+  port: 8000
+  useShm: false
+
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/vllm"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  containerArgs: []
+
+  service:
+    type: ClusterIP
+    port: 8000
+
+  annotations: 
+    has_metrics_endpoint: "true"
+  labels: {}
+
+  resources:
+    limits:
+      cpu: '8'
+      memory: '30Gi'
+      ephemeral-storage: '50Gi'
+      'nvidia.com/gpu': '1'
+    requests:
+      cpu: '6'
+      memory: '20Gi'
+      ephemeral-storage: '30Gi'
+      'nvidia.com/gpu': '1'
+
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+    maxUnavailable: ""
+
+  hpa:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
+  extraEnv: []
+
+
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector:
+    'beta.kubernetes.io/instance-type': 'g5.2xlarge'
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations:
+    - key: 'nvidia.com/gpu'
+      operator: 'Exists'
+      effect: 'NoSchedule'
+    - key: 'gpu-type'
+      operator: 'Equal'
+      value: a10g
+      effect: 'NoSchedule'
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "ScheduleAnyway"
+      labelSelector:
+        matchLabels:
+          app: dynamoai-api
+
+moderation:
+  name: moderation
+  replicaCount: 1
+  numWorkers: 8
+  port: 2344
+
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/moderation"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+
+  service:
+    type: ClusterIP
+    port: 2344
+
+  annotations: {}
+  labels: {}
+  # If resources are not specified, they are automatically computed based on numWorkers, see _helpers.tpl
+  # resources:
+  #   limits:
+  #     cpu: "500m"
+  #     memory: "1000Mi"
+  #     ephemeral-storage: "20Gi"
+  #   requests:
+  #     cpu: "500m"
+  #     memory: "1000Mi"
+  #     ephemeral-storage: "20Gi"
+
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+    maxUnavailable: ""
+
+  hpa:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
+  extraEnv: []
+
+
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector: {}
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations: []
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "ScheduleAnyway"
+      labelSelector:
+        matchLabels:
+          app: dynamoai-api
+
+
+hallucinationEntailment:
+  name: hallucination-entailment
+  replicaCount: 1
+  numWorkers: 1
+  port: 8000
+
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/hallucination-entailment"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+
+  service:
+    type: ClusterIP
+    port: 8000
+
+  annotations: {}
+  labels: {}
+  # If resources are not specified, they are automatically computed based on numWorkers, see _helpers.tpl
+  # resources:
+  #   limits:
+  #     cpu: "500m"
+  #     memory: "1000Mi"
+  #     ephemeral-storage: "20Gi"
+  #   requests:
+  #     cpu: "500m"
+  #     memory: "1000Mi"
+  #     ephemeral-storage: "20Gi"
+
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+    maxUnavailable: ""
+
+  hpa:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
+  extraEnv: []
+
+
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector: {}
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations:
+    - key: 'nvidia.com/gpu'
+      operator: 'Exists'
+      effect: 'NoSchedule'
+    - key: 'gpu-type'
+      operator: 'Equal'
+      value: a10g
+      effect: 'NoSchedule'
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "ScheduleAnyway"
+      labelSelector:
+        matchLabels:
+          app: dynamoai-api
+
+hallucinationRag:
+  name: hallucination-rag
+  replicaCount: 1
+  numWorkers: 1
+  port: 8000
+
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/hallucination-entailment"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+
+  service:
+    type: ClusterIP
+    port: 8000
+
+  annotations: {}
+  labels: {}
+  # If resources are not specified, they are automatically computed based on numWorkers, see _helpers.tpl
+  # resources:
+  #   limits:
+  #     cpu: "500m"
+  #     memory: "1000Mi"
+  #     ephemeral-storage: "20Gi"
+  #   requests:
+  #     cpu: "500m"
+  #     memory: "1000Mi"
+  #     ephemeral-storage: "20Gi"
+
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+    maxUnavailable: ""
+
+  hpa:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
+  extraEnv: []
+
+
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector: {}
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations:
+    - key: 'nvidia.com/gpu'
+      operator: 'Exists'
+      effect: 'NoSchedule'
+    - key: 'gpu-type'
+      operator: 'Equal'
+      value: a10g
+      effect: 'NoSchedule'
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "ScheduleAnyway"
+      labelSelector:
+        matchLabels:
+          app: dynamoai-api
+
+piiRedaction:
+  name: pii-redaction
+  replicaCount: 1
+  port: 8000
+
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/hallucination-entailment"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+
+  service:
+    type: ClusterIP
+    port: 8000
+
+  annotations: {}
+  labels: {}
+
+  resources:
+    limits:
+      cpu: "8"
+      memory: "30Gi"
+      ephemeral-storage: "50Gi"
+      'nvidia.com/gpu': '1'
+    requests:
+      cpu: "4"
+      memory: "20Gi"
+      ephemeral-storage: "30Gi"
+      'nvidia.com/gpu': '1'
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+    maxUnavailable: ""
+
+  hpa:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
+  extraEnv: []
+
+
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector: {}
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations:
+    - key: 'nvidia.com/gpu'
+      operator: 'Exists'
+      effect: 'NoSchedule'
+    - key: 'gpu-type'
+      operator: 'Equal'
+      value: a10g
+      effect: 'NoSchedule'
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "ScheduleAnyway"
+      labelSelector:
+        matchLabels:
+          app: dynamoai-api
+
+lorax:
+  name: lorax
+  replicaCount: 1
+  port: 80
+
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/moderation"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  containerArgs:
+    - '--model-id'
+    - 'somepath'
+    - '--source'
+    - 's33'
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  annotations: 
+    has_metrics_endpoint: "true"
+  labels: {}
+
+  resources:
+    limits:
+      cpu: "8"
+      memory: "30Gi"
+      ephemeral-storage: "50Gi"
+      'nvidia.com/gpu': '1'
+    requests:
+      cpu: "6"
+      memory: "20Gi"
+      ephemeral-storage: "30Gi"
+      'nvidia.com/gpu': '1'
+
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+    maxUnavailable: ""
+
+  hpa:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
+  extraEnv: []
+
+
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector:
+    'beta.kubernetes.io/instance-type': 'g5.2xlarge'
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations:
+    - key: 'nvidia.com/gpu'
+      operator: 'Exists'
+      effect: 'NoSchedule'
+    - key: 'gpu-type'
+      operator: 'Equal'
+      value: a10g
+      effect: 'NoSchedule'
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "ScheduleAnyway"
+      labelSelector:
+        matchLabels:
+          app: dynamoai-api
+
+finetuning:
+  name: "fine-tuning-dynamo-guard"
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/fine-tuning-dynamo-guard"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+  restartPolicy: "Never"
+  pollingInterval: 10
+  minReplicaCount: 0
+  maxReplicaCount: 100
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 2
+
+  resources:
+    limits:
+      'nvidia.com/gpu': '4'
+    requests:
+      'nvidia.com/gpu': '4'
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations:
+    - key: 'nvidia.com/gpu'
+      operator: 'Exists'
+      effect: 'NoSchedule'
+    - key: 'gpu-type'
+      operator: 'Equal'
+      value: a10g
+      effect: 'NoSchedule'
+
+dataProcessing:
+  name: data-processing
+  replicaCount: 1
+
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/data-processing"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  annotations: {}
+  labels: {}
+  resources:
+    limits:
+      cpu: "2000m"
+      memory: "2500Mi"
+      ephemeral-storage: "20Gi"
+    requests:
+      cpu: "1000m"
+      memory: "2000Mi"
+      ephemeral-storage: "20Gi"
+      
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
+  extraEnv: []
+
+
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector: {}
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations: []
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "ScheduleAnyway"
+      labelSelector:
+        matchLabels:
+          app: dynamoai-api
+
+metricsServer:
+  address: "abc"

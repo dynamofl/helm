@@ -1,0 +1,47 @@
+{{- if .Values.testReportGeneration.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledJob
+metadata:
+  name: {{ .Values.testReportGeneration.name }}
+spec:
+  jobTargetRef:
+    parallelism: 1
+    completions: 1
+    template:
+      spec:
+        containers:
+          - name: redis-client
+            image: {{ .Values.testReportGeneration.image.registry }}/{{ .Values.testReportGeneration.image.repository }}:{{ .Values.testReportGeneration.image.tag }}
+            imagePullPolicy: {{ .Values.testReportGeneration.image.pullPolicy }}
+            resources:
+              requests:
+                cpu: '1'
+                memory: '2Gi'
+              limits:
+                cpu: '2'
+                memory: '3Gi'
+            env:
+              {{- include "dynamoai.commonEnv" . | nindent 12 }}
+              {{- include "dynamoai.scaledJobCommonEnv" . | nindent 12 }}
+              {{- include "dynamoai.testReportGenerationScaledJobEnv" . | nindent 12 }}
+              {{- with .Values.testReportGeneration.extraEnv }}
+              {{- toYaml . | nindent 12 }}
+              {{- end }}
+            {{- if $.Values.global.config.proxy }}
+            envFrom:
+              - configMapRef:
+                  name: {{ $.Values.global.config.proxy }}
+            {{- end }}
+        restartPolicy: {{ .Values.testReportGeneration.restartPolicy }}
+  pollingInterval: 10
+  minReplicaCount: 0
+  maxReplicaCount: 100
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 2
+  triggers:
+    - type: external
+      metadata:
+        scalerAddress: {{ .Values.metricsServer.address }}
+        listName: {{ .Values.testReportGeneration.name }}
+        listLength: '1'
+{{- end }}

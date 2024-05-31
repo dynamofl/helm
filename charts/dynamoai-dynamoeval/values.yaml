@@ -1,0 +1,163 @@
+# Default values for dynamoai-api.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  nameOverride: "dynamoai"
+  fullnameOverride: "dynamoai"
+  serviceAccount:
+    name: "dynamoai-service-account"
+  secrets:
+    mongodb: dynamoai-mongodb-secret
+    postgres: dynamoai-postgres-secret
+    redis: dynamoai-redis-secret
+    common: dynamoai-common-secret
+  config:
+    common: dynamoai-common-config
+    proxy: dynamoai-proxy-config
+    api: dynamoai-api-config
+    metricsServer: dynamoai-metrics-server-config
+  awsRegion: "us-east-1"
+  
+dbMigrationsJob:
+  name: "db-migrations-job"
+  enabled: true
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/db-migration"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+  backoffLimit: 4
+  restartPolicy: "OnFailure"
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
+  extraEnv: []
+
+
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector: {}
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations: []
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
+
+testReportGeneration:
+  name: "test-report-generation"
+  enabled: true
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/test-report-generation"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+  restartPolicy: "Never"
+
+pentest:
+  enabled: true
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/test-report-generation"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+  extraEnv: []
+  memoryConfig:
+  - type: 8
+    count: 1
+  - type: 16
+    count: 1
+  - type: 24
+    count: 1
+  - type: 32
+    count: 4
+  - type: 64
+    count: 4
+  - type: 96
+    count: 4
+  - type: 128
+    count: 8
+  gpuConfig:
+  - type: a100
+    count: 8
+  - type: a10g
+    count: 1
+  - type: a10g
+    count: 2
+  - type: a10g
+    count: 3
+  - type: a10g
+    count: 4
+  - type: a10g
+    count: 5
+  - type: a10g
+    count: 6
+  - type: a10g
+    count: 7
+  - type: a10g
+    count: 8
+  - type: h100
+    count: 8
+  - type: m60
+    count: 1
+  - type: m60
+    count: 2
+  - type: m60
+    count: 3
+  - type: m60
+    count: 4
+  - type: t4
+    count: 1
+  - type: t4
+    count: 2
+  - type: t4
+    count: 3
+  - type: t4
+    count: 4
+  - type: t4
+    count: 5
+  - type: t4
+    count: 6
+  - type: t4
+    count: 7
+  - type: t4
+    count: 8
+  - type: v100
+    count: 1
+  - type: v100
+    count: 2
+  - type: v100
+    count: 3
+  - type: v100
+    count: 4
+  - type: v100
+    count: 5
+  - type: v100
+    count: 6
+  - type: v100
+    count: 7
+  - type: v100
+    count: 8
+
+metricsServer:
+  address: "needed"

@@ -1,0 +1,117 @@
+# Default values for dynamoai-metricsServer.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  nameOverride: "dynamoai"
+  fullnameOverride: "dynamoai"
+  serviceAccount:
+    name: "dynamoai-service-account"
+  secrets:
+    mongodb: dynamoai-mongodb-secret
+    postgres: dynamoai-postgres-secret
+    metricsServer: dynamoai-metricsServer-secret
+    common: dynamoai-common-secret
+    redis: dynamoai-redis-secret
+  config:
+    common: dynamoai-common-config
+    proxy: dynamoai-proxy-config
+
+metricsServer:
+  name: metricsServer
+  replicaCount: 1
+  port: 9090
+
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/metricsServer"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+
+  service:
+    type: ClusterIP
+    port: 9090
+
+  annotations: {}
+  labels: {}
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "32Mi"
+    limits:
+      cpu: "100m"
+      memory: "64Mi"
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+    maxUnavailable: ""
+
+  hpa:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-metricsServer/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-metricsServer/v1.22/#envvar-v1-core
+  extraEnv: []
+
+
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-metricsServer/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-metricsServer/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector: {}
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations: []
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "ScheduleAnyway"
+      labelSelector:
+        matchLabels:
+          app: dynamoai-metricsServer

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.legalAdvice.name }}
+  labels:
+    {{- include "dynamoai.labels" . | nindent 4 }}
+    {{- with .Values.legalAdvice.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- include "dynamoai.annotations" . | nindent 4 }}
+    {{- with .Values.legalAdvice.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.legalAdvice.service.type }}
+  ports:
+    - port: {{ .Values.legalAdvice.service.port }}
+      targetPort: {{ .Values.legalAdvice.port }}
+      protocol: TCP
+  selector:
+    app: {{ include "dynamoai.fullname" . }}-{{ .Values.legalAdvice.name }}
+    {{- include "dynamoai.labels" . | nindent 4 }}

@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.toxicity.name }}
+  labels:
+    app: {{ include "dynamoai.fullname" . }}-{{ .Values.toxicity.name }}
+    {{- include "dynamoai.labels" . | nindent 4 }}
+    {{- with .Values.toxicity.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- include "dynamoai.annotations" . | nindent 4 }}
+    {{- with .Values.toxicity.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "dynamoai.fullname" . }}-{{ .Values.toxicity.name }}
+      {{- include "dynamoai.selectorLabels" . | nindent 6 }}
+  {{- if not .Values.toxicity.hpa.enabled }}
+  replicas: {{ .Values.toxicity.replicaCount }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "dynamoai.fullname" . }}-{{ .Values.toxicity.name }}
+        {{- include "dynamoai.labels" . | nindent 8 }}
+        {{- with .Values.toxicity.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- include "dynamoai.annotations" . | nindent 8 }}
+        {{- with .Values.toxicity.annotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "dynamoai.serviceAccountName" . }}
+      {{- with .Values.toxicity.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Values.toxicity.name }}
+          args: {{ .Values.toxicity.containerArgs }}
+          env:
+            {{- include "dynamoai.commonEnv" . | nindent 12 }}
+            {{- include "dynamoai.generateVllmEnvVars" (dict "modelNameOrPath" .Values.models.toxicity.path "servedModelName" .Values.models.toxicity.name "secret" .Values.global.secrets.common "requests" .Values.toxicity.resources.requests "maxModelLength" .Values.toxicity.maxLength) | nindent 12 }}
+            {{- with .Values.toxicity.extraEnv }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- if .Values.global.config.proxy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.global.config.proxy }}
+          {{- end }}
+          image: "{{ .Values.toxicity.image.registry }}/{{ .Values.toxicity.image.repository }}:{{ .Values.toxicity.image.tag }}"
+          imagePullPolicy: {{ .Values.toxicity.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.toxicity.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.toxicity.resources | nindent 12 }}
+          volumeMounts:
+            {{- with .Values.toxicity.extraVolumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- if .Values.toxicity.useShm }}
+            - mountPath: '/dev/shm'
+              name: 'dshm'
+            {{- end }}
+          startupProbe: 
+            failureThreshold: 120
+            httpGet: 
+              path: '/health'
+              port: 'http'
+              scheme: 'HTTP'
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+      restartPolicy: Always
+      volumes:
+        {{- with .Values.toxicity.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.toxicity.useShm }}
+        - name: 'dshm'
+          emptyDir:
+            medium: 'Memory'
+            sizeLimit: '60Gi'
+        {{- end }}
+      {{- with .Values.toxicity.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.toxicity.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.toxicity.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.toxicity.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

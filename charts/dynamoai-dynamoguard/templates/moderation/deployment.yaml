@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.moderation.name }}
+  labels:
+    app: {{ include "dynamoai.fullname" . }}-{{ .Values.moderation.name }}
+    {{- include "dynamoai.labels" . | nindent 4 }}
+    {{- with .Values.moderation.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- include "dynamoai.annotations" . | nindent 4 }}
+    {{- with .Values.moderation.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "dynamoai.fullname" . }}-{{ .Values.moderation.name }}
+      {{- include "dynamoai.selectorLabels" . | nindent 6 }}
+  {{- if not .Values.moderation.hpa.enabled }}
+  replicas: {{ .Values.moderation.replicaCount }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "dynamoai.fullname" . }}-{{ .Values.moderation.name }}
+        {{- include "dynamoai.labels" . | nindent 8 }}
+        {{- with .Values.moderation.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- include "dynamoai.annotations" . | nindent 8 }}
+        {{- with .Values.moderation.annotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "dynamoai.serviceAccountName" . }}
+      {{- with .Values.moderation.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Values.moderation.name }}
+          env:
+            {{- include "dynamoai.commonEnv" . | nindent 12 }}
+            {{- include "dynamoai.moderationEnv" . | nindent 12 }}
+            {{- with .Values.moderation.extraEnv }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- if .Values.global.config.proxy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.global.config.proxy }}
+          {{- end }}
+          image: "{{ .Values.moderation.image.registry }}/{{ .Values.moderation.image.repository }}:{{ .Values.moderation.image.tag }}"
+          imagePullPolicy: {{ .Values.moderation.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.moderation.port }}
+              protocol: TCP
+          resources:
+            {{- include "dynamoai.moderation.resources" . | nindent 12 }}
+          volumeMounts:
+            {{- with .Values.moderation.extraVolumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          startupProbe: 
+            failureThreshold: 120
+            httpGet: 
+              path: '/ping'
+              port: 'http'
+              scheme: 'HTTP'
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+      restartPolicy: Always
+      volumes:
+        {{- with .Values.moderation.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.moderation.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.moderation.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.moderation.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.moderation.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

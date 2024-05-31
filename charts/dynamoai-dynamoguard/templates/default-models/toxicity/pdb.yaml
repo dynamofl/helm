@@ -1,0 +1,24 @@
+{{- if .Values.toxicity.podDisruptionBudget.enabled }}
+apiVersion: {{ include "dynamoai.pdb.apiVersion" . }}
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.toxicity.name }}-pdb
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dynamoai.labels" . | nindent 4 }}
+  {{- with .Values.toxicity.podDisruptionBudget.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+{{- if .Values.toxicity.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.toxicity.podDisruptionBudget.minAvailable }}
+{{- end }}
+{{- if .Values.toxicity.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.toxicity.podDisruptionBudget.maxUnavailable }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.toxicity.name }}
+      {{- include "dynamoai.selectorLabels" . | nindent 6 }}
+{{- end }}
+

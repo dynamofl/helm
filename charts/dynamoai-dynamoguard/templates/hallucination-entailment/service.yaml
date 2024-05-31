@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationEntailment.name }}
+  labels:
+    {{- include "dynamoai.labels" . | nindent 4 }}
+    {{- with .Values.hallucinationEntailment.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- include "dynamoai.annotations" . | nindent 4 }}
+    {{- with .Values.hallucinationEntailment.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.hallucinationEntailment.service.type }}
+  ports:
+    - port: {{ .Values.hallucinationEntailment.service.port }}
+      targetPort: {{ .Values.hallucinationEntailment.port }}
+      protocol: TCP
+  selector:
+    app: {{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationEntailment.name }}
+    {{- include "dynamoai.labels" . | nindent 4 }}

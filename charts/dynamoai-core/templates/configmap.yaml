@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-common-config
+  labels:
+    {{- include "dynamoai.labels" . | nindent 4 }}
+  annotations:
+    {{- include "dynamoai.annotations" . | nindent 4 }}
+data:
+  testReportGenerationEnabled: {{ default "true" .Values.config.testReportGenerationEnabled | quote }}
+  remoteModelConfigValidationApiEnabled: {{ default "true" .Values.config.remoteModelConfigValidationApiEnabled | quote }}
+  huggingfaceApiRequestsEnabled: {{ default "true" .Values.config.huggingfaceApiRequestsEnabled | quote }}
+  rateLimitDynamoGuard: {{ default "true" .Values.config.rateLimitDynamoGuard | quote }}
+  rateLimitDynamoEval: {{ default "true" .Values.config.rateLimitDynamoEval | quote }}
+  pbacSafetyModeEnabled: {{ default "true" .Values.config.pbacSafetyModeEnabled | quote }}
+  cognitoUserPoolId: {{ required "A valid .Values.config.cognitoUserPoolId is required!" .Values.config.cognitoUserPoolId | quote }}
+  cognitoClientId: {{ required "A valid .Values.config.cognitoClientId is required!" .Values.config.cognitoClientId | quote }}
+  bucketName: {{ required "A valid .Values.config.bucketName is required!" .Values.config.bucketName | quote }}
+  corsRule: {{ default "allow-all" .Values.config.corsRule | quote }}
+  awsRegion: {{ default "us-east-1" .Values.global.awsRegion | quote }}
+
+
+

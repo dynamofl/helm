@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.dataProcessing.name }}
+  labels:
+    app: {{ include "dynamoai.fullname" . }}-{{ .Values.dataProcessing.name }}
+    {{- include "dynamoai.labels" . | nindent 4 }}
+    {{- with .Values.dataProcessing.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- include "dynamoai.annotations" . | nindent 4 }}
+    {{- with .Values.dataProcessing.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "dynamoai.fullname" . }}-{{ .Values.dataProcessing.name }}
+      {{- include "dynamoai.selectorLabels" . | nindent 6 }}
+  replicas: {{ .Values.dataProcessing.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "dynamoai.fullname" . }}-{{ .Values.dataProcessing.name }}
+        {{- include "dynamoai.labels" . | nindent 8 }}
+        {{- with .Values.dataProcessing.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- include "dynamoai.annotations" . | nindent 8 }}
+        {{- with .Values.dataProcessing.annotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "dynamoai.serviceAccountName" . }}
+      {{- with .Values.dataProcessing.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Values.dataProcessing.name }}
+          env:
+            {{- include "dynamoai.commonEnv" . | nindent 12 }}
+            {{- include "dynamoai.dataProcessingEnv" . | nindent 12 }}
+            {{- with .Values.dataProcessing.extraEnv }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- if .Values.global.config.proxy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.global.config.proxy }}
+          {{- end }}
+          image: "{{ .Values.dataProcessing.image.registry }}/{{ .Values.dataProcessing.image.repository }}:{{ .Values.dataProcessing.image.tag }}"
+          imagePullPolicy: {{ .Values.dataProcessing.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.dataProcessing.resources | nindent 12 }}
+          volumeMounts:
+            {{- with .Values.dataProcessing.extraVolumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+      restartPolicy: Always
+      volumes:
+        {{- with .Values.dataProcessing.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.dataProcessing.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dataProcessing.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dataProcessing.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dataProcessing.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
