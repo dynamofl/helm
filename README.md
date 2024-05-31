@@ -3,5 +3,5 @@
 
 
 ```
-helm repo add dynamoai https://dynamoai.github.io/helm --force-update
+helm repo add dynamoai https://documentation.dynamofl.com/helm/ --force-update
 ```
