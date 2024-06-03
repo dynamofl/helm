@@ -2,13 +2,14 @@
 {{- if and (not (empty $config.subnetAzs)) (not (empty $config.privateSubnetIds)) (not (empty $config.secondaryPrivateSubnetIds)) }}
 
 {{- range $index, $az := $config.subnetAzs }}
+---
 apiVersion: crd.k8s.amazonaws.com/v1alpha1
 kind: ENIConfig
 metadata:
   name: {{ $az }}
 spec:
   securityGroups:
-    - {{ .Values.k8Infra.clusterSecurityGroupId }}
+    - {{ $config.clusterSecurityGroupId }}
   subnet: {{ index $config.secondaryPrivateSubnetIds $index }}
 {{- end }}
 

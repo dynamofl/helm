@@ -25,18 +25,29 @@ appVersion: "1.16.0"
 
 dependencies:
   - name: "aws-ebs-csi-driver"
-    version: "2.30.0"
+    version: "2.31.0"
     repository: "https://kubernetes-sigs.github.io/aws-ebs-csi-driver/"
     condition: awsEbsCsiDriver.enabled
-  - name: "aws-vpc-cni"
-    version: "v1.16.0"
-    repository: "https://aws.github.io/eks-charts/aws-vpc-cni"
-    condition: awsVpcCni.enabled
+    namespace: "kube-system"
   - name: "karpenter"
-    version: "0.36.0"
-    repository: "oci://public.ecr.aws/karpenter/karpenter"
+    version: "v0.33.1"
+    repository: "oci://public.ecr.aws/karpenter"
+    namespace: "kube-system"
     condition: karpenter.enabled
   - name: "ingress-nginx"
-    version: "4.7.1"
+    version: "4.10.0"
     repository: "https://kubernetes.github.io/ingress-nginx"
-    condition: dynamoai.ingressNginx
+    namespace: "kube-system"
+    condition: nginx.enabled
+  - name: "keda"
+    version: "2.14.0"
+    repository: "https://kedacore.github.io/charts"
+    chart: "keda"
+    namespace: "kube-system"
+    condition: keda.enabled
+  - name : "keda-add-ons-http"
+    version: "0.6.0"
+    repository: "https://kedacore.github.io/charts"
+    chart: "keda-add-ons-http"
+    namespace: "kube-system"
+    condition: keda-add-ons-http.enabled
