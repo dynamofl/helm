@@ -12,7 +12,7 @@ global:
     proxy: dynamoai-proxy-config
 
 metricsServer:
-  name: metricsServer
+  name: metrics-server
   replicaCount: 1
   port: 9090
 
