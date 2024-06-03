@@ -33,27 +33,15 @@ redis:
     type: ClusterIP
     port: 6379
 
-  ingress:
-    ingressClassName: nginx
-    host: ""
-    annotations: {
-      nginx.ingress.kubernetes.io/rewrite-target: "/$2",
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "3000",
-    }
-    labels: {}
-    tls: []
-
   annotations: {}
   labels: {}
   resources:
     limits:
-      cpu: "500m"
-      memory: "1000Mi"
-      ephemeral-storage: "20Gi"
+      cpu: "20m"
+      memory: "64Mi"
     requests:
-      cpu: "500m"
-      memory: "1000Mi"
-      ephemeral-storage: "20Gi"
+      cpu: "10m"
+      memory: "32Mi"
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
