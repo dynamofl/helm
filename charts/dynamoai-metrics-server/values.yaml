@@ -7,13 +7,8 @@ global:
   serviceAccount:
     name: "dynamoai-service-account"
   secrets:
-    mongodb: dynamoai-mongodb-secret
-    postgres: dynamoai-postgres-secret
-    metricsServer: dynamoai-metricsServer-secret
-    common: dynamoai-common-secret
     redis: dynamoai-redis-secret
   config:
-    common: dynamoai-common-config
     proxy: dynamoai-proxy-config
 
 metricsServer:

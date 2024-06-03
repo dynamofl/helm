@@ -6,13 +6,7 @@ global:
   fullnameOverride: "dynamoai"
   serviceAccount:
     name: "dynamoai-service-account"
-  secrets:
-    mongodb: dynamoai-mongodb-secret
-    postgres: dynamoai-postgres-secret
-    redis: dynamoai-redis-secret
-    common: dynamoai-common-secret
   config:
-    common: dynamoai-common-config
     proxy: dynamoai-proxy-config
 
 redis:
