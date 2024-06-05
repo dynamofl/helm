@@ -45,14 +45,14 @@ secrets:
     platformAdminPassword: ""
     license: ""
     serviceUserApiKeyMap: ""
-    openaiApiKey: ""
-    mistralApiKey: ""
     pentestServiceUserApiKey: ""
     dataGenerationApiKey: ""
     hfToken: ""
   apikeys:
-    openai: []
-    mistral: []
+    openai:
+      - "abc"
+    mistral: 
+      - "def"
   postgres:
     host: ""
     port: ""
