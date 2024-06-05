@@ -14,23 +14,23 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "dynamoai.fullname" . }}-{{ .Values.dynamoai.metricsServer.name }}
-  minReplicas: {{ .Values.hpa.minReplicas }}
-  maxReplicas: {{ .Values.hpa.maxReplicas }}
+  minReplicas: {{ .Values.metricsServer.hpa.minReplicas }}
+  maxReplicas: {{ .Values.metricsServer.hpa.maxReplicas }}
   metrics:
-    {{- if .Values.hpa.targetCPUUtilizationPercentage }}
+    {{- if .Values.metricsServer.hpa.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.hpa.targetCPUUtilizationPercentage }}
+          averageUtilization: {{ .Values.metricsServer.hpa.targetCPUUtilizationPercentage }}
     {{- end }}
-    {{- if .Values.hpa.targetMemoryUtilizationPercentage }}
+    {{- if .Values.metricsServer.hpa.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ .Values.hpa.targetMemoryUtilizationPercentage }}
+          averageUtilization: {{ .Values.metricsServer.hpa.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}

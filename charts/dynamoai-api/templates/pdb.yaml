@@ -6,9 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "dynamoai.labels" . | nindent 4 }}
-  {{- with .Values.api.podDisruptionBudget.labels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- with .Values.api.podDisruptionBudget.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
 {{- if .Values.api.podDisruptionBudget.minAvailable }}
   minAvailable: {{ .Values.api.podDisruptionBudget.minAvailable }}
@@ -21,4 +21,3 @@ spec:
       app: {{ .Values.api.name }}
       {{- include "dynamoai.selectorLabels" . | nindent 6 }}
 {{- end }}
-

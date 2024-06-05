@@ -14,23 +14,23 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "dynamoai.fullname" . }}-{{ .Values.dynamoai.hallucinationEntailment.name }}
-  minReplicas: {{ .Values.hpa.minReplicas }}
-  maxReplicas: {{ .Values.hpa.maxReplicas }}
+  minReplicas: {{ .Values.hallucinationEntailment.hpa.minReplicas }}
+  maxReplicas: {{ .Values.hallucinationEntailment.hpa.maxReplicas }}
   metrics:
-    {{- if .Values.hpa.targetCPUUtilizationPercentage }}
+    {{- if .Values.hallucinationEntailment.hpa.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.hpa.targetCPUUtilizationPercentage }}
+          averageUtilization: {{ .Values.hallucinationEntailment.hpa.targetCPUUtilizationPercentage }}
     {{- end }}
-    {{- if .Values.hpa.targetMemoryUtilizationPercentage }}
+    {{- if .Values.hallucinationEntailment.hpa.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ .Values.hpa.targetMemoryUtilizationPercentage }}
+          averageUtilization: {{ .Values.hallucinationEntailment.hpa.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}
