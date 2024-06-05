@@ -135,6 +135,7 @@ Common environment variables used in all Dynamo AI services, including secrets a
       name: {{ .Values.global.secrets.postgres }}
       key: password
 {{- end }}
+{{- end }}
 
 {{/*
 Selector labels
