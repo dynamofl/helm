@@ -14,23 +14,23 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "dynamoai.fullname" . }}-{{ .Values.dynamoai.lorax.name }}
-  minReplicas: {{ .Values.hpa.minReplicas }}
-  maxReplicas: {{ .Values.hpa.maxReplicas }}
+  minReplicas: {{ .Values.lorax.hpa.minReplicas }}
+  maxReplicas: {{ .Values.lorax.hpa.maxReplicas }}
   metrics:
-    {{- if .Values.hpa.targetCPUUtilizationPercentage }}
+    {{- if .Values.lorax.hpa.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.hpa.targetCPUUtilizationPercentage }}
+          averageUtilization: {{ .Values.lorax.hpa.targetCPUUtilizationPercentage }}
     {{- end }}
-    {{- if .Values.hpa.targetMemoryUtilizationPercentage }}
+    {{- if .Values.lorax.hpa.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ .Values.hpa.targetMemoryUtilizationPercentage }}
+          averageUtilization: {{ .Values.lorax.hpa.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}
