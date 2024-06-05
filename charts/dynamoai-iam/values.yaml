@@ -32,10 +32,9 @@ keycloak:
       nginx.ingress.kubernetes.io/rewrite-target: /$1
     hostname: dev.dynamofl.com
 
-  keycloakconfigcli:
+  keycloakConfigCli:
     enabled: true
-    configuration:
-      'dynamoai-realm.json': ""
+    existingConfigmap: "keycloak-config"
 
   extraEnvVars:
     - name: KEYCLOAK_EXTRA_ARGS
@@ -54,4 +53,4 @@ keycloak:
     annotations:
       service.beta.kubernetes.ent.yaml/aws-load-balancer-additional-resource-tags: 'Name=dfl-keycloak-ingress'
       service.beta.kubernetes.ent.yaml/aws-load-balancer-backend-protocol: 'http'
-      service.beta.kubernetes.ent.yaml/aws-load-balancer-internal: false
+      service.beta.kubernetes.ent.yaml/aws-load-balancer-internal: false # TODO
