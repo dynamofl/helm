@@ -24,14 +24,14 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "dynamoai.fullname" . }}-{{ .Values.api.name }}
+        app: {{ include "dynamoai.fullname" . }}-{{ .Values.keycloak.name }}
         {{- include "dynamoai.labels" . | nindent 8 }}
-        {{- with .Values.api.labels }}
+        {{- with .Values.keycloak.labels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
         {{- include "dynamoai.annotations" . | nindent 8 }}
-        {{- with .Values.api.annotations }}
+        {{- with .Values.keycloak.annotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
@@ -40,7 +40,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "dynamoai.serviceAccountName" . }}
-      {{- with .Values.api.securityContext }}
+      {{- with .Values.keycloak.securityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
