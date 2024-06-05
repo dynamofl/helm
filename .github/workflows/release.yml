@@ -34,6 +34,7 @@ jobs:
             helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
             helm repo add eks https://aws.github.io/eks-charts
             helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+            helm repo add dynamoai https://documentation.dynamofl.com/helm
             helm repo update
             
       - name: Run chart-releaser
