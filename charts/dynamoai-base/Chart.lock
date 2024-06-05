@@ -4,12 +4,12 @@ dependencies:
   version: 12.1.16
 - name: dynamoai-core
   repository: file://../dynamoai-core
-  version: 0.1.0
+  version: 0.1.1
 - name: dynamoai-api
   repository: file://../dynamoai-api
-  version: 0.1.0
+  version: 0.1.1
 - name: dynamoai-ui
   repository: file://../dynamoai-ui
-  version: 0.1.0
-digest: sha256:cb273159a3491c099b38cca96b0d601c77728cedfda50cb6a0a64c92653ce17c
-generated: "2024-06-05T03:51:02.317259-07:00"
+  version: 0.1.1
+digest: sha256:3aad3e3fe84de899027190d8829ff218ce2cb5f8c0f6bb16fc759e8df3021a66
+generated: "2024-06-05T04:01:11.570906-07:00"

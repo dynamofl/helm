@@ -1,9 +1,9 @@
 dependencies:
 - name: dynamoai-redis
   repository: file://../dynamoai-redis
-  version: 0.1.0
+  version: 0.1.1
 - name: dynamoai-metrics-server
   repository: file://../dynamoai-metrics-server
-  version: 0.1.0
-digest: sha256:affeb93dcda4a7e3b0f6e2e42eae84dcc8a7f4eae788da24dd1909bed7e60efd
-generated: "2024-06-05T03:50:50.574154-07:00"
+  version: 0.1.1
+digest: sha256:128e7cb8052b5113d60d464ac7e090003f16fb6d6155c2700953d365a823a714
+generated: "2024-06-05T04:01:23.899755-07:00"
