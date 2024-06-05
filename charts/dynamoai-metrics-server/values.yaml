@@ -109,4 +109,4 @@ metricsServer:
       whenUnsatisfiable: "ScheduleAnyway"
       labelSelector:
         matchLabels:
-          app: dynamoai-metricsServer
+          app: dynamoai-metrics-server
