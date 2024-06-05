@@ -15,7 +15,7 @@ global:
   apiDomain: ""
   imagePullSecrets: []
 
-dynamoaiCore:
+dynamoai-core:
   enabled: true
   proxy:
     http: ""
@@ -70,7 +70,7 @@ dynamoaiCore:
       password: ""
       name: ""
 
-dynamoaiApi:
+dynamoai-api:
   enabled: true
   api:
     name: api
@@ -185,7 +185,7 @@ dynamoaiApi:
           matchLabels:
             app: dynamoai-api
 
-dynamoaiUi:
+dynamoai-ui:
   enabled: true
   ui:
     name: ui
