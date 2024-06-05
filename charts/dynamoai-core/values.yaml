@@ -36,3 +36,29 @@ config:
   cognitoUserPoolId: "123"
   cognitoClientId: "223"
 
+secrets:
+  create: true
+  common:
+    defaultUserPassword: ""
+    defaultUserEmail: ""
+    defaultUserApiKey: ""
+    platformAdminPassword: ""
+    license: ""
+    serviceUserApiKeyMap: ""
+    openaiApiKey: ""
+    mistralApiKey: ""
+    pentestServiceUserApiKey: ""
+    dataGenerationApiKey: ""
+    hfToken: ""
+  postgres:
+    host: ""
+    port: ""
+    username: ""
+    password: ""
+    name: ""
+  mongodb:
+    host: ""
+    port: ""
+    username: ""
+    password: ""
+    name: ""

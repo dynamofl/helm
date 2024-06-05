@@ -83,6 +83,7 @@ pentest:
     pullPolicy: "IfNotPresent"
   extraEnv: []
   memoryConfig:
+  # Name the VMs
   - type: 8
     count: 1
   - type: 16
@@ -105,15 +106,7 @@ pentest:
   - type: a10g
     count: 2
   - type: a10g
-    count: 3
-  - type: a10g
     count: 4
-  - type: a10g
-    count: 5
-  - type: a10g
-    count: 6
-  - type: a10g
-    count: 7
   - type: a10g
     count: 8
   - type: h100

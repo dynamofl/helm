@@ -17,14 +17,14 @@ global:
 
 models:
   legalAdvice:
-    name: "abc"
-    path: "cde"
+    name: ""
+    path: ""
   promptInjection:
-    name: "bed"
-    path: "cde"
+    name: ""
+    path: ""
   toxicity:
-    name: "bed"
-    path: "cde"
+    name: ""
+    path: ""
   dataGeneration:
     name: ""
   finetuning:
