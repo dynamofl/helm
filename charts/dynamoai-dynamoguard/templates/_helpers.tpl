@@ -159,30 +159,28 @@ Define environment variables specific to the Lorax service.
 
 {{- define "dynamoai.moderation.resources" -}}
 {{- $numWorkers := .Values.moderation.numWorkers -}}
-resources:
-  requests:
-    cpu: {{ $numWorkers }}
-    memory: {{ mul $numWorkers 2000 }}Mi
-    ephemeral-storage: 10Gi
-  limits:
-    cpu: {{ mul $numWorkers 2 }}
-    memory: {{ mul $numWorkers 2000 }}Mi
-    ephemeral-storage: 20Gi
+requests:
+  cpu: {{ $numWorkers }}
+  memory: {{ mul $numWorkers 2000 }}Mi
+  ephemeral-storage: 10Gi
+limits:
+  cpu: {{ mul $numWorkers 2 }}
+  memory: {{ mul $numWorkers 2000 }}Mi
+  ephemeral-storage: 20Gi
 {{- end -}}
 
 {{- define "dynamoai.hallucinationEntailment.resources" -}}
 {{- $numWorkers := .Values.hallucinationEntailment.numWorkers -}}
-resources:
-  requests:
-    cpu: {{ $numWorkers }}
-    memory: {{ $numWorkers }}Gi
-    ephemeral-storage: 10Gi
-    nvidia.com/gpu: '1'
-  limits:
-    cpu: {{ mul $numWorkers 2 }}
-    memory: {{ mul $numWorkers 2 }}Gi
-    ephemeral-storage: 20Gi
-    nvidia.com/gpu: '1'
+requests:
+  cpu: {{ $numWorkers }}
+  memory: {{ $numWorkers }}Gi
+  ephemeral-storage: 10Gi
+  nvidia.com/gpu: '1'
+limits:
+  cpu: {{ mul $numWorkers 2 }}
+  memory: {{ mul $numWorkers 2 }}Gi
+  ephemeral-storage: 20Gi
+  nvidia.com/gpu: '1'
 {{- end -}}
 
 {{- define "dynamoai.hallucinationEntailmentEnv" -}}
@@ -192,17 +190,16 @@ resources:
 
 {{- define "dynamoai.hallucinationRag.resources" -}}
 {{- $numWorkers := .Values.hallucinationRag.numWorkers -}}
-resources:
-  requests:
-    cpu: {{ $numWorkers }}
-    memory: {{ $numWorkers }}Gi
-    ephemeral-storage: 10Gi
-    nvidia.com/gpu: '1'
-  limits:
-    cpu: {{ mul $numWorkers 2 }}
-    memory: {{ mul $numWorkers 2 }}Gi
-    ephemeral-storage: 20Gi
-    nvidia.com/gpu: '1'
+requests:
+  cpu: {{ $numWorkers }}
+  memory: {{ $numWorkers }}Gi
+  ephemeral-storage: 10Gi
+  nvidia.com/gpu: '1'
+limits:
+  cpu: {{ mul $numWorkers 2 }}
+  memory: {{ mul $numWorkers 2 }}Gi
+  ephemeral-storage: 20Gi
+  nvidia.com/gpu: '1'
 {{- end -}}
 
 {{- define "dynamoai.hallucinationRagEnv" -}}
