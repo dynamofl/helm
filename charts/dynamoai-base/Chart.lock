@@ -11,5 +11,5 @@ dependencies:
 - name: dynamoai-ui
   repository: https://documentation.dynamofl.com/helm/
   version: 0.1.1
-digest: sha256:0303594cb7581c129d26cb6cabbf777418b8170126861995702606767fcef61c
-generated: "2024-06-05T03:14:18.40546-07:00"
+digest: sha256:bb79623d2e2ddbcbb5fb1d20af6c646606844097cef3df98c99b49b6f97f0106
+generated: "2024-06-05T03:42:26.400713-07:00"
