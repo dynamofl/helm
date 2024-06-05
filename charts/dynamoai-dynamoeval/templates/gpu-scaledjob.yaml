@@ -22,7 +22,7 @@ spec:
         volumes:
           - name: api-key-secret-volume
             secret:
-              secretName: {{ .Values.global.secrets.apikeys }}
+              secretName: {{ $.Values.global.secrets.apikeys }}
         containers:
           - name: redis-client
             image: {{ $.Values.pentest.image.registry }}/{{ $.Values.pentest.image.repository }}:{{ $.Values.pentest.image.tag }}
