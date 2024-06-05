@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationRag.name }}
+  labels:
+    app: {{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationRag.name }}
+    {{- include "dynamoai.labels" . | nindent 4 }}
+    {{- with .Values.hallucinationRag.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- include "dynamoai.annotations" . | nindent 4 }}
+    {{- with .Values.hallucinationRag.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationRag.name }}
+      {{- include "dynamoai.selectorLabels" . | nindent 6 }}
+  {{- if not .Values.hallucinationRag.hpa.enabled }}
+  replicas: {{ .Values.hallucinationRag.replicaCount }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationRag.name }}
+        {{- include "dynamoai.labels" . | nindent 8 }}
+        {{- with .Values.hallucinationRag.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- include "dynamoai.annotations" . | nindent 8 }}
+        {{- with .Values.hallucinationRag.annotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "dynamoai.serviceAccountName" . }}
+      {{- with .Values.hallucinationRag.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Values.hallucinationRag.name }}
+          env:
+            {{- include "dynamoai.commonEnv" . | nindent 12 }}
+            {{- include "dynamoai.hallucinationRagEnv" . | nindent 12 }}
+            {{- with .Values.hallucinationRag.extraEnv }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- if .Values.global.config.proxy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.global.config.proxy }}
+          {{- end }}
+          image: "{{ .Values.hallucinationRag.image.registry }}/{{ .Values.hallucinationRag.image.repository }}:{{ .Values.hallucinationRag.image.tag }}"
+          imagePullPolicy: {{ .Values.hallucinationRag.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.hallucinationRag.port }}
+              protocol: TCP
+          resources:
+            {{- include "dynamoai.hallucinationRag.resources" . | nindent 12 }}
+          volumeMounts:
+            - name: api-key-secret-volume
+              mountPath: /var/secrets
+              readOnly: true
+            {{- with .Values.hallucinationRag.extraVolumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          startupProbe: 
+            failureThreshold: 120
+            httpGet: 
+              path: '/ping'
+              port: 'http'
+              scheme: 'HTTP'
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+      restartPolicy: Always
+      volumes:
+        - name: api-key-secret-volume
+          secret:
+            secretName: {{ .Values.global.secrets.apikeys }}
+        {{- with .Values.hallucinationRag.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.hallucinationRag.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.hallucinationRag.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.hallucinationRag.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.hallucinationRag.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

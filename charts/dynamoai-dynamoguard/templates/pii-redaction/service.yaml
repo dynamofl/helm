@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.piiRedaction.name }}
+  labels:
+    {{- include "dynamoai.labels" . | nindent 4 }}
+    {{- with .Values.piiRedaction.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- include "dynamoai.annotations" . | nindent 4 }}
+    {{- with .Values.piiRedaction.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.piiRedaction.service.type }}
+  ports:
+    - port: {{ .Values.piiRedaction.service.port }}
+      targetPort: {{ .Values.piiRedaction.port }}
+      protocol: TCP
+  selector:
+    app: {{ include "dynamoai.fullname" . }}-{{ .Values.piiRedaction.name }}
+    {{- include "dynamoai.labels" . | nindent 4 }}

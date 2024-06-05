@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.legalAdvice.name }}
+  labels:
+    app: {{ include "dynamoai.fullname" . }}-{{ .Values.legalAdvice.name }}
+    {{- include "dynamoai.labels" . | nindent 4 }}
+    {{- with .Values.legalAdvice.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- include "dynamoai.annotations" . | nindent 4 }}
+    {{- with .Values.legalAdvice.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "dynamoai.fullname" . }}-{{ .Values.legalAdvice.name }}
+      {{- include "dynamoai.selectorLabels" . | nindent 6 }}
+  {{- if not .Values.legalAdvice.hpa.enabled }}
+  replicas: {{ .Values.legalAdvice.replicaCount }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "dynamoai.fullname" . }}-{{ .Values.legalAdvice.name }}
+        {{- include "dynamoai.labels" . | nindent 8 }}
+        {{- with .Values.legalAdvice.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- include "dynamoai.annotations" . | nindent 8 }}
+        {{- with .Values.legalAdvice.annotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "dynamoai.serviceAccountName" . }}
+      {{- with .Values.legalAdvice.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Values.legalAdvice.name }}
+          args: {{ .Values.legalAdvice.containerArgs }}
+          env:
+            {{- include "dynamoai.commonEnv" . | nindent 12 }}
+            {{- include "dynamoai.generateVllmEnvVars" (dict "modelNameOrPath" .Values.models.legalAdvice.path "servedModelName" .Values.models.legalAdvice.name "secret" .Values.global.secrets.common "requests" .Values.legalAdvice.resources.requests "maxModelLength" .Values.legalAdvice.maxLength) | nindent 12 }}
+            {{- with .Values.legalAdvice.extraEnv }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- if .Values.global.config.proxy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.global.config.proxy }}
+          {{- end }}
+          image: "{{ .Values.legalAdvice.image.registry }}/{{ .Values.legalAdvice.image.repository }}:{{ .Values.legalAdvice.image.tag }}"
+          imagePullPolicy: {{ .Values.legalAdvice.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.legalAdvice.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.legalAdvice.resources | nindent 12 }}
+          volumeMounts:
+            - name: api-key-secret-volume
+              mountPath: /var/secrets
+              readOnly: true
+            {{- with .Values.legalAdvice.extraVolumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- if .Values.legalAdvice.useShm }}
+            - mountPath: '/dev/shm'
+              name: 'dshm'
+            {{- end }}
+          startupProbe: 
+            failureThreshold: 120
+            httpGet: 
+              path: '/health'
+              port: 'http'
+              scheme: 'HTTP'
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+      restartPolicy: Always
+      volumes:
+        - name: api-key-secret-volume
+          secret:
+            secretName: {{ .Values.global.secrets.apikeys }}
+        {{- with .Values.legalAdvice.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.legalAdvice.useShm }}
+        - name: 'dshm'
+          emptyDir:
+            medium: 'Memory'
+            sizeLimit: '60Gi'
+        {{- end }}
+      {{- with .Values.legalAdvice.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.legalAdvice.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.legalAdvice.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.legalAdvice.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

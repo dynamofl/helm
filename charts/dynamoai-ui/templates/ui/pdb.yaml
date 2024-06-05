@@ -1,0 +1,24 @@
+{{- if .Values.ui.podDisruptionBudget.enabled }}
+apiVersion: {{ include "dynamoai.pdb.apiVersion" . }}
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.ui.name }}-pdb
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dynamoai.labels" . | nindent 4 }}
+  {{- with .Values.ui.podDisruptionBudget.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+{{- if .Values.ui.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.ui.podDisruptionBudget.minAvailable }}
+{{- end }}
+{{- if .Values.ui.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.ui.podDisruptionBudget.maxUnavailable }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.ui.name }}
+      {{- include "dynamoai.selectorLabels" . | nindent 6 }}
+{{- end }}
+

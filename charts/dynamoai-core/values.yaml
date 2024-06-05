@@ -1,0 +1,67 @@
+# Default values for dynamoai-core.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  imagePullSecrets: []
+  nameOverride: "dynamoai"
+  fullnameOverride: "dynamoai"
+  serviceAccount:
+    name: "dynamoai-service-account"
+  awsRegion: "us-east-1"
+
+proxy:
+  http: ""
+  https: ""
+  noProxy: "" 
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+
+
+config: 
+  testReportGenerationEnabled: true
+  remoteModelConfigValidationApiEnabled: false
+  huggingfaceApiRequestsEnabled: false
+  rateLimitDynamoGuard: true
+  rateLimitDynamoEval: true
+  pbacSafetyModeEnabled: true
+  bucketName: "dynamoai-pentest-bucket"
+  corsRule: "allow-all"
+  cognitoUserPoolId: "123"
+  cognitoClientId: "223"
+
+secrets:
+  create: true
+  common:
+    defaultUserPassword: ""
+    defaultUserEmail: ""
+    defaultUserApiKey: ""
+    platformAdminPassword: ""
+    license: ""
+    serviceUserApiKeyMap: ""
+    openaiApiKey: ""
+    mistralApiKey: ""
+    pentestServiceUserApiKey: ""
+    dataGenerationApiKey: ""
+    hfToken: ""
+  apikeys:
+    openai: []
+    mistral: []
+  postgres:
+    host: ""
+    port: ""
+    username: ""
+    password: ""
+    name: ""
+  mongodb:
+    host: ""
+    port: ""
+    username: ""
+    password: ""
+    name: ""

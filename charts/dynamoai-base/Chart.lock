@@ -1,0 +1,21 @@
+dependencies:
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.1.16
+- name: dynamoai-core
+  repository: https://documentation.dynamofl.com/helm
+  version: 0.1.1
+- name: dynamoai-api
+  repository: https://documentation.dynamofl.com/helm
+  version: 0.1.1
+- name: dynamoai-ui
+  repository: https://documentation.dynamofl.com/helm
+  version: 0.1.1
+- name: dynamoai-redis
+  repository: https://documentation.dynamofl.com/helm
+  version: 0.1.1
+- name: dynamoai-metrics-server
+  repository: https://documentation.dynamofl.com/helm
+  version: 0.1.1
+digest: sha256:57c84f0670b332bcec55eced5ee2826b38582f1103a6a50856f5abe12fe5c564
+generated: "2024-06-05T04:24:48.170967-07:00"
