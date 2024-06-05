@@ -93,6 +93,50 @@ Return the appropriate apiVersion for Pod Disuption Budget.
 {{- end }}
 
 {{/*
+Common environment variables used in all Dynamo AI services.
+*/}}
+{{- define "dynamoai.commonEnv" -}}
+- name: POD_NAME
+  valueFrom:
+    fieldRef:
+      fieldPath: 'metadata.name'
+- name: NAMESPACE
+  valueFrom:
+    fieldRef:
+      fieldPath: 'metadata.namespace'
+{{- end }}
+
+
+{{/*
+Common environment variables used in all Dynamo AI services, including secrets and config map values.
+*/}}
+{{- define "dynamoai.keycloakEnv" -}}
+- name: PORT
+  value: "{{ .Values.api.port }}"
+{{- if .Values.global.secrets.postgres }}
+- name: PG_DB_HOST
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: host
+- name: PG_DB_NAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: name
+- name: PG_DB_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: username
+- name: PG_DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: password
+{{- end }}
+
+{{/*
 Selector labels
 */}}
 {{- define "dynamoai.selectorLabels" -}}
