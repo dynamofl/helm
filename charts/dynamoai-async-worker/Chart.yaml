@@ -26,9 +26,9 @@ appVersion: "1.16.0"
 dependencies:
   - name: "dynamoai-redis"
     version: "0.1.1"
-    repository: "file://../dynamoai-redis"
+    repository: "https://documentation.dynamofl.com/helm"
     condition: dynamoai-redis.enabled
   - name: "dynamoai-metrics-server"
     version: "0.1.1"
-    repository: "file://../dynamoai-metrics-server"
+    repository: "https://documentation.dynamofl.com/helm"
     condition: dynamoai-metrics-server.enabled

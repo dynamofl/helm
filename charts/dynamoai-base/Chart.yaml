@@ -30,14 +30,14 @@ dependencies:
     condition: mongodb.enabled
   - name: "dynamoai-core"
     version: "0.1.1"
-    repository: "file://../dynamoai-core"
+    repository: "https://documentation.dynamofl.com/helm"
     condition: dynamoai-core.enabled
   - name: "dynamoai-api"
     version: "0.1.1"
-    repository: "file://../dynamoai-api"
+    repository: "https://documentation.dynamofl.com/helm"
     condition: dynamoai-api.enabled
   - name: "dynamoai-ui"
     version: "0.1.1"
-    repository: "file://../dynamoai-ui"
+    repository: "https://documentation.dynamofl.com/helm"
     condition: dynamoai-ui.enabled
 

@@ -3,13 +3,13 @@ dependencies:
   repository: https://charts.bitnami.com/bitnami
   version: 12.1.16
 - name: dynamoai-core
-  repository: file://../dynamoai-core
+  repository: https://documentation.dynamofl.com/helm
   version: 0.1.1
 - name: dynamoai-api
-  repository: file://../dynamoai-api
+  repository: https://documentation.dynamofl.com/helm
   version: 0.1.1
 - name: dynamoai-ui
-  repository: file://../dynamoai-ui
+  repository: https://documentation.dynamofl.com/helm
   version: 0.1.1
-digest: sha256:3aad3e3fe84de899027190d8829ff218ce2cb5f8c0f6bb16fc759e8df3021a66
-generated: "2024-06-05T04:01:11.570906-07:00"
+digest: sha256:0b8b6869773e77e9984de9c9d301a6b6783a9f91ddf7af79352c70c3ba9d3c4d
+generated: "2024-06-05T04:06:16.479934-07:00"

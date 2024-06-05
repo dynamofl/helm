@@ -1,9 +1,9 @@
 dependencies:
 - name: dynamoai-redis
-  repository: file://../dynamoai-redis
+  repository: https://documentation.dynamofl.com/helm
   version: 0.1.1
 - name: dynamoai-metrics-server
-  repository: file://../dynamoai-metrics-server
+  repository: https://documentation.dynamofl.com/helm
   version: 0.1.1
-digest: sha256:128e7cb8052b5113d60d464ac7e090003f16fb6d6155c2700953d365a823a714
-generated: "2024-06-05T04:01:23.899755-07:00"
+digest: sha256:ad5daadf1b423b6637e04bb1c2994c94cd470590cb0b334aa855612467efd898
+generated: "2024-06-05T04:06:26.688254-07:00"
