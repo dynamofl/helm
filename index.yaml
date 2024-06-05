@@ -34,6 +34,41 @@ entries:
   dynamoai-base:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2024-06-05T14:38:32.639937423Z"
+    dependencies:
+    - condition: mongodb.enabled
+      name: mongodb
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.1.16
+    - condition: dynamoai-core.enabled
+      name: dynamoai-core
+      repository: https://documentation.dynamofl.com/helm
+      version: 0.1.1
+    - condition: dynamoai-api.enabled
+      name: dynamoai-api
+      repository: https://documentation.dynamofl.com/helm
+      version: 0.1.1
+    - condition: dynamoai-ui.enabled
+      name: dynamoai-ui
+      repository: https://documentation.dynamofl.com/helm
+      version: 0.1.1
+    - condition: dynamoai-redis.enabled
+      name: dynamoai-redis
+      repository: https://documentation.dynamofl.com/helm
+      version: 0.1.1
+    - condition: dynamoai-metrics-server.enabled
+      name: dynamoai-metrics-server
+      repository: https://documentation.dynamofl.com/helm
+      version: 0.1.1
+    description: A Helm chart for Kubernetes
+    digest: 64d65f74fd5b6458a8fda7ae77760039bfe7f99c3e477eb382f5cacea9bb1b0c
+    name: dynamoai-base
+    type: application
+    urls:
+    - https://github.com/dynamofl/helm/releases/download/dynamoai-base-0.1.2/dynamoai-base-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2024-06-05T11:03:14.336488671Z"
     dependencies:
     - condition: mongodb.enabled
@@ -125,4 +160,4 @@ entries:
     urls:
     - https://github.com/dynamofl/helm/releases/download/dynamoai-ui-0.1.1/dynamoai-ui-0.1.1.tgz
     version: 0.1.1
-generated: "2024-06-05T11:03:15.516290539Z"
+generated: "2024-06-05T14:38:32.639950587Z"
