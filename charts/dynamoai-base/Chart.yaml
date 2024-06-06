@@ -28,6 +28,10 @@ dependencies:
     version: "12.1.16"
     repository: "https://charts.bitnami.com/bitnami"
     condition: mongodb.enabled
+  - name: "minio"
+    version: "14.6.5"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: minio.enabled
   - name: "dynamoai-core"
     version: "0.1.2"
     repository: "https://documentation.dynamofl.com/helm"
