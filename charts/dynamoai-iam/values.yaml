@@ -2,55 +2,66 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-global:
-  nameOverride: "dynamoai"
-  fullnameOverride: "dynamoai"
-  serviceAccount:
-    name: "dynamoai-service-account"
-  secrets:
-    mongodb: dynamoai-mongodb-secret
-    postgres: dynamoai-postgres-secret
-    redis: dynamoai-redis-secret
-    common: dynamoai-common-secret
-  config:
-    common: dynamoai-common-config
-    proxy: dynamoai-proxy-config
-  awsRegion: "us-east-1"
+secrets:
+  create: true
+  authAdminPassword: "testing"
+  keycloakPsqlPassword: "testing"
 
-keycloak:
+# Keycloak values:
+enabled: true
+fullname: dynamoai-iam-keycloak
+fullnameOverride: dynamoai-iam-keycloak
+auth:
+  adminUser: "admin"
+  existingSecret: dynamoai-keycloak-auth-secret
+
+adminIngress:
   enabled: true
-  fullnameOverride: keycloak
+  ingressClassName: nginx
+  path: /keycloak/?(.*)
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+  hostname: dev.dynamofl.com
+
+keycloakConfigCli:
+  enabled: true
+  existingConfigmap: "keycloak-config"
+
+extraEnvVars:
+  - name: KEYCLOAK_EXTRA_ARGS
+    value: "--hostname-url=https://dev.dynamofl.com/keycloak --hostname-admin-url=https://dev.dynamofl.com/keycloak"
+  - name: DYNAMOAI_REALM_NAME
+    value: 'dynamo-ai'
+  - name: DYNAMOAI_API_CLIENT_ID
+    value: 'api'
+  - name: DYNAMOAI_UI_CLIENT_ID
+    value: 'ui'
+  - name: 'DYNAMOAI_API_CLIENT_SECRET'
+    value: ''
+  - name: 'DYNAMOAI_UI_DOMAIN'
+    value: ''
+  - name: 'REDIRECT_URL_DYNAMOAI_UI'
+    value: ''
+  - name: 'POST_LOGOUT_REDIRECT_URI'
+    value: ''
+
+postgresql:
+  enabled: true
   auth:
-    adminUser: "admin"
-    adminPassword: "" # TODO
+    username: dynamoai
+    password: dynamoai
+    database: keycloak
+    existingSecret: dynamoai-keycloak-psql-db-secret # password for "postgres" admin user
+    architecture: replication
 
-  adminIngress:
-    enabled: true
-    ingressClassName: nginx
-    path: /keycloak/?(.*)
-    annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /$1
-    hostname: dev.dynamofl.com
 
-  keycloakConfigCli:
-    enabled: true
-    existingConfigmap: "keycloak-config"
-
-  extraEnvVars:
-    - name: KEYCLOAK_EXTRA_ARGS
-      value: "--hostname-url=https://dev.dynamofl.com/keycloak --hostname-admin-url=https://dev.dynamofl.com/keycloak"
-
-  postgresql:
-    enabled: false
-    externalDatabase: # TODO
-      host: ""
-      user: ""
-      password: ""
-      database: keycloak
-
-  service:
-    type:
-    annotations:
-      service.beta.kubernetes.ent.yaml/aws-load-balancer-additional-resource-tags: 'Name=dfl-keycloak-ingress'
-      service.beta.kubernetes.ent.yaml/aws-load-balancer-backend-protocol: 'http'
-      service.beta.kubernetes.ent.yaml/aws-load-balancer-internal: false # TODO
+####
+# To use an existing psql DB in cluster, uncomment the following:
+####
+# externalDatabase:
+#   database: keycloak # DB name for keycloak
+#   existingSecret: dynamoai-postgres-secret
+#   existingSecretHostKey: host
+#   existingSecretPortKey: port
+#   existingSecretUserKey: username
+#   existingSecretPasswordKey: password
