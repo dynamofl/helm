@@ -48,6 +48,19 @@ spec:
             {{- with .Values.api.extraEnv }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
+            # TODO: move the below env vars to _helpers.tpl
+            {{- if eq .Values.api.authProvider "keycloak" }}
+              {{- with .Values.api.keycloakEnv }}
+                {{- toYaml . | nindent 12 }}
+              {{- end }}
+            {{- else if eq .Values.api.authProvider "cognito" }}
+              {{- with .Values.api.cognitoEnv }}
+                {{- toYaml . | nindent 12 }}
+              {{- end }}
+            {{- if eq .Values.api.storageProvider "minio" }}
+              {{- with .Values.api.minioEnv }}
+                {{- toYaml . | nindent 12 }}
+              {{- end }}
           {{- if .Values.global.config.proxy }}
           envFrom:
             - configMapRef:

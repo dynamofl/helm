@@ -2,6 +2,9 @@ dependencies:
 - name: mongodb
   repository: https://charts.bitnami.com/bitnami
   version: 12.1.16
+- name: minio
+  repository: https://charts.bitnami.com/bitnami
+  version: 14.6.5
 - name: dynamoai-core
   repository: https://documentation.dynamofl.com/helm
   version: 0.1.2
@@ -17,5 +20,5 @@ dependencies:
 - name: dynamoai-metrics-server
   repository: https://documentation.dynamofl.com/helm
   version: 0.1.1
-digest: sha256:6f08b9b10fcd75de083ae72a785290e869fc7634df7cc458658a12fa5c20896b
-generated: "2024-06-05T07:49:21.561653-07:00"
+digest: sha256:5c81619fd2a630ad7fd93118b6875d253b8622931cf35f1e2c084f10026bd1ba
+generated: "2024-06-06T22:49:49.468979+05:30"

@@ -265,6 +265,14 @@ Function to generate environment variables for VLLM.
       name: {{ .Values.global.secrets.mongodb }}
       key: port
 {{- end }}
+{{- define "dynamoai.finetuning.extraEnv" -}}
+- name: S3_ENDPOINT_URL
+  value: ''
+- name: AWS_ACCESS_KEY_ID
+  value: ''
+- name: AWS_SECRET_ACCESS_KEY
+  value: ''
+{{- end -}}
 {{- if .Values.global.secrets.redis }}
 - name: REDIS_HOST
   valueFrom:
@@ -350,4 +358,3 @@ Function to generate environment variables for VLLM.
       name: {{ .Values.global.secrets.common }}
       key: data_generation_api_key
 {{- end }}
-

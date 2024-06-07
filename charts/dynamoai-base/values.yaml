@@ -20,7 +20,7 @@ dynamoai-core:
   proxy:
     http: ""
     https: ""
-    noProxy: "" 
+    noProxy: ""
 
   serviceAccount:
     # Specifies whether a service account should be created
@@ -31,7 +31,7 @@ dynamoai-core:
     annotations: {}
 
 
-  config: 
+  config:
     testReportGenerationEnabled: true
     remoteModelConfigValidationApiEnabled: false
     huggingfaceApiRequestsEnabled: false
@@ -561,3 +561,46 @@ mongodb:
       labelSelector:
         matchLabels:
           app.kubernetes.io/name: mongodb
+
+minio:
+  enabled: true
+  fullnameOverride: 'minio'
+  mode: 'standalone'
+  defaultBuckets: 'pentest-bucketprojects-bucket'
+  auth:
+      rootUser: ""
+      rootPassword: ""
+
+  ingress:
+      enabled: true
+      ingressClassName: 'nginx'
+      path: '/minio/?(.*)'
+      annotations:
+          'nginx.ingress.kubernetes.io/rewrite-target': '/$1'
+      hostname: ""
+
+  apiIngress:
+      enabled: true
+      ingressClassName: 'nginx'
+      path: '/'
+      hostname: ""
+
+  persistence:
+      enabled: true
+      storageClass: 'ebs-sc'
+      size: '10Gi'
+
+  extraEnvVars:
+      - name: 'MINIO_SERVER_URL'
+        value: ''
+      - name: 'MINIO_BROWSER_REDIRECT_URL'
+        value: ''
+
+  provisioning:
+    resources:
+        requests:
+            memory: '1Gi'
+            cpu: '800m'
+        limits:
+            memory: '1Gi'
+            cpu: '800m'

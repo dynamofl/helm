@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "dynamoai.name" -}}
-{{- default .Release.Name .Values.global.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default .Chart.Name .Values.global.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -29,14 +29,6 @@ Create chart name and version as used by the chart label.
 {{- define "dynamoai.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
-
-{{/*
-Selector labels
-*/}}
-{{- define "dynamoai.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "dynamoai.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end -}}
 
 {{/*
 Common labels
@@ -78,7 +70,6 @@ Return the service account name.
     {{ default "default" .Values.global.serviceAccount.name }}
 {{- end -}}
 
-
 {{/*
 Return the appropriate apiVersion for Horizontal Pod Autoscaler.
 */}}
@@ -115,36 +106,41 @@ Common environment variables used in all Dynamo AI services.
       fieldPath: 'metadata.namespace'
 {{- end }}
 
+
 {{/*
 Common environment variables used in all Dynamo AI services, including secrets and config map values.
 */}}
-{{- define "dynamoai.uiEnv" -}}
-- name: DFL_UI_USERPOOL_ID
+{{- define "dynamoai.keycloakEnv" -}}
+- name: PORT
+  value: "{{ .Values.api.port }}"
+{{- if .Values.global.secrets.postgres }}
+- name: PG_DB_HOST
   valueFrom:
-    configMapKeyRef:
-      name: {{ .Values.global.config.common }}
-      key: cognitoUserPoolId
-- name: DFL_UI_USERPOOL_CLIENT_ID
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: host
+- name: PG_DB_NAME
   valueFrom:
-    configMapKeyRef:
-      name: {{ .Values.global.config.common }}
-      key: cognitoClientId
-{{- if .Values.global.apiDomain }}
-- name: DFL_UI_BASEURL
-  value: {{ .Values.global.apiDomain }}
-{{- else }}
-- name: DFL_UI_BASEURL
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: name
+- name: PG_DB_USERNAME
   valueFrom:
-    configMapKeyRef:
-      name: {{ .Values.global.config.api }}
-      key: domain
-{{- end}}
-{{- if .Values.keycloak.enabled -}}
-- name: DFL_KEYCLOAK_REALM
-  value: 'dynamo-ai'
-- name: DFL_KEYCLOAK_UI_CLIENT_ID
-  value: 'ui'
-- name: DFL_KEYCLOAK_BASE_URL
-  value: {{ .Values.keycloak.baseUrl }}
-{{ - end }}
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: username
+- name: PG_DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: password
+{{- end }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "dynamoai.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "dynamoai.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
