@@ -94,7 +94,8 @@ api:
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
   extraEnv: []
 
-  authProvider: keycloak  # or 'cognito'
+  # TODO: move these to common configs.
+  authProvider: keycloak  # or cognito
   keycloakEnv:
     - name: KEYCLOAK_REALM
       value: dynamo-ai
@@ -110,6 +111,15 @@ api:
   cognitoEnv:
     - name: 'API_AUTH_MODE'
       value: 'cognito-and-key'
+
+  storageProvider: minio # or s3
+  minioEnv:
+    - name: S3_ENDPOINT
+      value: ''
+    - name: AWS_ACCESS_KEY_ID
+      value: ''
+    - name: AWS_SECRET_ACCESS_KEY
+      value: ''
 
   # Extra volumes to add to the deployment. Make sure these don't
   # conflict with the ones already defined in the deployment.

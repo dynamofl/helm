@@ -15,6 +15,7 @@ global:
   config:
     common: dynamoai-common-config
     proxy: dynamoai-proxy-config
+  awsRegion:  "us-east-1"
 
 models:
   legalAdvice:
@@ -60,7 +61,7 @@ promptInjection:
     type: ClusterIP
     port: 8000
 
-  annotations: 
+  annotations:
     has_metrics_endpoint: "true"
   labels: {}
 
@@ -169,7 +170,7 @@ legalAdvice:
     type: ClusterIP
     port: 8000
 
-  annotations: 
+  annotations:
     has_metrics_endpoint: "true"
   labels: {}
 
@@ -278,7 +279,7 @@ toxicity:
     type: ClusterIP
     port: 8000
 
-  annotations: 
+  annotations:
     has_metrics_endpoint: "true"
   labels: {}
 
@@ -790,7 +791,7 @@ lorax:
     type: ClusterIP
     port: 80
 
-  annotations: 
+  annotations:
     has_metrics_endpoint: "true"
   labels: {}
 
@@ -930,7 +931,7 @@ dataProcessing:
       cpu: "1000m"
       memory: "2000Mi"
       ephemeral-storage: "20Gi"
-      
+
   # SecurityContext to add to the deployment. Default is just set to not run as root.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
   securityContext: {}

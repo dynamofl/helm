@@ -17,6 +17,10 @@ global:
     api: dynamoai-api-config
   apiDomain: ""
 
+keycloak:
+  enabled: false
+  baseUrl: ''
+
 ui:
   name: ui
   replicaCount: 1

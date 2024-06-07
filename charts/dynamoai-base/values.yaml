@@ -595,6 +595,7 @@ minio:
         value: ''
       - name: 'MINIO_BROWSER_REDIRECT_URL'
         value: ''
+
   provisioning:
     resources:
         requests:
