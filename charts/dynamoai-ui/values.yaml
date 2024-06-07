@@ -15,7 +15,7 @@ global:
     common: dynamoai-common-config
     proxy: dynamoai-proxy-config
     api: dynamoai-api-config
-  apiDomain: ""
+  apiDomain: " "
 
 keycloak:
   enabled: false
