@@ -3,6 +3,16 @@ entries:
   dynamoai-api:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2024-06-07T17:25:59.988205706Z"
+    description: A Helm chart for Kubernetes
+    digest: 21db0b909aae7ddd1f3238bca3c8261d80b2ba762b72b8901aa4ba85cdb84ef9
+    name: dynamoai-api
+    type: application
+    urls:
+    - https://github.com/dynamofl/helm/releases/download/dynamoai-api-0.1.4/dynamoai-api-0.1.4.tgz
+    version: 0.1.4
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2024-06-07T15:13:17.699768122Z"
     description: A Helm chart for Kubernetes
     digest: 991c5696b98c5d8e97674c11bcc4780a50e89509a717aba00928d756373183ea
@@ -394,4 +404,4 @@ entries:
     urls:
     - https://github.com/dynamofl/helm/releases/download/dynamoai-ui-0.1.1/dynamoai-ui-0.1.1.tgz
     version: 0.1.1
-generated: "2024-06-07T16:54:50.266379329Z"
+generated: "2024-06-07T17:25:59.988247655Z"
