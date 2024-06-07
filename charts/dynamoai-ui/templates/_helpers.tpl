@@ -139,7 +139,7 @@ Common environment variables used in all Dynamo AI services, including secrets a
       name: {{ .Values.global.config.api }}
       key: domain
 {{- end}}
-{{- if .Values.keycloak.enabled -}}
+{{- if .Values.keycloak.enabled }}
 - name: DFL_KEYCLOAK_REALM
   value: 'dynamo-ai'
 - name: DFL_KEYCLOAK_UI_CLIENT_ID

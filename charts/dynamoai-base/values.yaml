@@ -651,7 +651,8 @@ keycloak:
       username: dynamoai
       password: dynamoai
       database: keycloak
-      existingSecret: dynamoai-keycloak-psql-db-secret # password for "postgres" admin user
+      postgresPassword: ''
+      # existingSecret: dynamoai-keycloak-psql-db-secret # password for "postgres" admin user
       architecture: replication
 
 
