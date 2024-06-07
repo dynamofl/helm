@@ -1,0 +1,6 @@
+dependencies:
+- name: nvidia-device-plugin
+  repository: https://nvidia.github.io/k8s-device-plugin
+  version: 0.14.5
+digest: sha256:a149737116d05c74e648afb4953bf88e06bb599b727faa8a19858a89fe95bba4
+generated: "2024-06-06T18:20:12.723106+05:30"

@@ -1,0 +1,7 @@
+keda:
+  enabled: true
+
+keda-add-ons-http:
+  enabled: true
+  interceptor:
+    responseHeaderTimeout: 30s

@@ -1,0 +1,9 @@
+dependencies:
+- name: keda
+  repository: https://kedacore.github.io/charts
+  version: 2.14.0
+- name: keda-add-ons-http
+  repository: https://kedacore.github.io/charts
+  version: 0.6.0
+digest: sha256:eda3207f661987185d47f639017c41b984d9979cb4ec3a98ae181ea4fb1cdfc1
+generated: "2024-06-06T18:00:03.299426+05:30"

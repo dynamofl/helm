@@ -1,0 +1,25 @@
+# values.yaml
+karpenter:
+  enabled: true
+
+  serviceAccount:
+    create: true
+    name: "karpenter"
+    annotations:
+      "eks.amazonaws.com/role-arn": "arn:aws:iam::260010166034:role/KarpenterControllerRole-sandbox-eks-cluster"
+  
+  podLabels:
+    app: "karpenter"
+
+  settings:
+    clusterName: "sandbox-eks-cluster"
+
+  controller:
+    replicaCount: 2
+    resources:
+      requests:
+        cpu: "1"
+        memory: "1Gi"
+      limits:
+        cpu: "1"
+        memory: "1Gi"

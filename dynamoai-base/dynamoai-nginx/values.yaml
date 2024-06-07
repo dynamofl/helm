@@ -1,0 +1,18 @@
+ingress-nginx:
+  enabled: true
+
+  controller:
+    service:
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+        service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3000"
+        service.beta.kubernetes.io/aws-load-balancer-internal: "false"
+        service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-1:260010166034:certificate/c42d41e7-a2f5-4333-85bf-3e70c6905df0
+        service.beta.kubernetes.io/aws-load-balancer-ssl-ports: https
+      ports:
+        http: 80
+        https: 443
+      targetPorts:
+        http: http
+        https: http
+      type: LoadBalancer
