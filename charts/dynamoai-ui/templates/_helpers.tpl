@@ -146,5 +146,5 @@ Common environment variables used in all Dynamo AI services, including secrets a
   value: 'ui'
 - name: DFL_KEYCLOAK_BASE_URL
   value: {{ .Values.keycloak.baseUrl }}
-{{ - end }}
+{{- end }}
 {{- end }}
