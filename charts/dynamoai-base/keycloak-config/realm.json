@@ -1,6 +1,6 @@
 {
   "id": "2c7e00b2-907d-46f5-9f5e-9cd3a8747228",
-  "realm": "dynamo-ai",
+  "realm": "${DYNAMOAI_REALM_NAME}",
   "notBefore": 0,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,
@@ -252,7 +252,7 @@
     },
     {
       "id": "1319a712-6308-440f-a584-24fa9cc6bc0d",
-      "clientId": "api",
+      "clientId": "${DYNAMOAI_API_CLIENT_ID}",
       "name": "API",
       "description": "DynamoAI API client",
       "rootUrl": "",
@@ -262,7 +262,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "g9ooZUkCOaiHfrnCBPvkrUQejSJfMd9p",
+      "secret": "${DYNAMOAI_API_CLIENT_SECRET}",
       "redirectUris": ["/*"],
       "webOrigins": ["/*"],
       "notBefore": 0,
@@ -354,48 +354,7 @@
         "phone",
         "offline_access",
         "microprofile-jwt"
-      ],
-      "authorizationSettings": {
-        "allowRemoteResourceManagement": true,
-        "policyEnforcementMode": "PERMISSIVE",
-        "resources": [
-          {
-            "name": "Default Resource",
-            "type": "urn:api:resources:default",
-            "ownerManagedAccess": false,
-            "attributes": {},
-            "_id": "f933627f-75d5-4bbe-923c-7c95582bb47c",
-            "uris": ["/*"]
-          }
-        ],
-        "policies": [
-          {
-            "id": "b41574af-3ed7-4e37-81e4-6537d314af50",
-            "name": "Default Policy",
-            "description": "A policy that grants access only for users within this realm",
-            "type": "js",
-            "logic": "POSITIVE",
-            "decisionStrategy": "AFFIRMATIVE",
-            "config": {
-              "code": "// by default, grants any permission associated with this policy\n$evaluation.grant();\n"
-            }
-          },
-          {
-            "id": "2c309b81-995b-4511-a50f-20b028247867",
-            "name": "Default Permission",
-            "description": "A permission that applies to the default resource type",
-            "type": "resource",
-            "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
-            "config": {
-              "defaultResourceType": "urn:api:resources:default",
-              "applyPolicies": "[\"Default Policy\"]"
-            }
-          }
-        ],
-        "scopes": [],
-        "decisionStrategy": "UNANIMOUS"
-      }
+      ]
     },
     {
       "id": "2810300d-1ee2-440a-8e0a-262859ab2198",
@@ -523,6 +482,66 @@
       "defaultClientScopes": [
         "web-origins",
         "acr",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "id": "9a2781e8-d1f8-4b7a-98f3-06a12e1d44be",
+      "clientId": "${DYNAMOAI_UI_CLIENT_ID}",
+      "name": "Dynamo AI UI",
+      "description": "Keycloak Client for DynamoAI UI",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "${REDIRECT_URL_DYNAMOAI_UI}"
+      ],
+      "webOrigins": ["*"],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "publicClient": true,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "post.logout.redirect.uris": "${POST_LOGOUT_REDIRECT_URI}",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "use.refresh.tokens": "true",
+        "oidc.ciba.grant.enabled": "false",
+        "client.use.lightweight.access.token.enabled": "false",
+        "backchannel.logout.session.required": "true",
+        "client_credentials.use_refresh_token": "false",
+        "acr.loa.map": "{}",
+        "require.pushed.authorization.requests": "false",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "display.on.consent.screen": "false",
+        "token.response.type.bearer.lower-case": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "openid",
         "profile",
         "roles",
         "email"
@@ -823,8 +842,8 @@
           "consentRequired": false,
           "config": {
             "id.token.claim": "true",
-            "access.token.claim": "true",
             "introspection.token.claim": "true",
+            "access.token.claim": "true",
             "userinfo.token.claim": "true"
           }
         },

@@ -609,11 +609,11 @@ keycloak:
   enabled: true
   secrets:
     create: false
-  fullname: dynamoai-iam-keycloak
-  fullnameOverride: dynamoai-iam-keycloak
+  fullname: dynamoai-base-keycloak
+  fullnameOverride: dynamoai-base-keycloak
   auth:
-    adminUser: "admin"
-    existingSecret: dynamoai-keycloak-auth-secret
+    adminUser: admin
+    adminPassword: ""
 
   adminIngress:
     enabled: true
@@ -623,37 +623,46 @@ keycloak:
       nginx.ingress.kubernetes.io/rewrite-target: /$1
     hostname: dev.dynamofl.com
 
-  keycloakConfigCli:
-    enabled: true
-    existingConfigmap: "keycloak-config"
+  extraVolumes:
+    - name: keycloak-realm-config
+      configMap:
+        name: keycloak-realm
+        items:
+        - key: "realm.json"
+          path: "realm.json"
+
+  extraVolumeMounts:
+    - name: keycloak-realm-config
+      mountPath: "/opt/bitnami/keycloak/data/import"
+      readOnly: true
 
   extraEnvVars:
     - name: KEYCLOAK_EXTRA_ARGS
-      value: "--hostname-url=https://dev.dynamofl.com/keycloak --hostname-admin-url=https://dev.dynamofl.com/keycloak"
+      value: "" # pass --import-realm
     - name: DYNAMOAI_REALM_NAME
-      value: 'dynamo-ai'
+      value: ""
     - name: DYNAMOAI_API_CLIENT_ID
-      value: 'api'
+      value: ""
     - name: DYNAMOAI_UI_CLIENT_ID
-      value: 'ui'
-    - name: 'DYNAMOAI_API_CLIENT_SECRET'
-      value: ''
-    - name: 'DYNAMOAI_UI_DOMAIN'
-      value: ''
-    - name: 'REDIRECT_URL_DYNAMOAI_UI'
-      value: ''
-    - name: 'POST_LOGOUT_REDIRECT_URI'
-      value: ''
+      value: ""
+    - name: DYNAMOAI_API_CLIENT_SECRET
+      value: ""
+    - name: DYNAMOAI_UI_DOMAIN
+      value: ""
+    - name: REDIRECT_URL_DYNAMOAI_UI
+      value: ""
+    - name: POST_LOGOUT_REDIRECT_URI
+      value: ""
 
   postgresql:
     enabled: true
     auth:
       username: dynamoai
-      password: dynamoai
+      password: ''
       database: keycloak
-      postgresPassword: ''
+      postgresPassword: '' # psql admin password
       # existingSecret: dynamoai-keycloak-psql-db-secret # password for "postgres" admin user
-      architecture: replication
+      architecture: standalone
 
 
   ####
