@@ -28,7 +28,7 @@ ec2NodeClasses:
   - name: "default"
     role: "KarpenterNodeRole-sandbox-eks-cluster"
     amiFamily: "AL2"
-    securityGroupId: "sg-0fa3a28d7a9360314"
+    securityGroupId: "sg-00dcc23298caf3d0c"
     subnetIds:
       - "subnet-0963c4a7e7c999302"
       - "subnet-048450cca7a240236"

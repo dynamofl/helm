@@ -3,5 +3,7 @@ keda:
 
 keda-add-ons-http:
   enabled: true
+  dependson: 
+    - keda
   interceptor:
     responseHeaderTimeout: 30s
