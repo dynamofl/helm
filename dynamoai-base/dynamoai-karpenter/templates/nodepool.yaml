@@ -1,0 +1,48 @@
+# For Non-GPU Node Pool
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: {{ .Values.nonGpuNodePool.name }}
+spec:
+  template:
+    spec:
+      nodeClassRef:
+        name: {{ required "A valid .Values.nonGpuNodePool.nodeClassName is required!" .Values.nonGpuNodePool.nodeClassName }}
+      requirements:
+        {{- toYaml .Values.nonGpuNodePool.requirements | nindent 8 }}
+  limits:
+    cpu: {{ .Values.nonGpuNodePool.limits.cpu }}
+    memory: {{ .Values.nonGpuNodePool.limits.memory }}
+  disruption:
+    consolidationPolicy: {{ .Values.nonGpuNodePool.disruption.consolidationPolicy }}
+    expireAfter: {{ .Values.nonGpuNodePool.disruption.expireAfter }}
+
+---
+{{- range .Values.gpuNodePools }}
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: {{ .name }}
+spec:
+  template:
+    metadata:
+      labels:
+        {{- range $key, $value := .labels }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+    spec:
+      nodeClassRef:
+        name: {{ .nodeClassName }}
+      requirements:
+        {{- toYaml .requirements | nindent 8 }}
+      taints:
+        {{- toYaml .taints | nindent 8 }}
+  limits:
+    cpu: {{ .limits.cpu }}
+    memory: {{ .limits.memory }}
+  disruption:
+    consolidationPolicy: {{ .disruption.consolidationPolicy }}
+    consolidateAfter: {{ .disruption.consolidateAfter }}
+    expireAfter: {{ .disruption.expireAfter }}
+---
+{{- end }}

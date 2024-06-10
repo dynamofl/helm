@@ -23,3 +23,483 @@ karpenter:
       limits:
         cpu: "1"
         memory: "1Gi"
+
+ec2NodeClasses:
+  - name: "default"
+    role: "KarpenterNodeRole-sandbox-eks-cluster"
+    amiFamily: "AL2"
+    securityGroupId: "sg-0fa3a28d7a9360314"
+    subnetIds:
+      - "subnet-0963c4a7e7c999302"
+      - "subnet-048450cca7a240236"
+      - "subnet-0845be3ffe70af48e"
+    blockDeviceMappings:
+      - deviceName: "/dev/xvda"
+        ebs:
+          volumeSize: "150Gi"
+          volumeType: "gp3"
+          deleteOnTermination: true
+          encrypted: true
+    tags:
+      Name: "sandbox-eks-node"
+
+  - name: "gpu"
+    role: "KarpenterNodeRole-sandbox-eks-cluster"
+    amiFamily: "AL2"
+    securityGroupId: "sg-0fa3a28d7a9360314"
+    subnetIds:
+      - "subnet-0963c4a7e7c999302"
+      - "subnet-048450cca7a240236"
+      - "subnet-0845be3ffe70af48e"
+    blockDeviceMappings:
+      - deviceName: "/dev/xvda"
+        ebs:
+          volumeSize: "500Gi"
+          volumeType: "gp3"
+          deleteOnTermination: true
+          encrypted: true
+    tags:
+      Name: "sandbox-eks-node-gpu"
+
+nonGpuNodePool:
+  name: "non-gpu-node-pool"
+  nodeClassName: "default"
+  requirements:
+    - key: "karpenter.k8s.aws/instance-category"
+      operator: "In"
+      values: ["m", "r", "c", "t"]
+    - key: "karpenter.k8s.aws/instance-cpu"
+      operator: "In"
+      values: ["2", "4", "8", "16", "32"]
+    - key: "karpenter.sh/capacity-type"
+      operator: "In"
+      values: ["on-demand"]
+    - key: "kubernetes.io/arch"
+      operator: "In"
+      values: ["amd64"]
+    - key: "kubernetes.io/os"
+      operator: "In"
+      values: ["linux"]
+  limits:
+    cpu: 1000000
+    memory: "1000000Gi"
+  disruption:
+    consolidationPolicy: "WhenUnderutilized"
+    expireAfter: "720h"  # 30 * 24h
+
+gpuNodePools:
+  - name: "gpu-128"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["g4dn.metal", "p3.16xlarge"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-memory"
+        value: "128"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
+
+  - name: "gpu-16"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["p3.2xlarge", "g4dn.xlarge", "g4dn.16xlarge", "g4dn.8xlarge", "g4dn.2xlarge", "g4dn.4xlarge"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-memory"
+        value: "16"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
+
+  - name: "gpu-24"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["g5.4xlarge", "g5.2xlarge", "g5.16xlarge", "g5.xlarge", "g5.8xlarge"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-memory"
+        value: "24"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
+
+  - name: "gpu-32"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["g3.16xlarge"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-memory"
+        value: "32"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
+
+  - name: "gpu-64"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["g4dn.12xlarge", "p3.8xlarge"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-memory"
+        value: "64"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
+
+  - name: "gpu-8"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["g3.4xlarge", "g3s.xlarge"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-memory"
+        value: "8"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
+
+  - name: "gpu-96"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["g5.24xlarge", "g5.12xlarge"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-memory"
+        value: "96"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
+
+  - name: "gpu-a100"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["p4d.24xlarge"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-type"
+        value: "a100"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
+
+  - name: "gpu-a10g"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["g5.4xlarge", "g5.2xlarge", "g5.24xlarge", "g5.12xlarge", "g5.16xlarge", "g5.xlarge", "g5.48xlarge", "g5.8xlarge"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-type"
+        value: "a10g"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
+
+  - name: "gpu-h100"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["p5.48xlarge"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-type"
+        value: "h100"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
+
+  - name: "gpu-m60"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["g3.16xlarge", "g3.8xlarge", "g3.4xlarge", "g3s.xlarge"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-type"
+        value: "m60"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
+
+  - name: "gpu-t4"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["g4dn.metal", "g4dn.12xlarge", "g4dn.xlarge", "g4dn.16xlarge", "g4dn.8xlarge", "g4dn.2xlarge", "g4dn.4xlarge"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-type"
+        value: "t4"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
+
+  - name: "gpu-v100"
+    nodeClassName: "gpu"
+    labels:
+      node-type: "gpu"
+    requirements:
+      - key: "karpenter.sh/capacity-type"
+        operator: "In"
+        values: ["spot", "on-demand"]
+      - key: "node.kubernetes.io/instance-type"
+        operator: "In"
+        values: ["p3.2xlarge", "p3.16xlarge", "p3.8xlarge", "p3dn.24xlarge"]
+      - key: "kubernetes.io/arch"
+        operator: "In"
+        values: ["amd64"]
+      - key: "kubernetes.io/os"
+        operator: "In"
+        values: ["linux"]
+    taints:
+      - key: "nvidia.com/gpu"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "gpu-type"
+        value: "v100"
+        effect: "NoSchedule"
+    limits:
+      cpu: 1000000
+      memory: "1000000Gi"
+    disruption:
+      consolidationPolicy: "WhenEmpty"
+      consolidateAfter: "120s"
+      expireAfter: "720h"
