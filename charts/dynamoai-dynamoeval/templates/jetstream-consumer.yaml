@@ -1,0 +1,33 @@
+{{- if $.Values.nats.enabled }}
+{{- range .Values.pentest.gpuConfig }}
+apiVersion: jetstream.nats.io/v1beta2
+kind: Consumer
+metadata:
+  name: {{ include "dynamoai.natsConsumerName" (dict "subjectprefix" $.Values.natsQueueGpuSubjectPrefix "type" .type "count" .count)  }}
+spec:
+    streamName: {{ $.Values.nats.stream.name }}
+    durableName: {{ $.Values.nats.stream.name }}
+    filterSubject: {{ include "dynamoai.natsConsumerSubjectFilter" (dict "subjectprefix" $.Values.natsQueueGpuSubjectPrefix "type" .type "count" .count) }}
+    ackPolicy: 'explicit'
+    ackWait: '60s'
+    maxAckPending: 100
+    maxDeliver: 3
+{{- end }}
+
+---
+
+{{- range .Values.pentest.memoryConfig }}
+apiVersion: jetstream.nats.io/v1beta2
+kind: Consumer
+metadata:
+  name: {{ include "dynamoai.natsConsumerName" (dict "subjectprefix" $.Values.natsQueueVramSubjectPrefix "type" .type "count" .count)  }}
+spec:
+    streamName: {{ $.Values.nats.stream.name }}
+    durableName: {{ $.Values.nats.stream.name }}
+    filterSubject: {{ include "dynamoai.natsConsumerSubjectFilter" (dict "subjectprefix" $.Values.natsQueueVramSubjectPrefix "type" .type "count" .count) }}
+    ackPolicy: 'explicit'
+    ackWait: '60s'
+    maxAckPending: 100
+    maxDeliver: 3
+{{- end }}
+{{- end }}

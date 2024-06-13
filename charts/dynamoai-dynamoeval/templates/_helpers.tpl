@@ -266,3 +266,17 @@ Common environment variables used in all Dynamo AI services, including secrets a
 - name: REDIS_QUEUE
   value: "pentest-{{ .type }}"
 {{- end }}
+
+{{/*
+Create consumer name based on subject prefix and GPU specs.
+*/}}
+{{- define "dynamoai.natsConsumerName" -}}
+{{- printf "%s-%s-%f" .subjectprefix .type .count | replace "." "-" | lower -}}
+{{- end -}}
+
+{{/*
+Create subject filter for consumer based on GPU specs.
+*/}}
+{{- define "dynamoai.natsConsumerSubjectFilter" -}}
+{{- printf "%s.%s.%f" .subjectprefix .type .count -}}
+{{- end -}}
