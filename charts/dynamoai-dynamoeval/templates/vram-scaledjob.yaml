@@ -61,5 +61,14 @@ spec:
         scalerAddress: {{ $.Values.metricsServer.address }}
         listName: pentest-{{ .type }}
         listLength: '1'
+    - type: nats-jetstream
+      metadata:
+        natsServerMonitoringEndpoint: "nats-headless.{{ $.Release.Namespace }}.svc.cluster.local:8222"
+        account: '$G'
+        stream: {{ $.Values.nats.stream.name }}
+        consumer: {{ include "dynamoai.natsVramConsumerName" (dict "subjectprefix" $.Values.natsQueueVramSubjectPrefix "type" .type)  }}
+        lagThreshold: '5'
+        activationLagThreshold: '1'
+        useHttps: 'false'
 {{- end }}
 {{- end }}

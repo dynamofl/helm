@@ -61,5 +61,14 @@ spec:
         scalerAddress: {{ $.Values.metricsServer.address }}
         listName: queue-{{ .type }}-{{ .count }}
         listLength: '1'
+    - type: nats-jetstream
+      metadata:
+        natsServerMonitoringEndpoint: "nats-headless.{{ $.Release.Namespace }}.svc.cluster.local:8222"
+        account: '$G'
+        stream: {{ $.Values.nats.stream.name }}
+        consumer: {{ include "dynamoai.natsGpuConsumerName" (dict "subjectprefix" $.Values.natsQueueGpuSubjectPrefix "type" .type "count" .count) }}
+        lagThreshold: '5'
+        activationLagThreshold: '1'
+        useHttps: 'false'
 {{- end }}
 {{- end }}
