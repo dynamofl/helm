@@ -701,7 +701,7 @@ nats:
           matchLabels:
             'app.kubernetes.io/name': 'natsjs'
 
-nats-jsc:
+nack:
   jetstream:
     nats:
-      url: 'nats://nats:4222'
+      url: 'nats://dynamoai-base-nats:4222'

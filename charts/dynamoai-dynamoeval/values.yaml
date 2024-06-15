@@ -160,14 +160,13 @@ metricsServer:
 natsQueueGpuSubjectPrefix: 'dynamo.eval.jobqueue.gpu'
 natsQueueVramSubjectPrefix: 'dynamo.eval.jobqueue.vram'
 nats:
-  enabled: true
+  enabled: false
   stream:
     name: 'dynamo-eval-jobqueue'
-    subjects: 'dynamo.eval.jobqueue.>'
+    subjects: ['dynamo.eval.jobqueue.>']
     retention: workqueue
     maxConsumers: -1
     maxMsgs: -1
     maxBytes: -1
-    maxAge: "0"
     storage: 'file'
     replicas: 1

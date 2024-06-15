@@ -3,7 +3,7 @@
 apiVersion: jetstream.nats.io/v1beta2
 kind: Consumer
 metadata:
-  name: {{ include "dynamoai.natsConsumerName" (dict "subjectprefix" $.Values.natsQueueGpuSubjectPrefix "type" .type "count" .count)  }}
+  name: {{ include "dynamoai.natsGpuConsumerName" (dict "subjectprefix" $.Values.natsQueueGpuSubjectPrefix "type" .type "count" .count)  }}
 spec:
     streamName: {{ $.Values.nats.stream.name }}
     durableName: {{ $.Values.nats.stream.name }}
@@ -20,7 +20,7 @@ spec:
 apiVersion: jetstream.nats.io/v1beta2
 kind: Consumer
 metadata:
-  name: {{ include "dynamoai.natsConsumerName" (dict "subjectprefix" $.Values.natsQueueVramSubjectPrefix "type" .type "count" .count)  }}
+  name: {{ include "dynamoai.natsVramConsumerName" (dict "subjectprefix" $.Values.natsQueueVramSubjectPrefix "type" .type "count" .count)  }}
 spec:
     streamName: {{ $.Values.nats.stream.name }}
     durableName: {{ $.Values.nats.stream.name }}
