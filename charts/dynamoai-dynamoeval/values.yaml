@@ -11,14 +11,14 @@ global:
     postgres: dynamoai-postgres-secret
     redis: dynamoai-redis-secret
     common: dynamoai-common-secret
-    apikeys: dynamoai-apikeys-secret   
+    apikeys: dynamoai-apikeys-secret
   config:
     common: dynamoai-common-config
     proxy: dynamoai-proxy-config
     api: dynamoai-api-config
     metricsServer: dynamoai-metrics-server-config
   awsRegion: "us-east-1"
-  
+
 dbMigrationsJob:
   name: "db-migrations-job"
   enabled: true
@@ -155,3 +155,18 @@ pentest:
 
 metricsServer:
   address: "needed"
+
+
+natsQueueGpuSubjectPrefix: 'dynamo.eval.jobqueue.gpu'
+natsQueueVramSubjectPrefix: 'dynamo.eval.jobqueue.vram'
+nats:
+  enabled: false
+  stream:
+    name: 'dynamo-eval-jobqueue'
+    subjects: ['dynamo.eval.jobqueue.>']
+    retention: workqueue
+    maxConsumers: -1
+    maxMsgs: -1
+    maxBytes: -1
+    storage: 'file'
+    replicas: 1

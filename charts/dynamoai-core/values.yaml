@@ -22,6 +22,8 @@ serviceAccount:
   automount: true
   # Annotations to add to the service account
   annotations: {}
+    # eks.amazonaws.com/role-arn: arn:aws:iam::111122223333:role/my-role
+  
 
 
 config: 
