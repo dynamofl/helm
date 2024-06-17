@@ -131,6 +131,16 @@ Common environment variables used in all Dynamo AI services, including secrets a
   value: "{{ .Values.models.toxicity.name }}"
 - name: DYNAMO_DATA_GENERATION_MODEL
   value: "{{ .Values.models.dataGeneration.name }}"
+- name: PROMPT_INJECTION_HOST
+  value: "{{ include "dynamoai.fullname" . }}-{{ .Values.promptInjection.name }}.{{ .Release.Namespace }}.svc.cluster.local"
+- name: LEGAL_ADVICE_HOST
+  value: "{{ include "dynamoai.fullname" . }}-{{ .Values.legalAdvice.name }}.{{ .Release.Namespace }}.svc.cluster.local"
+- name: HALLUCINATION_ENTAILMENT_HOST
+  value: "{{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationEntailment.name }}.{{ .Release.Namespace }}.svc.cluster.local"
+- name: HALLUCINATION_RAG_HOST
+  value: "{{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationRag.name }}.{{ .Release.Namespace }}.svc.cluster.local"
+- name: PII_REDACTION_HOST
+  value: "{{ include "dynamoai.fullname" . }}-{{ .Values.piiRedaction.name }}.{{ .Release.Namespace }}.svc.cluster.local"
 - name: DYNAMO_DATA_GENERATION_API_KEY
   valueFrom:
     secretKeyRef:
