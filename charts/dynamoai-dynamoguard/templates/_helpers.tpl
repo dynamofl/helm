@@ -352,6 +352,10 @@ Function to generate environment variables for VLLM.
       name: {{ .Values.global.secrets.redis }}
       key: port
 {{- end }}
+{{- if .Values.dataProcessing.nats.enabled }}
+- name: NATS_SERVER
+  value: {{ .Values.dataProcessing.nats.serverUrl }}
+{{- end }}
 {{- if .Values.global.awsRegion }}
 - name: AWS_DEFAULT_REGION
   value: "{{ .Values.global.awsRegion }}"

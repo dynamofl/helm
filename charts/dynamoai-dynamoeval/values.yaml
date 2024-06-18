@@ -161,6 +161,7 @@ natsQueueGpuSubjectPrefix: 'dynamo.eval.jobqueue.gpu'
 natsQueueVramSubjectPrefix: 'dynamo.eval.jobqueue.vram'
 nats:
   enabled: false
+  serverUrl: 'nats://dynamoai-base-nats:4222'
   stream:
     name: 'dynamo-eval-jobqueue'
     subjects: ['dynamo.eval.jobqueue.>']

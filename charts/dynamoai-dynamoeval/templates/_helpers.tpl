@@ -211,6 +211,10 @@ Common environment variables used in all Dynamo AI services, including secrets a
       name: {{ .Values.global.secrets.redis }}
       key: port
 {{- end }}
+{{- if .Values.nats.enabled }}
+- name: NATS_SERVER
+  value: {{ .Values.nats.serverUrl }}
+{{- end}}
 {{- if .Values.global.awsRegion }}
 - name: AWS_DEFAULT_REGION
   value: "{{ .Values.global.awsRegion }}"
@@ -278,7 +282,7 @@ Create consumer name based on subject prefix and GPU specs.
 Create consumer name based on subject prefix and GPU specs.
 */}}
 {{- define "dynamoai.natsVramConsumerName" -}}
-{{- printf "%s-%d" .subjectprefix (int .type) | replace "." "-" | lower -}}
+{{- printf "%s-%d-%d" .subjectprefix (int .type) (int .count) | replace "." "-" | lower -}}
 {{- end -}}
 
 

@@ -1,0 +1,14 @@
+{{- if $.Values.finetuning.nats.enabled }}
+apiVersion: jetstream.nats.io/v1beta2
+kind: Consumer
+metadata:
+  name: finetuning-nats-consumer
+spec:
+    streamName: {{ $.Values.finetuning.nats.stream.name }}
+    durableName: {{ $.Values.finetuning.nats.stream.name }}
+    filterSubject: {{ .Values.finetuning.nats.stream.subjects }}
+    ackPolicy: 'explicit'
+    ackWait: '60s'
+    maxAckPending: 100
+    maxDeliver: 3
+{{- end }}
