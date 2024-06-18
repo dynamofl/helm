@@ -66,7 +66,7 @@ spec:
         natsServerMonitoringEndpoint: "nats-headless.{{ $.Release.Namespace }}.svc.cluster.local:8222"
         account: '$G'
         stream: {{ $.Values.nats.stream.name }}
-        consumer: {{ include "dynamoai.natsVramConsumerName" (dict "subjectprefix" $.Values.natsQueueVramSubjectPrefix "type" .type)  }}
+        consumer: {{ include "dynamoai.natsVramConsumerName" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type)  }}
         lagThreshold: '5'
         activationLagThreshold: '1'
         useHttps: 'false'

@@ -83,6 +83,7 @@ pentest:
     tag: "0.0.1"
     pullPolicy: "IfNotPresent"
   extraEnv: []
+  natsSubjectFilter: dynamo.eval.pentest
   memoryConfig:
   # Name the VMs
   - type: 8
@@ -156,15 +157,12 @@ pentest:
 metricsServer:
   address: "needed"
 
-
-natsQueueGpuSubjectPrefix: 'dynamo.eval.jobqueue.gpu'
-natsQueueVramSubjectPrefix: 'dynamo.eval.jobqueue.vram'
 nats:
   enabled: false
   serverUrl: 'nats://dynamoai-base-nats:4222'
   stream:
-    name: 'dynamo-eval-jobqueue'
-    subjects: ['dynamo.eval.jobqueue.>']
+    name: 'dynamo-eval'
+    subjects: ['dynamo.eval.>']
     retention: workqueue
     maxConsumers: -1
     maxMsgs: -1

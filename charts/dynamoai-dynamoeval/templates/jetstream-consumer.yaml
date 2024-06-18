@@ -3,13 +3,13 @@
 apiVersion: jetstream.nats.io/v1beta2
 kind: Consumer
 metadata:
-  name: {{ include "dynamoai.natsGpuConsumerName" (dict "subjectprefix" $.Values.natsQueueGpuSubjectPrefix "type" .type "count" .count)  }}
+  name: {{ include "dynamoai.natsGpuConsumerName" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type "count" .count)  }}
 spec:
     streamName: {{ $.Values.nats.stream.name }}
     durableName: {{ $.Values.nats.stream.name }}
-    filterSubject: {{ include "dynamoai.natsGpuConsumerSubjectFilter" (dict "subjectprefix" $.Values.natsQueueGpuSubjectPrefix "type" .type "count" .count) }}
+    filterSubject: {{ include "dynamoai.natsGpuConsumerSubjectFilter" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type "count" .count) }}
     ackPolicy: 'explicit'
-    ackWait: '60s'
+    ackWait: '900s'
     maxAckPending: 100
     maxDeliver: 3
 {{- end }}
@@ -20,13 +20,13 @@ spec:
 apiVersion: jetstream.nats.io/v1beta2
 kind: Consumer
 metadata:
-  name: {{ include "dynamoai.natsVramConsumerName" (dict "subjectprefix" $.Values.natsQueueVramSubjectPrefix "type" .type )  }}
+  name: {{ include "dynamoai.natsVramConsumerName" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type )  }}
 spec:
     streamName: {{ $.Values.nats.stream.name }}
     durableName: {{ $.Values.nats.stream.name }}
-    filterSubject: {{ include "dynamoai.natsVramConsumerSubjectFilter" (dict "subjectprefix" $.Values.natsQueueVramSubjectPrefix "type" .type ) }}
+    filterSubject: {{ include "dynamoai.natsVramConsumerSubjectFilter" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type ) }}
     ackPolicy: 'explicit'
-    ackWait: '60s'
+    ackWait: '900s'
     maxAckPending: 100
     maxDeliver: 3
 {{- end }}
