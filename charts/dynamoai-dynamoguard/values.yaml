@@ -978,3 +978,10 @@ dataProcessing:
 
 metricsServer:
   address: "abc"
+
+minio:
+  enabled: false
+  aws:
+    endpoint: ''
+    accessKeyId: ''
+    secretAccessKey: ''
