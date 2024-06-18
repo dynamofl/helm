@@ -282,13 +282,20 @@ Create consumer name based on subject prefix and GPU specs.
 Create consumer name based on subject prefix and GPU specs.
 */}}
 {{- define "dynamoai.natsVramConsumerName" -}}
-{{- printf "%s-%d-%d" .subjectprefix (int .type) (int .count) | replace "." "-" | lower -}}
+{{- printf "%s-%d-%d" .subjectprefix (int .type) | replace "." "-" | lower -}}
 {{- end -}}
 
 
 {{/*
 Create subject filter for consumer based on GPU specs.
 */}}
-{{- define "dynamoai.natsConsumerSubjectFilter" -}}
+{{- define "dynamoai.natsGpuConsumerSubjectFilter" -}}
 {{- printf "%s.%s.%d" .subjectprefix .type (int .count) -}}
+{{- end -}}
+
+{{/*
+Create subject filter for consumer based on GPU specs.
+*/}}
+{{- define "dynamoai.natsVramConsumerSubjectFilter" -}}
+{{- printf "%s.%s" .subjectprefix .type -}}
 {{- end -}}
