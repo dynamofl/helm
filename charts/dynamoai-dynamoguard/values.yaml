@@ -903,17 +903,7 @@ finetuning:
       effect: 'NoSchedule'
 
   nats:
-    enabled: false
-    serverUrl: 'nats://dynamoai-base-nats:4222'
-    stream:
-      name: 'finetuning'
-      subjects: ['dynamo.guard.finetuning']
-      retention: workqueue
-      maxConsumers: -1
-      maxMsgs: -1
-      maxBytes: -1
-      storage: 'file'
-      replicas: 1
+    subjectFilter: 'dynamo.guard.finetuning'
 
 dataProcessing:
   name: data-processing
@@ -946,17 +936,7 @@ dataProcessing:
       ephemeral-storage: "20Gi"
 
   nats:
-    enabled: false
-    serverUrl: 'nats://dynamoai-base-nats:4222'
-    stream:
-      name: 'dataprocessing'
-      subjects: ['dynamo.guard.dataprocessing']
-      retention: workqueue
-      maxConsumers: -1
-      maxMsgs: -1
-      maxBytes: -1
-      storage: 'file'
-      replicas: 1
+    subjectFilter: 'dynamo.guard.dataprocessing'
 
   # SecurityContext to add to the deployment. Default is just set to not run as root.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
@@ -1011,3 +991,16 @@ minio:
     endpoint: ''
     accessKeyId: ''
     secretAccessKey: ''
+
+nats:
+  enabled: false
+  serverUrl: 'nats://dynamoai-base-nats:4222'
+  stream:
+    name: 'dynamo-guard'
+    subjects: ['dynamo.guard.>']
+    retention: workqueue
+    maxConsumers: -1
+    maxMsgs: -1
+    maxBytes: -1
+    storage: 'file'
+    replicas: 1

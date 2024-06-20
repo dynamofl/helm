@@ -372,3 +372,10 @@ Function to generate environment variables for VLLM.
       name: {{ .Values.global.secrets.common }}
       key: data_generation_api_key
 {{- end }}
+
+{{/*
+Create subject filter for consumer based on dynamoguard component.
+*/}}
+{{- define "dynamoai.natsConsumerSubjectFilter" -}}
+{{- printf "%s.%s" .subjectprefix .component -}}
+{{- end -}}
