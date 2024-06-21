@@ -24,6 +24,12 @@ spec:
               {{- with .Values.finetuning.extraEnv }}
               {{- toYaml . | nindent 12 }}
               {{- end }}
+              {{- if .Values.nats.enabled -}}
+              - name: NATS_SUBJECT_FILTER
+                value: {{ .Values.finetuning.nats.subjectFilter}}
+              - name: NATS_CONSUMER_NAME
+                value: finetuning-nats-consumer
+              {{- end -}}
             {{- if $.Values.global.config.proxy }}
             envFrom:
               - configMapRef:
