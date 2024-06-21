@@ -113,6 +113,12 @@ Common environment variables used in all Dynamo AI services.
   valueFrom:
     fieldRef:
       fieldPath: 'metadata.namespace'
+{{- if .Values.nats.enabled }}
+- name: NATS_SERVER
+  value: {{ .Values.nats.serverUrl }}
+- name: NATS_ENABLED
+  value: true
+{{- end}}
 {{- end }}
 
 {{/*
@@ -211,10 +217,6 @@ Common environment variables used in all Dynamo AI services, including secrets a
       name: {{ .Values.global.secrets.redis }}
       key: port
 {{- end }}
-{{- if .Values.nats.enabled }}
-- name: NATS_SERVER
-  value: {{ .Values.nats.serverUrl }}
-{{- end}}
 {{- if .Values.global.awsRegion }}
 - name: AWS_DEFAULT_REGION
   value: "{{ .Values.global.awsRegion }}"
