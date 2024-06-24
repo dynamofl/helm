@@ -24,6 +24,9 @@ models:
   promptInjection:
     name: ""
     path: ""
+  piiRedaction:
+    name: ""
+    path: ""
   toxicity:
     name: ""
     path: ""
