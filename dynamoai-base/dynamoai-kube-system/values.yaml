@@ -1,2 +1,11 @@
 aws-ebs-csi-driver:
   enabled: true
+
+storageClass:
+  name: ebs-sc
+  provisioner: kubernetes.io/aws-ebs
+  parameters:
+    type: gp2
+    fsType: ext4
+  reclaimPolicy: Delete
+  allowVolumeExpansion: true

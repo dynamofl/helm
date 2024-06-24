@@ -28,11 +28,11 @@ ec2NodeClasses:
   - name: "default"
     role: "KarpenterNodeRole-sandbox-eks-cluster"
     amiFamily: "AL2"
-    securityGroupId: "sg-00dcc23298caf3d0c"
+    securityGroupId: "sg-0e2d98f704649ff2c"
     subnetIds:
-      - "subnet-0963c4a7e7c999302"
-      - "subnet-048450cca7a240236"
-      - "subnet-0845be3ffe70af48e"
+      - "subnet-0d57db695c2d3857c"
+      - "subnet-0d3b4b02a4422a889"
+      - "subnet-0554f95b5cb6e4654"
     blockDeviceMappings:
       - deviceName: "/dev/xvda"
         ebs:
@@ -46,11 +46,11 @@ ec2NodeClasses:
   - name: "gpu"
     role: "KarpenterNodeRole-sandbox-eks-cluster"
     amiFamily: "AL2"
-    securityGroupId: "sg-0fa3a28d7a9360314"
+    securityGroupId: "sg-0e2d98f704649ff2c"
     subnetIds:
-      - "subnet-0963c4a7e7c999302"
-      - "subnet-048450cca7a240236"
-      - "subnet-0845be3ffe70af48e"
+      - "subnet-0d57db695c2d3857c"
+      - "subnet-0d3b4b02a4422a889"
+      - "subnet-0554f95b5cb6e4654"
     blockDeviceMappings:
       - deviceName: "/dev/xvda"
         ebs:
