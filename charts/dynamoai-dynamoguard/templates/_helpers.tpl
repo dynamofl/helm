@@ -279,14 +279,14 @@ Function to generate environment variables for VLLM.
       name: {{ .Values.global.secrets.mongodb }}
       key: port
 {{- end }}
-{{- define "dynamoai.finetuning.extraEnv" -}}
-- name: S3_ENDPOINT_URL
-  value: ''
+{{- if .Values.minio.enabled }}
+- name: AWS_ENDPOINT_URL_S3
+  value: {{ .Values.minio.aws.endpoint }}
 - name: AWS_ACCESS_KEY_ID
-  value: ''
+  value: {{ .Values.minio.aws.accessKeyId }}
 - name: AWS_SECRET_ACCESS_KEY
-  value: ''
-{{- end -}}
+  value: {{ .Values.minio.aws.secretAccessKey }}
+{{- end }}
 {{- if .Values.global.secrets.redis }}
 - name: REDIS_HOST
   valueFrom:
