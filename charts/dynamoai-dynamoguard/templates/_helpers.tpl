@@ -234,6 +234,8 @@ limits:
       key: hf_token
 - name: HF_REPO
   value: {{ .Values.models.promptInjection.name }}
+- name: WORKER_TIMEOUT
+  value: "300"
 {{- end }}
 
 {{/*
