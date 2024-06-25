@@ -235,7 +235,7 @@ limits:
       name: {{ .Values.global.secrets.common }}
       key: hf_token
 - name: HF_REPO
-  value: {{ .Values.models.promptInjection.name }}
+  value: {{ .Values.models.piiRedaction.name }}
 - name: WORKER_TIMEOUT
   value: "300"
 {{- end }}
