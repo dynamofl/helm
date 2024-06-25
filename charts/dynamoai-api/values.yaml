@@ -17,6 +17,7 @@ global:
   awsRegion: "us-east-1"
 
 api:
+  enabled: true
   name: api
   replicaCount: 1
   port: 3000
@@ -42,6 +43,7 @@ api:
     annotations: {}
 
   ingress:
+    enabled: true
     ingressClassName: nginx
     host: ""
     annotations: {
