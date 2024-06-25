@@ -22,6 +22,7 @@ keycloak:
   baseUrl: ''
 
 ui:
+  enabled: true
   name: ui
   replicaCount: 1
   port: 80
@@ -46,6 +47,7 @@ ui:
     port: 80
 
   ingress:
+    enabled: true
     ingressClassName: nginx
     host: ""
     annotations: {}
