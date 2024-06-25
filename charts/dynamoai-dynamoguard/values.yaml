@@ -62,7 +62,7 @@ promptInjection:
 
   service:
     type: ClusterIP
-    port: 8000
+    port: 80
 
   annotations:
     has_metrics_endpoint: "true"
@@ -171,7 +171,7 @@ legalAdvice:
 
   service:
     type: ClusterIP
-    port: 8000
+    port: 80
 
   annotations:
     has_metrics_endpoint: "true"
@@ -280,7 +280,7 @@ toxicity:
 
   service:
     type: ClusterIP
-    port: 8000
+    port: 80
 
   annotations:
     has_metrics_endpoint: "true"
@@ -482,7 +482,7 @@ hallucinationEntailment:
 
   service:
     type: ClusterIP
-    port: 8000
+    port: 80
 
   annotations: {}
   labels: {}
@@ -584,7 +584,7 @@ hallucinationRag:
 
   service:
     type: ClusterIP
-    port: 8000
+    port: 80
 
   annotations: {}
   labels: {}
@@ -685,7 +685,7 @@ piiRedaction:
 
   service:
     type: ClusterIP
-    port: 8000
+    port: 80
 
   annotations: {}
   labels: {}
