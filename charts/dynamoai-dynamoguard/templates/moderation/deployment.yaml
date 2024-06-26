@@ -48,11 +48,6 @@ spec:
             {{- with .Values.moderation.extraEnv }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
-          {{- if .Values.global.config.proxy }}
-          envFrom:
-            - configMapRef:
-                name: {{ .Values.global.config.proxy }}
-          {{- end }}
           image: "{{ .Values.moderation.image.registry }}/{{ .Values.moderation.image.repository }}:{{ .Values.moderation.image.tag }}"
           imagePullPolicy: {{ .Values.moderation.image.pullPolicy }}
           ports:

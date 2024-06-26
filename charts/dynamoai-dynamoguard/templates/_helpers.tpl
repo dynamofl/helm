@@ -145,6 +145,8 @@ Common environment variables used in all Dynamo AI services, including secrets a
   value: {{ include "dynamoai.fullname" . }}-{{ .Values.toxicity.name }}.{{ .Release.Namespace }}.svc.cluster.local
 - name: LORAX_HOST
   value: {{ include "dynamoai.fullname" . }}-{{ .Values.lorax.name }}.{{ .Release.Namespace }}.svc.cluster.local
+- name: AZURE_API_VERSION
+  value: "2024-02-01"
 - name: DYNAMO_DATA_GENERATION_API_KEY
   valueFrom:
     secretKeyRef:
