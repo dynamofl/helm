@@ -132,15 +132,19 @@ Common environment variables used in all Dynamo AI services, including secrets a
 - name: DYNAMO_DATA_GENERATION_MODEL
   value: "{{ .Values.models.dataGeneration.name }}"
 - name: PROMPT_INJECTION_HOST
-  value: "{{ include "dynamoai.fullname" . }}-{{ .Values.promptInjection.name }}.{{ .Release.Namespace }}.svc.cluster.local"
+  value: {{ include "dynamoai.fullname" . }}-{{ .Values.promptInjection.name }}.{{ .Release.Namespace }}.svc.cluster.local
 - name: LEGAL_ADVICE_HOST
-  value: "{{ include "dynamoai.fullname" . }}-{{ .Values.legalAdvice.name }}.{{ .Release.Namespace }}.svc.cluster.local"
+  value: {{ include "dynamoai.fullname" . }}-{{ .Values.legalAdvice.name }}.{{ .Release.Namespace }}.svc.cluster.local
 - name: HALLUCINATION_ENTAILMENT_HOST
-  value: "{{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationEntailment.name }}.{{ .Release.Namespace }}.svc.cluster.local"
+  value: {{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationEntailment.name }}.{{ .Release.Namespace }}.svc.cluster.local
 - name: HALLUCINATION_RAG_HOST
-  value: "{{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationRag.name }}.{{ .Release.Namespace }}.svc.cluster.local"
+  value: {{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationRag.name }}.{{ .Release.Namespace }}.svc.cluster.local
 - name: PII_REDACTION_HOST
-  value: "{{ include "dynamoai.fullname" . }}-{{ .Values.piiRedaction.name }}.{{ .Release.Namespace }}.svc.cluster.local"
+  value: {{ include "dynamoai.fullname" . }}-{{ .Values.piiRedaction.name }}.{{ .Release.Namespace }}.svc.cluster.local
+- name: TOXICITY_HOST
+  value: {{ include "dynamoai.fullname" . }}-{{ .Values.toxicity.name }}.{{ .Release.Namespace }}.svc.cluster.local
+- name: LORAX_HOST
+  value: {{ include "dynamoai.fullname" . }}-{{ .Values.lorax.name }}.{{ .Release.Namespace }}.svc.cluster.local
 - name: DYNAMO_DATA_GENERATION_API_KEY
   valueFrom:
     secretKeyRef:
@@ -230,6 +234,10 @@ limits:
     secretKeyRef:
       name: {{ .Values.global.secrets.common }}
       key: hf_token
+- name: HF_REPO
+  value: {{ .Values.models.piiRedaction.name }}
+- name: WORKER_TIMEOUT
+  value: "300"
 {{- end }}
 
 {{/*
