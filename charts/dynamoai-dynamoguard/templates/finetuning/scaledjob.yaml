@@ -19,17 +19,21 @@ spec:
             resources:
               {{- toYaml .Values.finetuning.resources | nindent 14 }}
             env:
-              {{- include "dynamoai.commonEnv" . | nindent 12 }}
-              {{- include "dynamoai.finetuningScaledJobEnv" . | nindent 12 }}
-              {{- with .Values.finetuning.extraEnv }}
-              {{- toYaml . | nindent 12 }}
-              {{- end }}
-              {{- if .Values.nats.enabled -}}
+              {{- if .Values.nats.enabled }}
+              - name: NATS_SERVER
+                value: {{ $.Values.nats.serverUrl }}
+              - name: NATS_ENABLED
+                value: "true"
               - name: NATS_SUBJECT_FILTER
                 value: {{ .Values.finetuning.nats.subjectFilter}}
               - name: NATS_CONSUMER_NAME
                 value: finetuning-nats-consumer
-              {{- end -}}
+              {{- end }}
+              {{- include "dynamoai.commonEnv" . | nindent 14 }}
+              {{- include "dynamoai.finetuningScaledJobEnv" . | nindent 14 }}
+              {{- with .Values.finetuning.extraEnv }}
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
             {{- if $.Values.global.config.proxy }}
             envFrom:
               - configMapRef:

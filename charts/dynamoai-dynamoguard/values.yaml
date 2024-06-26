@@ -15,6 +15,7 @@ global:
   config:
     common: dynamoai-common-config
     proxy: dynamoai-proxy-config
+    api: dynamoai-api-config
   awsRegion:  "us-east-1"
 
 models:

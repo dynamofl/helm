@@ -37,19 +37,23 @@ spec:
               limits:
                 nvidia.com/gpu: {{ .count | quote }}
             env:
-              {{- include "dynamoai.commonEnv" $ | nindent 12 }}
-              {{- include "dynamoai.pentestEnv" $ | nindent 12 }}
-              {{- include "dynamoai.scaledJobCommonEnv" $ | nindent 12 }}
-              {{- include "dynamoai.gpuMemoryCountScaledJobEnv" . | nindent 12 }}
-              {{- with $.Values.pentest.extraEnv }}
-              {{- toYaml . | nindent 12 }}
-              {{- end }}
-              {{- if $.Values.nats.enabled -}}
+              {{- if $.Values.nats.enabled }}
+              - name: NATS_SERVER
+                value: {{ $.Values.nats.serverUrl }}
+              - name: NATS_ENABLED
+                value: "true"
               - name: NATS_SUBJECT_FILTER
-                value: {{ include "dynamoai.natsVramConsumerSubjectFilter" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type ) }}
+                value: {{- include "dynamoai.natsVramConsumerSubjectFilter" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type ) | indent 1 }}
               - name: NATS_CONSUMER_NAME
-                value: {{ include "dynamoai.natsVramConsumerName" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type )  }}
-              {{- end -}}
+                value: {{- include "dynamoai.natsVramConsumerName" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type ) | indent 1 }}
+              {{- end }}
+              {{- include "dynamoai.commonEnv" $ | nindent 14 }}
+              {{- include "dynamoai.pentestEnv" $ | nindent 14 }}
+              {{- include "dynamoai.scaledJobCommonEnv" $ | nindent 14 }}
+              {{- include "dynamoai.gpuMemoryCountScaledJobEnv" . | nindent 14 }}
+              {{- with $.Values.pentest.extraEnv }}
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
             {{- if $.Values.global.config.proxy }}
             envFrom:
               - configMapRef:
@@ -72,7 +76,7 @@ spec:
         natsServerMonitoringEndpoint: "nats-headless.{{ $.Release.Namespace }}.svc.cluster.local:8222"
         account: '$G'
         stream: {{ $.Values.nats.stream.name }}
-        consumer: {{ include "dynamoai.natsVramConsumerName" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type)  }}
+        consumer: {{ include "dynamoai.natsVramConsumerName" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type) }}
         lagThreshold: '5'
         activationLagThreshold: '1'
         useHttps: 'false'

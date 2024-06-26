@@ -113,12 +113,6 @@ Common environment variables used in all Dynamo AI services.
   valueFrom:
     fieldRef:
       fieldPath: 'metadata.namespace'
-{{- if .Values.nats.enabled }}
-- name: NATS_SERVER
-  value: {{ .Values.nats.serverUrl }}
-- name: NATS_ENABLED
-  value: true
-{{- end}}
 {{- end }}
 
 {{/*
@@ -362,6 +356,23 @@ Function to generate environment variables for VLLM.
 - name: AWS_DEFAULT_REGION
   value: "{{ .Values.global.awsRegion }}"
 {{- end }}
+{{- if .Values.global.secrets.common }}
+- name: PENTEST_SERVICE_USER_API_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.common }}
+      key: pentest_service_user_api_key
+{{- end }}
+{{- if .Values.global.apiDomain }}
+- name: API_DOMAIN
+  value: {{ .Values.global.apiDomain }}
+{{- else }}
+- name: API_DOMAIN
+  valueFrom:
+    configMapKeyRef:
+      name: {{ .Values.global.config.api }}
+      key: domain
+{{- end}}
 - name: MAX_REQUESTS_TO_PROCESS
   value: '10'
 - name: REDIS_QUEUE

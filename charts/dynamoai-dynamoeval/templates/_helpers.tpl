@@ -113,12 +113,6 @@ Common environment variables used in all Dynamo AI services.
   valueFrom:
     fieldRef:
       fieldPath: 'metadata.namespace'
-{{- if .Values.nats.enabled }}
-- name: NATS_SERVER
-  value: {{ .Values.nats.serverUrl }}
-- name: NATS_ENABLED
-  value: true
-{{- end}}
 {{- end }}
 
 {{/*
@@ -278,15 +272,14 @@ Create consumer name based on subject prefix and GPU specs.
 */}}
 {{- define "dynamoai.natsGpuConsumerName" -}}
 {{- printf "%s-gpu-%s-%d" .subjectprefix .type (int .count) | replace "." "-" | lower -}}
-{{- end -}}
+{{- end }}
 
 {{/*
 Create consumer name based on subject prefix and GPU specs.
 */}}
 {{- define "dynamoai.natsVramConsumerName" -}}
 {{- printf "%s-vram-%d" .subjectprefix (int .type) | replace "." "-" | lower -}}
-{{- end -}}
-
+{{- end }}
 
 {{/*
 Create subject filter for consumer based on GPU specs.
@@ -299,5 +292,5 @@ Create subject filter for consumer based on GPU specs.
 Create subject filter for consumer based on GPU specs.
 */}}
 {{- define "dynamoai.natsVramConsumerSubjectFilter" -}}
-{{- printf "%s.vram.%s" .subjectprefix .type -}}
+{{- printf "%s.vram.%d" .subjectprefix (int .type) -}}
 {{- end -}}
