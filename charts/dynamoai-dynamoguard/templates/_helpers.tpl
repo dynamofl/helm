@@ -366,6 +366,23 @@ Function to generate environment variables for VLLM.
 - name: AWS_DEFAULT_REGION
   value: "{{ .Values.global.awsRegion }}"
 {{- end }}
+{{- if .Values.global.secrets.common }}
+- name: PENTEST_SERVICE_USER_API_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.common }}
+      key: pentest_service_user_api_key
+{{- end }}
+{{- if .Values.global.apiDomain }}
+- name: API_DOMAIN
+  value: {{ .Values.global.apiDomain }}
+{{- else }}
+- name: API_DOMAIN
+  valueFrom:
+    configMapKeyRef:
+      name: {{ .Values.global.config.api }}
+      key: domain
+{{- end}}
 - name: MAX_REQUESTS_TO_PROCESS
   value: '10'
 - name: REDIS_QUEUE
@@ -378,3 +395,10 @@ Function to generate environment variables for VLLM.
       name: {{ .Values.global.secrets.common }}
       key: data_generation_api_key
 {{- end }}
+
+{{/*
+Create subject filter for consumer based on dynamoguard component.
+*/}}
+{{- define "dynamoai.natsConsumerSubjectFilter" -}}
+{{- printf "%s.%s" .subjectprefix .component -}}
+{{- end -}}

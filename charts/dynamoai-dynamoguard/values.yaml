@@ -15,6 +15,7 @@ global:
   config:
     common: dynamoai-common-config
     proxy: dynamoai-proxy-config
+    api: dynamoai-api-config
   awsRegion:  "us-east-1"
 
 models:
@@ -905,6 +906,9 @@ finetuning:
       value: a10g
       effect: 'NoSchedule'
 
+  nats:
+    subjectFilter: 'dynamo.guard.finetuning'
+
 dataProcessing:
   name: data-processing
   replicaCount: 1
@@ -934,6 +938,9 @@ dataProcessing:
       cpu: "1000m"
       memory: "2000Mi"
       ephemeral-storage: "20Gi"
+
+  nats:
+    subjectFilter: 'dynamo.guard.dataprocessing'
 
   # SecurityContext to add to the deployment. Default is just set to not run as root.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
@@ -988,3 +995,16 @@ minio:
     endpoint: ''
     accessKeyId: ''
     secretAccessKey: ''
+
+nats:
+  enabled: false
+  serverUrl: 'nats://dynamoai-base-nats:4222'
+  stream:
+    name: 'dynamo-guard'
+    subjects: ['dynamo.guard.>']
+    retention: workqueue
+    maxConsumers: -1
+    maxMsgs: -1
+    maxBytes: -1
+    storage: 'file'
+    replicas: 1

@@ -37,12 +37,22 @@ spec:
               limits:
                 nvidia.com/gpu: {{ .count | quote }}
             env:
-              {{- include "dynamoai.commonEnv" $ | nindent 12 }}
-              {{- include "dynamoai.pentestEnv" $ | nindent 12 }}
-              {{- include "dynamoai.scaledJobCommonEnv" $ | nindent 12 }}
-              {{- include "dynamoai.gpuTypeCountScaledJobEnv" . | nindent 12 }}
+              {{- if $.Values.nats.enabled }}
+              - name: NATS_SERVER
+                value: {{ $.Values.nats.serverUrl }}
+              - name: NATS_ENABLED
+                value: "true"
+              - name: NATS_SUBJECT_FILTER
+                value: {{- include "dynamoai.natsGpuConsumerSubjectFilter" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type "count" .count) | indent 1 }}
+              - name: NATS_CONSUMER_NAME
+                value: {{- include "dynamoai.natsGpuConsumerName" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type "count" .count) | indent 1 }}
+              {{- end }}
+              {{- include "dynamoai.commonEnv" $ | nindent 14 }}
+              {{- include "dynamoai.pentestEnv" $ | nindent 14 }}
+              {{- include "dynamoai.scaledJobCommonEnv" $ | nindent 14 }}
+              {{- include "dynamoai.gpuTypeCountScaledJobEnv" . | nindent 14 }}
               {{- with $.Values.pentest.extraEnv }}
-              {{- toYaml . | nindent 12 }}
+              {{- toYaml . | nindent 14 }}
               {{- end }}
             {{- if $.Values.global.config.proxy }}
             envFrom:
@@ -66,7 +76,7 @@ spec:
         natsServerMonitoringEndpoint: "nats-headless.{{ $.Release.Namespace }}.svc.cluster.local:8222"
         account: '$G'
         stream: {{ $.Values.nats.stream.name }}
-        consumer: {{ include "dynamoai.natsGpuConsumerName" (dict "subjectprefix" $.Values.natsQueueGpuSubjectPrefix "type" .type "count" .count) }}
+        consumer: {{ include "dynamoai.natsGpuConsumerName" (dict "subjectprefix" $.Values.pentest.natsSubjectFilter "type" .type "count" .count) }}
         lagThreshold: '5'
         activationLagThreshold: '1'
         useHttps: 'false'
