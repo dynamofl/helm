@@ -119,6 +119,8 @@ Common environment variables used in all Dynamo AI services.
 Common environment variables used in all Dynamo AI services, including secrets and config map values.
 */}}
 {{- define "dynamoai.apiEnv" -}}
+- name: PROJECTS_BUCKET
+  value: dynamofl-projects
 - name: PORT
   value: "{{ .Values.api.port }}"
 {{- if .Values.global.secrets.postgres }}
