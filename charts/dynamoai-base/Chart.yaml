@@ -45,11 +45,11 @@ dependencies:
     repository: "https://nats-io.github.io/k8s/helm/charts/"
     condition: nats.enabled
   - name: "dynamoai-core"
-    version: "0.1.2"
+    version: "0.1.4"
     repository: "https://documentation.dynamofl.com/helm"
     condition: dynamoai-core.enabled
   - name: "dynamoai-api"
-    version: "0.1.6"
+    version: "0.1.8"
     repository: "https://documentation.dynamofl.com/helm"
     condition: dynamoai-api.enabled
   - name: "dynamoai-ui"
