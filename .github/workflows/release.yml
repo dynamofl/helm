@@ -35,6 +35,7 @@ jobs:
             helm repo add eks https://aws.github.io/eks-charts
             helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
             helm repo add dynamoai https://documentation.dynamofl.com/helm
+            helm repo add nats https://nats-io.github.io/k8s/helm/charts/
             helm repo update
             
       - name: Run chart-releaser
