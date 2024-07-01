@@ -641,6 +641,8 @@ keycloak:
       value: "" # pass --import-realm
     - name: DYNAMOAI_REALM_NAME
       value: ""
+    - name: DYNAMOAI_SSL_REQUIRED
+      value: "external"
     - name: DYNAMOAI_API_CLIENT_ID
       value: ""
     - name: DYNAMOAI_UI_CLIENT_ID

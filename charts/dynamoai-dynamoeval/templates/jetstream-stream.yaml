@@ -1,3 +1,4 @@
+{{- if $.Values.nats.enabled }}
 apiVersion: jetstream.nats.io/v1beta2
 kind: Stream
 metadata:
@@ -9,6 +10,6 @@ spec:
     maxConsumers: {{ .Values.nats.stream.maxConsumers }}
     maxMsgs: {{ .Values.nats.stream.maxMsgs }}
     maxBytes: {{ .Values.nats.stream.maxBytes }}
-    maxAge: {{ .Values.nats.stream.maxAge }}
     storage: {{ .Values.nats.stream.storage }}
     replicas: {{ .Values.nats.stream.replicas }}
+{{- end }}

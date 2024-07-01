@@ -119,6 +119,8 @@ Common environment variables used in all Dynamo AI services.
 Common environment variables used in all Dynamo AI services, including secrets and config map values.
 */}}
 {{- define "dynamoai.apiEnv" -}}
+- name: PROJECTS_BUCKET
+  value: dynamofl-projects
 - name: PORT
   value: "{{ .Values.api.port }}"
 {{- if .Values.global.secrets.postgres }}
@@ -257,6 +259,11 @@ Common environment variables used in all Dynamo AI services, including secrets a
     configMapKeyRef:
       name: {{ .Values.global.config.common }}
       key: bucketName
+- name: CORS_RULE
+  valueFrom:
+    configMapKeyRef:
+      name: {{ .Values.global.config.common }}
+      key: corsRule
 - name: AWS_DEFAULT_REGION
   value: "{{ .Values.global.awsRegion }}"
 - name: MODERATOR_WORKER_ASYNC_ENDPOINT

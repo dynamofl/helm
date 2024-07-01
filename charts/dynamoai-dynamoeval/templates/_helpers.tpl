@@ -271,20 +271,26 @@ Common environment variables used in all Dynamo AI services, including secrets a
 Create consumer name based on subject prefix and GPU specs.
 */}}
 {{- define "dynamoai.natsGpuConsumerName" -}}
-{{- printf "%s-%s-%d" .subjectprefix .type (int .count) | replace "." "-" | lower -}}
-{{- end -}}
+{{- printf "%s-gpu-%s-%d" .subjectprefix .type (int .count) | replace "." "-" | lower -}}
+{{- end }}
 
 {{/*
 Create consumer name based on subject prefix and GPU specs.
 */}}
 {{- define "dynamoai.natsVramConsumerName" -}}
-{{- printf "%s-%d" .subjectprefix (int .type) | replace "." "-" | lower -}}
-{{- end -}}
-
+{{- printf "%s-vram-%d" .subjectprefix (int .type) | replace "." "-" | lower -}}
+{{- end }}
 
 {{/*
 Create subject filter for consumer based on GPU specs.
 */}}
-{{- define "dynamoai.natsConsumerSubjectFilter" -}}
-{{- printf "%s.%s.%d" .subjectprefix .type (int .count) -}}
+{{- define "dynamoai.natsGpuConsumerSubjectFilter" -}}
+{{- printf "%s.gpu.%s.%d" .subjectprefix .type (int .count) -}}
+{{- end -}}
+
+{{/*
+Create subject filter for consumer based on GPU specs.
+*/}}
+{{- define "dynamoai.natsVramConsumerSubjectFilter" -}}
+{{- printf "%s.vram.%d" .subjectprefix (int .type) -}}
 {{- end -}}
