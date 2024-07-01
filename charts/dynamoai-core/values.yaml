@@ -55,6 +55,9 @@ secrets:
       - "abc"
     mistral: 
       - "def"
+    azure_openai: ""
+    azure_mistral: ""
+
   postgres:
     host: ""
     port: ""
