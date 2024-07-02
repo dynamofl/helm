@@ -1,0 +1,15 @@
+{{- if $.Values.nats.enabled }}
+apiVersion: jetstream.nats.io/v1beta2
+kind: Stream
+metadata:
+  name: {{ .Values.nats.stream.name }}
+spec:
+    name: {{ .Values.nats.stream.name }}
+    subjects: {{ .Values.nats.stream.subjects }}
+    retention: {{ .Values.nats.stream.retention }}
+    maxConsumers: {{ .Values.nats.stream.maxConsumers }}
+    maxMsgs: {{ .Values.nats.stream.maxMsgs }}
+    maxBytes: {{ .Values.nats.stream.maxBytes }}
+    storage: {{ .Values.nats.stream.storage }}
+    replicas: {{ .Values.nats.stream.replicas }}
+{{- end }}
