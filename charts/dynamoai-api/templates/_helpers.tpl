@@ -123,6 +123,12 @@ Common environment variables used in all Dynamo AI services, including secrets a
   value: dynamofl-projects
 - name: PORT
   value: "{{ .Values.api.port }}"
+{{- if .Values.api.natsEnv.enabled }}
+- name: NATS_ENABLED
+  value: "true"
+- name: NATS_SERVER
+  value: {{ .Values.api.natsEnv.serverUrl }}
+{{- end }}
 {{- if .Values.global.secrets.postgres }}
 - name: PG_DB_HOST
   valueFrom:
