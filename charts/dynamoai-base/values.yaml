@@ -564,7 +564,8 @@ mongodb:
 
 minio:
   enabled: true
-  fullnameOverride: 'minio'
+  fullname: dynamoai-base-minio
+  fullnameOverride: dynamoai-base-minio
   mode: 'standalone'
   defaultBuckets: 'pentest-bucketprojects-bucket'
   auth:
