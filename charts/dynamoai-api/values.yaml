@@ -122,6 +122,9 @@ api:
       value: ''
     - name: AWS_SECRET_ACCESS_KEY
       value: ''
+  natsEnv:
+    enabled: true
+    serverUrl: nats://dynamoai-base-nats:4222
 
   # Extra volumes to add to the deployment. Make sure these don't
   # conflict with the ones already defined in the deployment.
