@@ -1,0 +1,647 @@
+opentelemetry-collector-daemonset:
+  enabled: true
+  clusterRole:
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - nodes/proxy
+      verbs:
+      - get
+  config:
+    exporters:
+      debug: {}
+      prometheus:
+        endpoint: 0.0.0.0:8889
+        metric_expiration: 60m
+        resource_to_telemetry_conversion:
+          enabled: true
+        send_timestamps: true
+    extensions:
+      health_check: {}
+    processors:
+      batch: {}
+      k8sattributes:
+        extract:
+          metadata:
+          - k8s.namespace.name
+          - k8s.pod.name
+          - k8s.deployment.name
+          - k8s.node.name
+          - k8s.replicaset.name
+          - k8s.daemonset.name
+          - k8s.statefulset.name
+          - k8s.container.name
+          - k8s.job.name
+          - k8s.pod.uid
+          - k8s.cronjob.name
+          - k8s.pod.start_time
+    receivers:
+      kubeletstats:
+        extra_metadata_labels:
+        - k8s.volume.type
+        k8s_api_config:
+          auth_type: serviceAccount
+        metric_groups:
+        - pod
+        - container
+        - node
+        - volume
+        metrics:
+          container.cpu.time:
+            enabled: true
+          container.cpu.usage:
+            enabled: false
+          container.cpu.utilization:
+            enabled: true
+          container.filesystem.available:
+            enabled: true
+          container.filesystem.capacity:
+            enabled: true
+          container.filesystem.usage:
+            enabled: true
+          container.memory.available:
+            enabled: true
+          container.memory.major_page_faults:
+            enabled: false
+          container.memory.page_faults:
+            enabled: false
+          container.memory.rss:
+            enabled: false
+          container.memory.usage:
+            enabled: true
+          container.memory.working_set:
+            enabled: true
+          container.uptime:
+            enabled: false
+          k8s.container.cpu_limit_utilization:
+            enabled: true
+          k8s.container.cpu_request_utilization:
+            enabled: true
+          k8s.container.memory_limit_utilization:
+            enabled: true
+          k8s.container.memory_request_utilization:
+            enabled: true
+          k8s.node.cpu.time:
+            enabled: true
+          k8s.node.cpu.usage:
+            enabled: false
+          k8s.node.cpu.utilization:
+            enabled: true
+          k8s.node.filesystem.available:
+            enabled: true
+          k8s.node.filesystem.capacity:
+            enabled: true
+          k8s.node.filesystem.usage:
+            enabled: true
+          k8s.node.memory.available:
+            enabled: true
+          k8s.node.memory.major_page_faults:
+            enabled: false
+          k8s.node.memory.page_faults:
+            enabled: false
+          k8s.node.memory.rss:
+            enabled: false
+          k8s.node.memory.usage:
+            enabled: true
+          k8s.node.memory.working_set:
+            enabled: true
+          k8s.node.network.errors:
+            enabled: false
+          k8s.node.network.io:
+            enabled: false
+          k8s.node.uptime:
+            enabled: false
+          k8s.pod.cpu.time:
+            enabled: true
+          k8s.pod.cpu.usage:
+            enabled: false
+          k8s.pod.cpu.utilization:
+            enabled: true
+          k8s.pod.cpu_limit_utilization:
+            enabled: true
+          k8s.pod.cpu_request_utilization:
+            enabled: true
+          k8s.pod.filesystem.available:
+            enabled: true
+          k8s.pod.filesystem.capacity:
+            enabled: true
+          k8s.pod.filesystem.usage:
+            enabled: true
+          k8s.pod.memory.available:
+            enabled: true
+          k8s.pod.memory.major_page_faults:
+            enabled: false
+          k8s.pod.memory.page_faults:
+            enabled: false
+          k8s.pod.memory.rss:
+            enabled: false
+          k8s.pod.memory.usage:
+            enabled: true
+          k8s.pod.memory.working_set:
+            enabled: true
+          k8s.pod.memory_limit_utilization:
+            enabled: true
+          k8s.pod.memory_request_utilization:
+            enabled: true
+          k8s.pod.network.errors:
+            enabled: false
+          k8s.pod.network.io:
+            enabled: false
+          k8s.pod.uptime:
+            enabled: false
+          k8s.volume.available:
+            enabled: true
+          k8s.volume.capacity:
+            enabled: true
+          k8s.volume.inodes:
+            enabled: true
+          k8s.volume.inodes.free:
+            enabled: true
+          k8s.volume.inodes.used:
+            enabled: true
+        resource_attributes:
+          aws.volume.id:
+            enabled: true
+          container.id:
+            enabled: false
+          fs.type:
+            enabled: false
+          gce.pd.name:
+            enabled: false
+          glusterfs.endpoints.name:
+            enabled: false
+          glusterfs.path:
+            enabled: false
+          k8s.container.name:
+            enabled: true
+          k8s.namespace.name:
+            enabled: true
+          k8s.node.name:
+            enabled: false
+          k8s.persistentvolumeclaim.name:
+            enabled: true
+          k8s.pod.name:
+            enabled: true
+          k8s.pod.uid:
+            enabled: false
+          k8s.volume.name:
+            enabled: true
+          k8s.volume.type:
+            enabled: true
+          partition:
+            enabled: false
+    service:
+      extensions:
+      - health_check
+      pipelines:
+        metrics:
+          exporters:
+          - debug
+          - prometheus
+          processors:
+          - memory_limiter
+          - batch
+  fullnameOverride: opentelemetry-collector-dmset
+  image:
+    repository: otel/opentelemetry-collector-contrib
+  livenessProbe:
+    failureThreshold: 5
+    initialDelaySeconds: 20
+    timeoutSeconds: 10
+  mode: daemonset
+  podAnnotations:
+    metrics_type: system
+  ports:
+    prometheus:
+      containerPort: 8889
+      enabled: true
+      hostPort: 8889
+      protocol: TCP
+      servicePort: 8889
+  presets:
+    kubeletMetrics:
+      enabled: true
+    kubernetesAttributes:
+      enabled: true
+  readinessProbe:
+    failureThreshold: 5
+    initialDelaySeconds: 20
+    timeoutSeconds: 10
+  resources:
+    limits:
+      cpu: 50m
+      memory: 150Mi
+    requests:
+      cpu: 50m
+      memory: 150Mi
+  tolerations:
+  - effect: NoSchedule
+    key: nvidia.com/gpu
+    operator: Exists
+  - effect: NoSchedule
+    key: gpu-type
+    operator: Exists
+  - effect: NoSchedule
+    key: gpu-memory
+    operator: Exists
+
+opentelemetry-collector-application-deployment:
+  enabled: true
+  config:
+    exporters:
+      debug: {}
+      prometheus:
+        endpoint: 0.0.0.0:8889
+        metric_expiration: 60m
+        resource_to_telemetry_conversion:
+          enabled: true
+        send_timestamps: true
+    extensions:
+      health_check: {}
+    processors:
+      batch: {}
+    receivers:
+      otlp:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:4318
+    service:
+      extensions:
+      - health_check
+      pipelines:
+        metrics:
+          exporters:
+          - debug
+          - prometheus
+          processors:
+          - memory_limiter
+          - batch
+          receivers:
+          - otlp
+  fullnameOverride: opentelemetry-collector-application
+  image:
+    repository: otel/opentelemetry-collector-contrib
+  mode: deployment
+  podAnnotations:
+    metrics_type: application
+  ports:
+    prometheus:
+      containerPort: 8889
+      enabled: true
+      hostPort: 8889
+      protocol: TCP
+      servicePort: 8889
+  presets:
+    kubernetesAttributes:
+      enabled: true
+  resources:
+    limits:
+      cpu: 250m
+      memory: 400Mi
+    requests:
+      cpu: 250m
+      memory: 400Mi
+
+opentelemetry-collector-deployment:
+  enabled: true
+  config:
+    exporters:
+      debug: {}
+      prometheus:
+        endpoint: 0.0.0.0:8889
+        metric_expiration: 60m
+        resource_to_telemetry_conversion:
+          enabled: true
+        send_timestamps: true
+    extensions:
+      health_check: {}
+    processors:
+      batch: {}
+      k8sattributes:
+        extract:
+          metadata:
+          - k8s.namespace.name
+          - k8s.pod.name
+          - k8s.deployment.name
+          - k8s.node.name
+          - k8s.replicaset.name
+          - k8s.daemonset.name
+          - k8s.statefulset.name
+          - k8s.container.name
+          - k8s.job.name
+          - k8s.pod.uid
+          - k8s.cronjob.name
+          - k8s.pod.start_time
+    receivers:
+      httpcheck:
+        targets:
+        - endpoint: https://sandbox.dev.dynamofl.com/api/v1/health
+          headers:
+            Authorization: Bearer 5f2ed7e7-86ac-455e-a989-70d8e0751e7d
+          method: GET
+      k8s_cluster:
+        metrics:
+          k8s.container.cpu_limit:
+            enabled: true
+          k8s.container.cpu_request:
+            enabled: true
+          k8s.container.ephemeralstorage_limit:
+            enabled: false
+          k8s.container.ephemeralstorage_request:
+            enabled: false
+          k8s.container.memory_limit:
+            enabled: true
+          k8s.container.memory_request:
+            enabled: true
+          k8s.container.ready:
+            enabled: true
+          k8s.container.restarts:
+            enabled: true
+          k8s.container.storage_limit:
+            enabled: true
+          k8s.container.storage_request:
+            enabled: true
+          k8s.cronjob.active_jobs:
+            enabled: false
+          k8s.daemonset.current_scheduled_nodes:
+            enabled: false
+          k8s.daemonset.desired_scheduled_nodes:
+            enabled: false
+          k8s.daemonset.misscheduled_nodes:
+            enabled: false
+          k8s.daemonset.ready_nodes:
+            enabled: false
+          k8s.deployment.available:
+            enabled: false
+          k8s.deployment.desired:
+            enabled: false
+          k8s.hpa.current_replicas:
+            enabled: false
+          k8s.hpa.desired_replicas:
+            enabled: false
+          k8s.hpa.max_replicas:
+            enabled: false
+          k8s.hpa.min_replicas:
+            enabled: false
+          k8s.job.active_pods:
+            enabled: false
+          k8s.job.desired_successful_pods:
+            enabled: false
+          k8s.job.failed_pods:
+            enabled: false
+          k8s.job.max_parallel_pods:
+            enabled: false
+          k8s.job.successful_pods:
+            enabled: false
+          k8s.namespace.phase:
+            enabled: false
+          k8s.node.condition:
+            enabled: false
+          k8s.pod.phase:
+            enabled: true
+          k8s.pod.status_reason:
+            enabled: true
+          k8s.replicaset.available:
+            enabled: false
+          k8s.replicaset.desired:
+            enabled: false
+          k8s.replication_controller.available:
+            enabled: false
+          k8s.replication_controller.desired:
+            enabled: false
+          k8s.resource_quota.hard_limit:
+            enabled: false
+          k8s.resource_quota.used:
+            enabled: false
+          k8s.statefulset.current_pods:
+            enabled: false
+          k8s.statefulset.desired_pods:
+            enabled: false
+          k8s.statefulset.ready_pods:
+            enabled: false
+          k8s.statefulset.updated_pods:
+            enabled: false
+          openshift.appliedclusterquota.limit:
+            enabled: false
+          openshift.appliedclusterquota.used:
+            enabled: false
+          openshift.clusterquota.limit:
+            enabled: false
+          openshift.clusterquota.used:
+            enabled: false
+        resource_attributes:
+          container.id:
+            enabled: false
+          container.image.name:
+            enabled: true
+          container.image.tag:
+            enabled: true
+          container.runtime:
+            enabled: false
+          container.runtime.version:
+            enabled: false
+          k8s.container.name:
+            enabled: true
+          k8s.container.status.last_terminated_reason:
+            enabled: true
+          k8s.cronjob.name:
+            enabled: true
+          k8s.cronjob.uid:
+            enabled: false
+          k8s.daemonset.name:
+            enabled: true
+          k8s.daemonset.uid:
+            enabled: false
+          k8s.deployment.name:
+            enabled: true
+          k8s.deployment.uid:
+            enabled: false
+          k8s.hpa.name:
+            enabled: true
+          k8s.hpa.uid:
+            enabled: false
+          k8s.job.name:
+            enabled: true
+          k8s.job.uid:
+            enabled: false
+          k8s.kubelet.version:
+            enabled: false
+          k8s.namespace.name:
+            enabled: true
+          k8s.namespace.uid:
+            enabled: false
+          k8s.node.name:
+            enabled: true
+          k8s.node.uid:
+            enabled: false
+          k8s.pod.name:
+            enabled: true
+          k8s.pod.qos_class:
+            enabled: true
+          k8s.pod.uid:
+            enabled: false
+          k8s.replicaset.name:
+            enabled: true
+          k8s.replicaset.uid:
+            enabled: false
+          k8s.replicationcontroller.name:
+            enabled: true
+          k8s.replicationcontroller.uid:
+            enabled: false
+          k8s.resourcequota.name:
+            enabled: true
+          k8s.resourcequota.uid:
+            enabled: false
+          k8s.statefulset.name:
+            enabled: true
+          k8s.statefulset.uid:
+            enabled: false
+          openshift.clusterquota.name:
+            enabled: false
+          openshift.clusterquota.uid:
+            enabled: false
+          os.description:
+            enabled: false
+          os.type:
+            enabled: false
+      mongodb:
+        hosts:
+        - endpoint: dynamoai-base-mongodb-0.dynamoai-mongodb-headless.dynamoai.svc.cluster.local:27017
+          transport: tcp
+        metrics:
+          mongodb.cache.operations:
+            enabled: false
+          mongodb.collection.count:
+            enabled: true
+          mongodb.connection.count:
+            enabled: true
+          mongodb.cursor.count:
+            enabled: false
+          mongodb.cursor.timeout.count:
+            enabled: false
+          mongodb.data.size:
+            enabled: true
+          mongodb.database.count:
+            enabled: true
+          mongodb.document.operation.count:
+            enabled: false
+          mongodb.extent.count:
+            enabled: false
+          mongodb.global_lock.time:
+            enabled: false
+          mongodb.health:
+            enabled: true
+          mongodb.index.access.count:
+            enabled: false
+          mongodb.index.count:
+            enabled: false
+          mongodb.index.size:
+            enabled: false
+          mongodb.lock.acquire.count:
+            enabled: false
+          mongodb.lock.acquire.time:
+            enabled: false
+          mongodb.lock.acquire.wait_count:
+            enabled: false
+          mongodb.lock.deadlock.count:
+            enabled: false
+          mongodb.memory.usage:
+            enabled: true
+          mongodb.network.io.receive:
+            enabled: false
+          mongodb.network.io.transmit:
+            enabled: false
+          mongodb.network.request.count:
+            enabled: false
+          mongodb.object.count:
+            enabled: true
+          mongodb.operation.count:
+            enabled: false
+          mongodb.operation.latency.time:
+            enabled: false
+          mongodb.operation.repl.count:
+            enabled: false
+          mongodb.operation.time:
+            enabled: false
+          mongodb.session.count:
+            enabled: true
+          mongodb.storage.size:
+            enabled: false
+          mongodb.uptime:
+            enabled: false
+        password: 31lb4EK8u4kv
+        resource_attributes:
+          database:
+            enabled: true
+        tls:
+          insecure: true
+        username: root
+      otlp:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:4318
+      prometheus:
+        config:
+          scrape_configs:
+          - job_name: pod-metrics
+            kubernetes_sd_configs:
+            - role: pod
+            relabel_configs:
+            - action: keep
+              regex: "true"
+              source_labels:
+              - __meta_kubernetes_pod_annotation_has_metrics_endpoint
+            - replacement: $1
+              source_labels:
+              - __meta_kubernetes_pod_name
+              target_label: pod_name
+            - replacement: $1
+              source_labels:
+              - __meta_kubernetes_namespace
+              target_label: namespace
+            - replacement: $1
+              source_labels:
+              - __meta_kubernetes_service_name
+              target_label: service_name
+    service:
+      extensions:
+      - health_check
+      pipelines:
+        metrics:
+          exporters:
+          - debug
+          - prometheus
+          processors:
+          - memory_limiter
+          - batch
+          receivers:
+          - otlp
+          - mongodb
+          - httpcheck
+          - prometheus
+  fullnameOverride: opentelemetry-collector
+  image:
+    repository: otel/opentelemetry-collector-contrib
+  mode: deployment
+  podAnnotations:
+    metrics_type: system
+  ports:
+    prometheus:
+      containerPort: 8889
+      enabled: true
+      hostPort: 8889
+      protocol: TCP
+      servicePort: 8889
+  presets:
+    clusterMetrics:
+      enabled: true
+    kubernetesAttributes:
+      enabled: true
+  resources:
+    limits:
+      cpu: 400m
+      memory: 600Mi
+    requests:
+      cpu: 400m
+      memory: 600Mi

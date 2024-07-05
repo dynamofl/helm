@@ -20,6 +20,9 @@ helm upgrade --install dynamoai-karpenter dynamoai-karpenter --namespace kube-sy
 # install Prometheus for Monitoring
 helm upgrade --install dynamoai-prometheus dynamoai-prometheus --namespace monitoring --create-namespace --values dynamoai-prometheus/values.yaml
 
+# install Prometheus for Opentelemetry
+helm upgrade --install dynamoai-opentelemetry dynamoai-opentelemetry --namespace opentelemetry --create-namespace --values dynamoai-opentelemetry/values.yaml
+
 # To uninstall the Charts
 
 helm uninstall dynamoai-karpenter --namespace kube-system
@@ -28,5 +31,7 @@ helm uninstall dynamoai-keda --namespace keda
 helm uninstall dynamoai-nginx --namespace dynamoai-nginx 
 helm uninstall dynamoai-k8s-base --namespace kube-system 
 helm uninstall dynamoai-prometheus --namespace monitoring
+helm uninstall dynamoai-opentelemetry --namespace opentelemetry
+ 
 
 

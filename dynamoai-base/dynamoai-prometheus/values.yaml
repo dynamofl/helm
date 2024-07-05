@@ -1,0 +1,465 @@
+prometheus:
+  enabled: true
+  configmapReload:
+    prometheus:
+      enabled: true
+      resources:
+        limits:
+          cpu: 100m
+          memory: 100Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+  kube-state-metrics:
+    enabled: false
+  prometheus-node-exporter:
+    enabled: false
+  prometheus-pushgateway:
+    enabled: false
+  server:
+    fullnameOverride: prometheus
+    persistentVolume:
+      storageClass: ebs-sc
+    resources:
+      limits:
+        cpu: 800m
+        memory: 2Gi
+      requests:
+        cpu: 800m
+        memory: 2Gi
+    retention: 30d
+  serverFiles:
+    alerting_rules.yml:
+      groups:
+      - name: API
+        rules:
+        - alert: 'API: Internal Server Error [500]'
+          annotations:
+            alertType: api-internal-server-error
+            description: Internal server errors
+            title: Internal Server Error
+          expr: rate(http_server_duration_milliseconds_count{status="500"}[5m]) > 0
+          for: 5m
+          labels:
+            severity: critical
+        - alert: 'API: RAM usage is high'
+          annotations:
+            alertType: api-high-ram
+            description: 'Memory usage is high (threshold value: 0.7 ; current value:
+              {{ $value }})'
+            title: 'API: RAM usage is high [ 0-1 %]'
+          expr: k8s_pod_memory_limit_utilization_ratio{k8s_deployment_name="api-deployment"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+        - alert: 'API: CPU usage is high'
+          annotations:
+            alertType: api-high-cpu
+            description: 'CPU usage is high (threshold value: 0.7 ; current value: {{
+              $value }})'
+            title: 'API: CPU usage is high [ 0-1 %]'
+          expr: k8s_pod_cpu_limit_utilization_ratio{k8s_deployment_name="api-deployment"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+        - alert: API Unhealthy (Health Endpoint)
+          annotations:
+            alertType: api-unhealthy
+            description: Health endpoint did not return 200, something is wrong
+            title: API Unhealthy
+          expr: httpcheck_status{http_status_class="2xx"} == 0
+          for: 1m
+          labels:
+            severity: critical
+      - name: UI
+        rules:
+        - alert: 'UI: RAM usage is high'
+          annotations:
+            alertType: ui-high-ram
+            description: 'Memory usage is high (threshold value: 0.7 ; current value:
+              {{ $value }})'
+            title: 'UI: RAM usage is high [ 0-1 %]'
+          expr: k8s_pod_memory_limit_utilization_ratio{k8s_deployment_name="ui-deployment"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+        - alert: 'UI: CPU usage is high'
+          annotations:
+            alertType: ui-high-cpu
+            description: 'CPU usage is high (threshold value: 0.7 ; current value: {{
+              $value }})'
+            title: 'UI: CPU usage is high [ 0-1 %]'
+          expr: k8s_pod_cpu_limit_utilization_ratio{k8s_deployment_name="ui-deployment"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+      - name: MongoDB
+        rules:
+        - alert: 'MongoDB: RAM usage is high'
+          annotations:
+            alertType: mongodb-high-ram
+            description: 'Memory usage is high (threshold value: 0.7 ; current value:
+              {{ $value }})'
+            title: 'MongoDB: RAM usage is high [ 0-1 %]'
+          expr: k8s_pod_memory_limit_utilization_ratio{k8s_statefulset_name="dynamoai-base-mongodb"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+        - alert: 'MongoDB: CPU usage is high'
+          annotations:
+            alertType: mongodb-high-cpu
+            description: 'CPU usage is high (threshold value: 0.7 ; current value: {{
+              $value }})'
+            title: 'MongoDB: CPU usage is high [ 0-1 %]'
+          expr: k8s_pod_cpu_limit_utilization_ratio{k8s_statefulset_name="dynamoai-base-mongodb"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+        - alert: MongoDB Unhealthy
+          annotations:
+            alertType: mongodb-unhealthy
+            description: MongoDB Replica Set is not healthy
+            title: MongoDB Replica Set is not healthy
+          expr: mongodb_health_ratio == 0
+          for: 2m
+          labels:
+            severity: critical
+      - name: Prometheus
+        rules:
+        - alert: 'Prometheus: RAM usage is high'
+          annotations:
+            alertType: prometheus-high-ram
+            description: 'Memory usage is high (threshold value: 0.7 ; current value:
+              {{ $value }})'
+            title: 'Prometheus: RAM usage is high [ 0-1 %]'
+          expr: k8s_pod_memory_limit_utilization_ratio{k8s_deployment_name="prometheus"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+        - alert: 'Prometheus: CPU usage is high'
+          annotations:
+            alertType: prometheus-high-cpu
+            description: 'CPU usage is high (threshold value: 0.7 ; current value: {{
+              $value }})'
+            title: 'Prometheus: CPU usage is high [ 0-1 %]'
+          expr: k8s_pod_cpu_limit_utilization_ratio{k8s_deployment_name="prometheus"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+      - name: AlertManager
+        rules:
+        - alert: 'AlertManager: RAM usage is high'
+          annotations:
+            alertType: alertmanager-high-ram
+            description: 'Memory usage is high (threshold value: 0.7 ; current value:
+              {{ $value }})'
+            title: 'AlertManager: RAM usage is high [ 0-1 %]'
+          expr: k8s_pod_memory_limit_utilization_ratio{k8s_statefulset_name="alertmanager"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+        - alert: 'AlertManager: CPU usage is high'
+          annotations:
+            alertType: alertmanager-high-cpu
+            description: 'CPU usage is high (threshold value: 0.7 ; current value: {{
+              $value }})'
+            title: 'AlertManager: CPU usage is high [ 0-1 %]'
+          expr: k8s_pod_cpu_limit_utilization_ratio{k8s_statefulset_name="alertmanager"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+      - name: Grafana
+        rules:
+        - alert: 'Grafana: RAM usage is high'
+          annotations:
+            alertType: grafana-high-ram
+            description: 'Memory usage is high (threshold value: 0.7 ; current value:
+              {{ $value }})'
+            title: 'Grafana: RAM usage is high [ 0-1 %]'
+          expr: k8s_pod_memory_limit_utilization_ratio{k8s_deployment_name="grafana"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+        - alert: 'Grafana: CPU usage is high'
+          annotations:
+            alertType: grafana-high-cpu
+            description: 'CPU usage is high (threshold value: 0.7 ; current value: {{
+              $value }})'
+            title: 'Grafana: CPU usage is high [ 0-1 %]'
+          expr: k8s_pod_cpu_limit_utilization_ratio{k8s_deployment_name="grafana"} >
+            0.7
+          for: 2m
+          labels:
+            severity: warning
+      - name: K8 Events Exporter
+        rules:
+        - alert: 'K8EventsExporter: RAM usage is high'
+          annotations:
+            alertType: events-exporter-high-ram
+            description: 'Memory usage is high (threshold value: 0.7 ; current value:
+              {{ $value }})'
+            title: 'K8EventsExporter: RAM usage is high [ 0-1 %]'
+          expr: k8s_pod_memory_limit_utilization_ratio{k8s_deployment_name="kubernetes-event-exporter"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+        - alert: 'K8EventsExporter: CPU usage is high'
+          annotations:
+            alertType: events-exporter-high-cpu
+            description: 'CPU usage is high (threshold value: 0.7 ; current value: {{
+              $value }})'
+            title: 'K8EventsExporter: CPU usage is high [ 0-1 %]'
+          expr: k8s_pod_cpu_limit_utilization_ratio{k8s_deployment_name="kubernetes-event-exporter"}
+            > 0.7
+          for: 2m
+          labels:
+            severity: warning
+    prometheus.yml:
+      rule_files:
+      - /etc/config/alerting_rules.yml
+      - /etc/config/recording_rules.yml
+      scrape_configs:
+      - job_name: otel-collector
+        kubernetes_sd_configs:
+        - namespaces:
+            names:
+            - opentelemetry
+          role: pod
+        relabel_configs:
+        - action: keep
+          regex: system
+          source_labels:
+          - __meta_kubernetes_pod_annotation_metrics_type
+        scrape_interval: 10s
+      - job_name: otel-collector-application
+        scrape_interval: 10s
+        static_configs:
+        - targets:
+          - opentelemetry-collector-application.opentelemetry.svc.cluster.local:8889
+      - job_name: prometheus
+        static_configs:
+        - targets:
+          - localhost:9090
+    recording_rules.yml: {}
+
+
+grafana:
+  enabled: true
+  adminPassword: ZuIlkhP6hOowGLfpaqEv12EjpUfLMvwljzHBrFzb
+  adminUser: admin
+  dashboardProviders:
+    dashboardProviders.yaml:
+      apiVersion: 1
+      providers:
+      - disableDeletion: false
+        editable: true
+        folder: ""
+        name: default
+        options:
+          path: /var/lib/grafana/dashboards/default
+        orgId: 1
+        type: file
+  dashboards:
+    default:
+      api:
+        json: '{"annotations":{"list":[{"builtIn":1,"datasource":{"type":"grafana","uid":"--
+          Grafana --"},"enable":true,"hide":true,"iconColor":"rgba(0, 211, 255, 1)","name":"Annotations
+          & Alerts","type":"dashboard"}]},"editable":true,"fiscalYearStartMonth":0,"graphTooltip":0,"links":[],"panels":[{"collapsed":false,"gridPos":{"h":1,"w":24,"x":0,"y":0},"id":19,"panels":[],"title":"Info","type":"row"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"CPU
+          Request requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":0,"y":1},"id":13,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_cpu_request{k8s_container_name=\"api\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"API
+          Container CPU Request","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"CPU
+          Limit requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":4,"y":1},"id":14,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_cpu_limit{k8s_container_name=\"api\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"API
+          Container CPU Limit","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"RAM
+          Request requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"bytes"},"overrides":[]},"gridPos":{"h":4,"w":4,"x":8,"y":1},"id":16,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_memory_request_bytes{k8s_container_name=\"api\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"API
+          Container RAM Request","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"RAM
+          Limit requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"bytes"},"overrides":[]},"gridPos":{"h":4,"w":4,"x":12,"y":1},"id":15,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_memory_limit_bytes{k8s_container_name=\"api\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"API
+          Container RAM Limit","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"Whether
+          a container has passed its readiness probe","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":16,"y":1},"id":18,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_container_ready{k8s_container_name=\"api\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"API
+          Container Readiness Probe","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":20,"y":1},"id":17,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_container_restarts{k8s_container_name=\"api\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"API
+          Container Restarts","type":"stat"},{"collapsed":false,"gridPos":{"h":1,"w":24,"x":0,"y":5},"id":9,"panels":[],"title":"Health","type":"row"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"Health
+          of the API. If the value is 1 then it''s healthy","fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":8,"w":8,"x":0,"y":6},"id":12,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"httpcheck_status{http_status_class=\"2xx\"}","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"API
+          Health","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"percentunit"},"overrides":[]},"gridPos":{"h":8,"w":8,"x":8,"y":6},"id":11,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":false},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_container_memory_limit_utilization_ratio{k8s_container_name=\"api\",
+          k8s_namespace_name=\"dynamoai\"}","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"API
+          RAM Limit Utilization","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"percentunit"},"overrides":[]},"gridPos":{"h":8,"w":8,"x":16,"y":6},"id":10,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":false},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_container_cpu_limit_utilization_ratio{k8s_container_name=\"api\",
+          k8s_namespace_name=\"dynamoai\"}","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"API
+          CPU Limit Utilization","type":"timeseries"},{"collapsed":false,"gridPos":{"h":1,"w":24,"x":0,"y":14},"id":8,"panels":[],"title":"HTTP
+          Stats","type":"row"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"Requests
+          per minute","fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"none"},"overrides":[]},"gridPos":{"h":8,"w":12,"x":0,"y":15},"id":5,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"editorMode":"code","expr":"sum(rate(http_server_duration_milliseconds_count{job=\"otel-collector\",
+          namespace=\"dynamoai\"}[1m]))","instant":false,"legendFormat":"__auto","range":true,"refId":"A"}],"title":"Total
+          requests rate","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"ms"},"overrides":[]},"gridPos":{"h":8,"w":12,"x":12,"y":15},"id":7,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"editorMode":"code","expr":"sum(rate(http_server_duration_milliseconds_sum{job=\"otel-collector\",
+          namespace=\"dynamoai\"}[1m])) / sum(rate(http_server_duration_milliseconds_count{job=\"otel-collector\",
+          namespace=\"dynamoai\"}[1m]))","instant":false,"legendFormat":"__auto","range":true,"refId":"A"}],"title":"Average
+          Response Time","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"fixedColor":"dark-red","mode":"fixed"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green"},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":8,"w":6,"x":0,"y":23},"id":6,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":false},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"editorMode":"code","expr":"sum(rate(http_server_duration_milliseconds_count{status=\"500\",
+          job=\"otel-collector\", namespace=\"dynamoai\"}[1m]))","instant":false,"legendFormat":"__auto","range":true,"refId":"A"}],"title":"Internal
+          Server Error Response Rate","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"fixedColor":"dark-red","mode":"fixed"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"semi-dark-red"}]}},"overrides":[]},"gridPos":{"h":8,"w":6,"x":6,"y":23},"id":4,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"editorMode":"code","expr":"sum(rate(http_server_duration_milliseconds_count{status=~\"[45]..\",
+          job=\"otel-collector\", namespace=\"dynamoai\"}[1m])) by (job) / sum(rate(http_server_duration_milliseconds_count{job=\"otel-collector\",
+          namespace=\"dynamoai\"}[1m])) by (job)","instant":false,"legendFormat":"__auto","range":true,"refId":"A"}],"title":"Probe
+          Error Ratio (Covers 4XX, 5XX)","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green"},{"color":"red","value":80}]},"unit":"ms"},"overrides":[]},"gridPos":{"h":8,"w":12,"x":12,"y":23},"id":1,"options":{"legend":{"calcs":[],"displayMode":"table","placement":"right","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"code","expr":"histogram_quantile(0.9,
+          sum by(le, method, path) (rate(http_server_duration_milliseconds_bucket{job=\"otel-collector\",
+          namespace=\"dynamoai\"}[5m])))","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"Historic
+          P90 response time by endpoint","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green"},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":8,"w":12,"x":0,"y":31},"id":2,"options":{"legend":{"calcs":[],"displayMode":"table","placement":"right","showLegend":true,"sortBy":"Name","sortDesc":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"editorMode":"code","expr":"sum
+          by (status,method) (increase(http_server_duration_milliseconds_count{job=\"otel-collector\",
+          namespace=\"dynamoai\"}[$__rate_interval]))","instant":false,"legendFormat":"__auto","range":true,"refId":"A"}],"title":"HTTP
+          Responses by status code","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"Rate
+          of increase in the HTTP requests received","fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green"},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":8,"w":12,"x":12,"y":31},"id":3,"options":{"legend":{"calcs":[],"displayMode":"table","placement":"right","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"editorMode":"code","expr":"sum
+          by (path) (increase(http_server_duration_milliseconds_count{job=\"otel-collector\",
+          namespace=\"dynamoai\"}[$__rate_interval]))","instant":false,"legendFormat":"__auto","range":true,"refId":"A"}],"title":"Top
+          HTTP paths used","type":"timeseries"}],"schemaVersion":39,"tags":[],"templating":{"list":[{"current":{"selected":true,"text":"default","value":"default"},"datasource":{"type":"prometheus","uid":"prometheus"},"definition":"label_values(k8s_pod_phase,k8s_namespace_name)","description":"The
+          namespace in which the resource exists","hide":2,"includeAll":false,"label":"Namespace","multi":false,"name":"namespace","options":[],"query":{"qryType":1,"query":"label_values(k8s_pod_phase,k8s_namespace_name)","refId":"PrometheusVariableQueryEditor-VariableQuery"},"refresh":1,"regex":"","skipUrlSync":false,"sort":0,"type":"query"}]},"time":{"from":"now-30m","to":"now"},"timepicker":{},"timezone":"browser","title":"API","uid":"api","version":1,"weekStart":""}'
+      mongoDbAnalysis:
+        json: '{"annotations":{"list":[{"builtIn":1,"datasource":{"type":"grafana","uid":"--
+          Grafana --"},"enable":true,"hide":true,"iconColor":"rgba(0, 211, 255, 1)","name":"Annotations
+          & Alerts","type":"dashboard"}]},"editable":true,"fiscalYearStartMonth":0,"graphTooltip":0,"links":[],"panels":[{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"1
+          means healthy","fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":8,"w":12,"x":0,"y":0},"id":3,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":false},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"mongodb_health_ratio","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"MongoDB
+          Health","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":8,"w":12,"x":12,"y":0},"id":5,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"mongodb_session_count","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"{{instance}}","range":true,"refId":"A","useBackend":false}],"title":"Session
+          Count","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":8,"w":6,"x":0,"y":8},"id":4,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"mongodb_collection_count{database=\"admin\"}","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"MongoDB
+          Collection Count (Admin DB)","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":8,"w":6,"x":6,"y":8},"id":2,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"mongodb_connection_count{type=\"active\",
+          database=\"admin\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"{{database}}-{{type}}","range":false,"refId":"A","useBackend":false}],"title":"Active
+          Connections (Admin DB)","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"bytes"},"overrides":[]},"gridPos":{"h":8,"w":12,"x":12,"y":8},"id":1,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"right","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"mongodb_data_size_bytes","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"{{database}}","range":true,"refId":"A","useBackend":false}],"title":"Database
+          sizes","type":"timeseries"}],"schemaVersion":39,"tags":[],"templating":{"list":[]},"time":{"from":"now-5m","to":"now"},"timepicker":{},"timezone":"browser","title":"MongoDB:
+          Analysis","uid":"mongodbanalysis","version":1,"weekStart":""}'
+      mongodb:
+        json: '{"annotations":{"list":[{"builtIn":1,"datasource":{"type":"grafana","uid":"--
+          Grafana --"},"enable":true,"hide":true,"iconColor":"rgba(0, 211, 255, 1)","name":"Annotations
+          & Alerts","type":"dashboard"}]},"editable":true,"fiscalYearStartMonth":0,"graphTooltip":0,"links":[],"panels":[{"collapsed":false,"gridPos":{"h":1,"w":24,"x":0,"y":0},"id":10,"panels":[],"title":"Overall","type":"row"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"percentunit"},"overrides":[]},"gridPos":{"h":8,"w":12,"x":0,"y":1},"id":2,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_container_cpu_limit_utilization_ratio{k8s_container_name=\"mongodb\",
+          k8s_namespace_name=\"dynamoai\"}","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"{{k8s_pod_name}}","range":true,"refId":"A","useBackend":false}],"title":"MongoDB
+          CPU Limit Utilization","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"percentunit"},"overrides":[]},"gridPos":{"h":8,"w":12,"x":12,"y":1},"id":1,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_container_memory_limit_utilization_ratio{k8s_container_name=\"mongodb\",
+          k8s_namespace_name=\"dynamoai\"}","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"{{k8s_pod_name}}","range":true,"refId":"A","useBackend":false}],"title":"MongoDB
+          RAM Limit Utilization","type":"timeseries"},{"gridPos":{"h":1,"w":24,"x":0,"y":9},"id":4,"panels":[],"repeat":"mongodbPod","repeatDirection":"h","title":"Pod
+          Wise","type":"row"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"CPU
+          Request requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":0,"y":10},"id":3,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_cpu_request{k8s_pod_name=\"$mongodbPod\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"Container
+          CPU Request","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"CPU
+          Limit requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":4,"y":10},"id":5,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_cpu_limit{k8s_pod_name=\"$mongodbPod\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"Container
+          CPU Limit","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"RAM
+          Request requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"bytes"},"overrides":[]},"gridPos":{"h":4,"w":4,"x":8,"y":10},"id":7,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_memory_request_bytes{k8s_pod_name=\"$mongodbPod\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"Container
+          RAM Request","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"RAM
+          Limit requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"bytes"},"overrides":[]},"gridPos":{"h":4,"w":4,"x":12,"y":10},"id":6,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_memory_limit_bytes{k8s_pod_name=\"$mongodbPod\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"Container
+          RAM Limit","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"Whether
+          a container has passed its readiness probe","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"none"},"overrides":[]},"gridPos":{"h":4,"w":4,"x":16,"y":10},"id":8,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_ready{k8s_pod_name=\"$mongodbPod\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"Container
+          Readiness Probe","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"Container
+          Restarts","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"none"},"overrides":[]},"gridPos":{"h":4,"w":4,"x":20,"y":10},"id":9,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_restarts{k8s_pod_name=\"$mongodbPod\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"Container
+          Restarts","type":"stat"}],"schemaVersion":39,"tags":[],"templating":{"list":[{"current":{"selected":false,"text":"mongodb","value":"mongodb"},"datasource":{"type":"prometheus","uid":"prometheus"},"definition":"label_values(k8s_pod_phase,k8s_namespace_name)","description":"The
+          namespace in which the resource exists","hide":2,"includeAll":false,"label":"Namespace","multi":false,"name":"namespace","options":[],"query":{"qryType":1,"query":"label_values(k8s_pod_phase,k8s_namespace_name)","refId":"PrometheusVariableQueryEditor-VariableQuery"},"refresh":1,"regex":"","skipUrlSync":false,"sort":0,"type":"query"},{"current":{"selected":true,"text":"dynamoai-base-mongodb-0","value":"dynamoai-base-mongodb-0"},"definition":"label_values(k8s_pod_cpu_limit_utilization_ratio{k8s_namespace_name=\"dynamoai\"},k8s_pod_name)","hide":0,"includeAll":false,"label":"MongoDb
+          Pod","multi":false,"name":"mongodbPod","options":[],"query":{"qryType":1,"query":"label_values(k8s_pod_cpu_limit_utilization_ratio{k8s_namespace_name=\"dynamoai\"},k8s_pod_name)","refId":"PrometheusVariableQueryEditor-VariableQuery"},"refresh":1,"regex":"","skipUrlSync":false,"sort":0,"type":"query"}]},"time":{"from":"now-15m","to":"now"},"timepicker":{},"timezone":"browser","title":"MongoDB:
+          Stats","uid":"mongodb","version":1,"weekStart":""}'
+      podGenericStats:
+        json: '{"annotations":{"list":[{"builtIn":1,"datasource":{"type":"grafana","uid":"--
+          Grafana --"},"enable":true,"hide":true,"iconColor":"rgba(0, 211, 255, 1)","name":"Annotations
+          & Alerts","type":"dashboard"}]},"editable":true,"fiscalYearStartMonth":0,"graphTooltip":0,"links":[],"panels":[{"gridPos":{"h":1,"w":24,"x":0,"y":0},"id":8,"title":"Info","type":"row"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"CPU
+          Request requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":0,"y":1},"id":5,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_cpu_request{k8s_pod_name=\"$pod\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"Container
+          CPU Request","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"CPU
+          Limit requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":4,"y":1},"id":6,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_cpu_limit{k8s_pod_name=\"$pod\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"Container
+          CPU Limit","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"RAM
+          Request requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"bytes"},"overrides":[]},"gridPos":{"h":4,"w":4,"x":8,"y":1},"id":9,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_memory_request_bytes{k8s_pod_name=\"$pod\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"Container
+          RAM Request","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"RAM
+          Limit requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"bytes"},"overrides":[]},"gridPos":{"h":4,"w":4,"x":12,"y":1},"id":10,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_memory_limit_bytes{k8s_pod_name=\"$pod\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"Container
+          RAM Limit","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"Whether
+          a container has passed its readiness probe","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":16,"y":1},"id":11,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_container_ready{k8s_pod_name=\"$pod\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"Container
+          Readiness Probe","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":20,"y":1},"id":12,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_container_restarts{k8s_pod_name=\"$pod\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"Container
+          Restarts","type":"stat"},{"gridPos":{"h":1,"w":24,"x":0,"y":5},"id":7,"title":"Stats","type":"row"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"percentunit"},"overrides":[]},"gridPos":{"h":8,"w":12,"x":0,"y":6},"id":2,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_pod_cpu_request_utilization_ratio{k8s_namespace_name=\"dynamoai\",
+          k8s_pod_name=\"$pod\"}","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"CPU
+          Request Utilization","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"percentunit"},"overrides":[]},"gridPos":{"h":8,"w":12,"x":12,"y":6},"id":1,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_pod_cpu_limit_utilization_ratio{k8s_namespace_name=\"dynamoai\",
+          k8s_pod_name=\"$pod\"}","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"CPU
+          Limit Utilization","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"percentunit"},"overrides":[]},"gridPos":{"h":8,"w":12,"x":0,"y":14},"id":3,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_pod_memory_request_utilization_ratio{k8s_namespace_name=\"dynamoai\",
+          k8s_pod_name=\"$pod\"}","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"RAM
+          Request Utilization","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"percentunit"},"overrides":[]},"gridPos":{"h":8,"w":12,"x":12,"y":14},"id":4,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_pod_memory_limit_utilization_ratio{k8s_namespace_name=\"dynamoai\",
+          k8s_pod_name=\"$pod\"}","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"RAM
+          Limit Utilization","type":"timeseries"}],"schemaVersion":39,"tags":[],"templating":{"list":[{"current":{"selected":false,"text":"amazon-cloudwatch","value":"amazon-cloudwatch"},"datasource":{"type":"prometheus","uid":"prometheus"},"definition":"label_values(k8s_pod_cpu_time_seconds_total,k8s_namespace_name)","hide":0,"includeAll":false,"label":"Namespace","multi":false,"name":"namespace","options":[],"query":{"qryType":1,"query":"label_values(k8s_pod_cpu_time_seconds_total,k8s_namespace_name)","refId":"PrometheusVariableQueryEditor-VariableQuery"},"refresh":1,"regex":"","skipUrlSync":false,"sort":0,"type":"query"},{"current":{"selected":false,"text":"fluent-bit-k2hkz","value":"fluent-bit-k2hkz"},"datasource":{"type":"prometheus","uid":"prometheus"},"definition":"label_values(k8s_pod_cpu_time_seconds_total{k8s_namespace_name=\"dynamoai\"},k8s_pod_name)","hide":0,"includeAll":false,"label":"Pod","multi":false,"name":"pod","options":[],"query":{"qryType":1,"query":"label_values(k8s_pod_cpu_time_seconds_total{k8s_namespace_name=\"dynamoai\"},k8s_pod_name)","refId":"PrometheusVariableQueryEditor-VariableQuery"},"refresh":1,"regex":"","skipUrlSync":false,"sort":0,"type":"query"}]},"time":{"from":"now-30m","to":"now"},"timepicker":{},"timezone":"browser","title":"Pod
+          Generic Stats","uid":"podgenericstats","version":1,"weekStart":""}'
+      ui:
+        json: '{"annotations":{"list":[{"builtIn":1,"datasource":{"type":"grafana","uid":"--
+          Grafana --"},"enable":true,"hide":true,"iconColor":"rgba(0, 211, 255, 1)","name":"Annotations
+          & Alerts","type":"dashboard"}]},"editable":true,"fiscalYearStartMonth":0,"graphTooltip":0,"links":[],"panels":[{"gridPos":{"h":1,"w":24,"x":0,"y":0},"id":10,"title":"Info","type":"row"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"CPU
+          Request requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":0,"y":1},"id":4,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_cpu_request{k8s_container_name=\"ui\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"UI
+          Container CPU Request","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"CPU
+          Limit requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":4,"y":1},"id":5,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_cpu_limit{k8s_container_name=\"ui\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"UI
+          Container CPU Limit","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"RAM
+          Request requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"bytes"},"overrides":[]},"gridPos":{"h":4,"w":4,"x":8,"y":1},"id":6,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_memory_request_bytes{k8s_container_name=\"ui\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"UI
+          Container RAM Request","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"RAM
+          Limit requested for the container","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"bytes"},"overrides":[]},"gridPos":{"h":4,"w":4,"x":12,"y":1},"id":7,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","exemplar":false,"expr":"k8s_container_memory_limit_bytes{k8s_container_name=\"ui\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":true,"legendFormat":"__auto","range":false,"refId":"A","useBackend":false}],"title":"UI
+          Container RAM Limit","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"description":"Whether
+          a container has passed its readiness probe","fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":16,"y":1},"id":8,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_container_ready{k8s_container_name=\"ui\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"UI
+          Container Readiness Probe","type":"stat"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"thresholds"},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]}},"overrides":[]},"gridPos":{"h":4,"w":4,"x":20,"y":1},"id":9,"options":{"colorMode":"value","graphMode":"none","justifyMode":"auto","orientation":"auto","reduceOptions":{"calcs":["lastNotNull"],"fields":"","values":false},"showPercentChange":false,"textMode":"auto","wideLayout":true},"pluginVersion":"10.4.1","targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_container_restarts{k8s_container_name=\"ui\",
+          k8s_namespace_name=\"dynamoai\"}","format":"table","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"UI
+          Container Restarts","type":"stat"},{"collapsed":false,"gridPos":{"h":1,"w":24,"x":0,"y":5},"id":3,"panels":[],"title":"Stats","type":"row"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"percentunit"},"overrides":[]},"gridPos":{"h":8,"w":12,"x":0,"y":6},"id":2,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":false},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_container_cpu_limit_utilization_ratio{k8s_container_name=\"ui\",
+          k8s_namespace_name=\"dynamoai\"}","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"UI
+          CPU Limit Utilization","type":"timeseries"},{"datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"color":{"mode":"palette-classic"},"custom":{"axisBorderShow":false,"axisCenteredZero":false,"axisColorMode":"text","axisLabel":"","axisPlacement":"auto","barAlignment":0,"drawStyle":"line","fillOpacity":0,"gradientMode":"none","hideFrom":{"legend":false,"tooltip":false,"viz":false},"insertNulls":false,"lineInterpolation":"linear","lineWidth":1,"pointSize":5,"scaleDistribution":{"type":"linear"},"showPoints":"auto","spanNulls":false,"stacking":{"group":"A","mode":"none"},"thresholdsStyle":{"mode":"off"}},"mappings":[],"thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":80}]},"unit":"percentunit"},"overrides":[]},"gridPos":{"h":8,"w":12,"x":12,"y":6},"id":1,"options":{"legend":{"calcs":[],"displayMode":"list","placement":"bottom","showLegend":false},"tooltip":{"mode":"single","sort":"none"}},"targets":[{"datasource":{"type":"prometheus","uid":"prometheus"},"disableTextWrap":false,"editorMode":"builder","expr":"k8s_container_memory_limit_utilization_ratio{k8s_container_name=\"ui\",
+          k8s_namespace_name=\"dynamoai\"}","fullMetaSearch":false,"includeNullMetadata":true,"instant":false,"legendFormat":"__auto","range":true,"refId":"A","useBackend":false}],"title":"UI
+          RAM Limit Utilization","type":"timeseries"}],"schemaVersion":39,"tags":[],"templating":{"list":[{"current":{"selected":false,"text":"default","value":"default"},"datasource":{"type":"prometheus","uid":"prometheus"},"default":"default","definition":"label_values(k8s_pod_phase,k8s_namespace_name)","description":"The
+          namespace in which the resource exists","hide":2,"includeAll":false,"label":"Namespace","multi":false,"name":"namespace","options":[],"query":{"qryType":1,"query":"label_values(k8s_pod_phase,k8s_namespace_name)","refId":"PrometheusVariableQueryEditor-VariableQuery"},"refresh":1,"regex":"","skipUrlSync":false,"sort":0,"type":"query"}]},"time":{"from":"now-6h","to":"now"},"timepicker":{},"timezone":"browser","title":"UI","uid":"ui","version":1,"weekStart":""}'
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - access: proxy
+        isDefault: true
+        name: Prometheus
+        type: prometheus
+        uid: prometheus
+        url: http://prometheus.monitoring.svc.cluster.local
+  fullnameOverride: grafana
+  grafana.ini:
+    server:
+      root_url: https://sandbox.dev.dynamofl.com/grafana
+  ingress:
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$1
+    enabled: true
+    hosts:
+    - sandbox.dev.dynamofl.com
+    ingressClassName: nginx
+    path: /grafana/?(.*)
+  resources:
+    limits:
+      cpu: 300m
+      memory: 300Mi
+    requests:
+      cpu: 300m
+      memory: 300Mi
+  service:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: Name=dfl-grafana-ingress
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+      service.beta.kubernetes.io/aws-load-balancer-internal: "false"
+    port: 80
+    type: ClusterIP
+
+
+kubernetes-event-exporter:
+  enabled: true
+  fullnameOverride: kubernetes-event-exporter
+  config:
