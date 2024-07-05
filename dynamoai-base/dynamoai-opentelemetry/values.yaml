@@ -338,7 +338,7 @@ opentelemetry-collector-deployment:
         targets:
         - endpoint: https://sandbox.dev.dynamofl.com/api/v1/health
           headers:
-            Authorization: Bearer 5f2ed7e7-86ac-455e-a989-70d8e0751e7d
+            Authorization: Bearer 5f32d7e7-86ac-455e-ad89-70d434751e7d
           method: GET
       k8s_cluster:
         metrics:
@@ -570,7 +570,7 @@ opentelemetry-collector-deployment:
             enabled: false
           mongodb.uptime:
             enabled: false
-        password: 31lb4EK8u4kv
+        password: 
         resource_attributes:
           database:
             enabled: true
