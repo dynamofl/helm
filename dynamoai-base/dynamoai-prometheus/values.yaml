@@ -257,7 +257,7 @@ prometheus:
 
 grafana:
   enabled: true
-  adminPassword: ZuIlkhP6hOowGLfpaqEv12EjpUfLMvwljzHBrFzb
+  adminPassword: 
   adminUser: admin
   dashboardProviders:
     dashboardProviders.yaml:
@@ -434,13 +434,13 @@ grafana:
   fullnameOverride: grafana
   grafana.ini:
     server:
-      root_url: https://sandbox.dev.dynamofl.com/grafana
+      root_url: 
   ingress:
     annotations:
       nginx.ingress.kubernetes.io/rewrite-target: /$1
     enabled: true
     hosts:
-    - sandbox.dev.dynamofl.com
+    - 
     ingressClassName: nginx
     path: /grafana/?(.*)
   resources:

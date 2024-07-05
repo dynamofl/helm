@@ -336,7 +336,7 @@ opentelemetry-collector-deployment:
     receivers:
       httpcheck:
         targets:
-        - endpoint: https://sandbox.dev.dynamofl.com/api/v1/health
+        - endpoint: 
           headers:
             Authorization: Bearer 5f32d7e7-86ac-455e-ad89-70d434751e7d
           method: GET
