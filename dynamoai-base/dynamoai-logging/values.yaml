@@ -1,0 +1,19 @@
+fluentBit:
+  config:
+    clusterName: sandbox-eks-cluster
+    httpPort: "2020"
+    httpServer: "On"
+    logsRegion: us-east-1
+    readHead: "Off"
+    readTail: "On"
+  tolerations:
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "gpu-type"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "gpu-memory"
+      operator: "Exists"
+      effect: "NoSchedule"
+  priorityClassName: "system-node-critical"

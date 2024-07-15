@@ -23,6 +23,9 @@ helm upgrade --install dynamoai-prometheus dynamoai-prometheus --namespace monit
 # install Prometheus for Opentelemetry
 helm upgrade --install dynamoai-opentelemetry dynamoai-opentelemetry --namespace opentelemetry --create-namespace --values dynamoai-opentelemetry/values.yaml
 
+# install Fluent Bit for Logging
+helm upgrade --install dynamoai-logging dynamoai-logging --namespace amazon-cloudwatch --create-namespace --values dynamoai-logging/values.yaml
+
 # To uninstall the Charts
 
 helm uninstall dynamoai-karpenter --namespace kube-system
@@ -32,6 +35,7 @@ helm uninstall dynamoai-nginx --namespace dynamoai-nginx
 helm uninstall dynamoai-k8s-base --namespace kube-system 
 helm uninstall dynamoai-prometheus --namespace monitoring
 helm uninstall dynamoai-opentelemetry --namespace opentelemetry
- 
+helm uninstall dynamoai-logging --namespace amazon-cloudwatch
 
+ 
 
