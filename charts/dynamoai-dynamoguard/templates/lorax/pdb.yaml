@@ -1,4 +1,4 @@
-{{- if .Values.lorax.podDisruptionBudget.enabled }}
+{{- if and .Values.lorax.enabled .Values.lorax.podDisruptionBudget.enabled }}
 apiVersion: {{ include "dynamoai.pdb.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
@@ -21,4 +21,3 @@ spec:
       app: {{ .Values.lorax.name }}
       {{- include "dynamoai.selectorLabels" . | nindent 6 }}
 {{- end }}
-

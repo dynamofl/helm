@@ -1,3 +1,4 @@
+{{- if .Values.hallucinationRag.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,4 +11,4 @@ data:
   host: "{{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationRag.name }}.{{ .Release.Namespace }}.svc.cluster.local"
   port: "{{ .Values.hallucinationRag.service.port }}"
   address: "{{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationRag.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.hallucinationRag.service.port }}"
-
+{{- end }}

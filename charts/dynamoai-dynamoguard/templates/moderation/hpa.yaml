@@ -1,4 +1,4 @@
-{{- if .Values.moderation.hpa.enabled }}
+{{- if and .Values.moderation.enabled .Values.moderation.hpa.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:

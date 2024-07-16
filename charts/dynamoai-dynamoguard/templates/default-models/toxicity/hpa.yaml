@@ -1,19 +1,19 @@
-{{- if .Values.toxicity.hpa.enabled }}
+{{- if and .Values.toxicity.enabled .Values.toxicity.hpa.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "dynamoai.fullname" . }}-{{ .Values.dynamoai.toxicity.name }}
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.toxicity.name }}
   labels:
-    app: {{ .Values.dynamoai.toxicity.name }}
+    app: {{ .Values.toxicity.name }}
     {{- include "dynamoai.labels" . | nindent 4 }}
-    {{- with .Values.dynamoai.toxicity.hpa.labels }}
+    {{- with .Values.toxicity.hpa.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "dynamoai.fullname" . }}-{{ .Values.dynamoai.toxicity.name }}
+    name: {{ include "dynamoai.fullname" . }}-{{ .Values.toxicity.name }}
   minReplicas: {{ .Values.toxicity.hpa.minReplicas }}
   maxReplicas: {{ .Values.toxicity.hpa.maxReplicas }}
   metrics:

@@ -1,3 +1,4 @@
+{{- if .Values.promptInjection.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,4 +11,4 @@ data:
   host: "{{ include "dynamoai.fullname" . }}-{{ .Values.promptInjection.name }}.{{ .Release.Namespace }}.svc.cluster.local"
   port: "{{ .Values.promptInjection.service.port }}"
   address: "{{ include "dynamoai.fullname" . }}-{{ .Values.promptInjection.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.promptInjection.service.port }}"
-
+{{- end }}

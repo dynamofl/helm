@@ -1,4 +1,4 @@
-{{- if .Values.legalAdvice.podDisruptionBudget.enabled }}
+{{- if and .Values.legalAdvice.enabled .Values.legalAdvice.podDisruptionBudget.enabled }}
 apiVersion: {{ include "dynamoai.pdb.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
@@ -21,4 +21,3 @@ spec:
       app: {{ .Values.legalAdvice.name }}
       {{- include "dynamoai.selectorLabels" . | nindent 6 }}
 {{- end }}
-

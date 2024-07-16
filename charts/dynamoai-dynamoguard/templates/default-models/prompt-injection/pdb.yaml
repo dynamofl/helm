@@ -1,4 +1,4 @@
-{{- if .Values.promptInjection.podDisruptionBudget.enabled }}
+{{- if and .Values.promptInjection.enabled .Values.promptInjection.podDisruptionBudget.enabled }}
 apiVersion: {{ include "dynamoai.pdb.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
@@ -21,4 +21,3 @@ spec:
       app: {{ .Values.promptInjection.name }}
       {{- include "dynamoai.selectorLabels" . | nindent 6 }}
 {{- end }}
-

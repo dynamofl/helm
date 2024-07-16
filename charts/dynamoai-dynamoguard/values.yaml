@@ -38,6 +38,7 @@ models:
     path: ""
 
 promptInjection:
+  enabled: true
   name: prompt-injection
   maxLength: 16384
   replicaCount: 1
@@ -147,6 +148,7 @@ promptInjection:
           app: dynamoai-api
 
 legalAdvice:
+  enabled: true
   name: legal-advice
   maxLength: 16384
   replicaCount: 1
@@ -256,6 +258,7 @@ legalAdvice:
           app: dynamoai-api
 
 toxicity:
+  enabled: true
   name: dot-1-6b
   maxLength: 16384
   replicaCount: 1
@@ -365,6 +368,7 @@ toxicity:
           app: dynamoai-api
 
 moderation:
+  enabled: true
   name: moderation
   replicaCount: 1
   numWorkers: 8
@@ -461,6 +465,7 @@ moderation:
 
 
 hallucinationEntailment:
+  enabled: true
   name: hallucination-entailment
   replicaCount: 1
   numWorkers: 1
@@ -563,6 +568,7 @@ hallucinationEntailment:
           app: dynamoai-api
 
 hallucinationRag:
+  enabled: true
   name: hallucination-rag
   replicaCount: 1
   numWorkers: 1
@@ -665,6 +671,7 @@ hallucinationRag:
           app: dynamoai-api
 
 piiRedaction:
+  enabled: true
   name: pii-redaction
   replicaCount: 1
   port: 8000
@@ -767,6 +774,7 @@ piiRedaction:
           app: dynamoai-api
 
 lorax:
+  enabled: true
   name: lorax
   replicaCount: 1
   port: 80
@@ -877,6 +885,7 @@ lorax:
           app: dynamoai-api
 
 finetuning:
+  enabled: true
   name: "fine-tuning-dynamo-guard"
   image:
     registry: "docker.io"
@@ -911,6 +920,7 @@ finetuning:
 
 dataProcessing:
   name: data-processing
+  enabled: true
   replicaCount: 1
 
   image:

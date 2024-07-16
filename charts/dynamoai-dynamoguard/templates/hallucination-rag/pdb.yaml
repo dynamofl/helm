@@ -1,4 +1,4 @@
-{{- if .Values.hallucinationRag.podDisruptionBudget.enabled }}
+{{- if and .Values.hallucinationRag.enabled .Values.hallucinationRag.podDisruptionBudget.enabled }}
 apiVersion: {{ include "dynamoai.pdb.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
@@ -21,4 +21,3 @@ spec:
       app: {{ .Values.hallucinationRag.name }}
       {{- include "dynamoai.selectorLabels" . | nindent 6 }}
 {{- end }}
-

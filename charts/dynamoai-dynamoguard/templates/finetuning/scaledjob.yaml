@@ -1,3 +1,4 @@
+{{- if .Values.finetuning.enabled }}
 apiVersion: keda.sh/v1alpha1
 kind: ScaledJob
 metadata:
@@ -51,3 +52,4 @@ spec:
         scalerAddress: {{ .Values.metricsServer.address }}
         listName: {{ .Values.finetuning.name }}
         listLength: '1'
+{{- end }}
