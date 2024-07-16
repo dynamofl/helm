@@ -1,4 +1,4 @@
-{{- if .Values.toxicity.podDisruptionBudget.enabled }}
+{{- if and .Values.toxicity.enabled .Values.toxicity.podDisruptionBudget.enabled }}
 apiVersion: {{ include "dynamoai.pdb.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
@@ -21,4 +21,3 @@ spec:
       app: {{ .Values.toxicity.name }}
       {{- include "dynamoai.selectorLabels" . | nindent 6 }}
 {{- end }}
-

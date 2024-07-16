@@ -1,3 +1,4 @@
+{{- if .Values.hallucinationEntailment.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -21,3 +22,4 @@ spec:
   selector:
     app: {{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationEntailment.name }}
     {{- include "dynamoai.labels" . | nindent 4 }}
+{{- end }}

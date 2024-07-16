@@ -1,4 +1,4 @@
-{{- if .Values.lorax.hpa.enabled }}
+{{- if and .Values.lorax.enabled .Values.lorax.hpa.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:

@@ -1,3 +1,4 @@
+{{- if .Values.piiRedaction.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,4 +11,4 @@ data:
   host: "{{ include "dynamoai.fullname" . }}-{{ .Values.piiRedaction.name }}.{{ .Release.Namespace }}.svc.cluster.local"
   port: "{{ .Values.piiRedaction.service.port }}"
   address: "{{ include "dynamoai.fullname" . }}-{{ .Values.piiRedaction.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.piiRedaction.service.port }}"
-
+{{- end }}

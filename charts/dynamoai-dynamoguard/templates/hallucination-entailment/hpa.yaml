@@ -1,19 +1,19 @@
-{{- if .Values.hallucinationEntailment.hpa.enabled }}
+{{- if and .Values.hallucinationEntailment.enabled .Values.hallucinationEntailment.hpa.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "dynamoai.fullname" . }}-{{ .Values.dynamoai.hallucinationEntailment.name }}
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationEntailment.name }}
   labels:
-    app: {{ .Values.dynamoai.hallucinationEntailment.name }}
+    app: {{ .Values.hallucinationEntailment.name }}
     {{- include "dynamoai.labels" . | nindent 4 }}
-    {{- with .Values.dynamoai.hallucinationEntailment.hpa.labels }}
+    {{- with .Values.hallucinationEntailment.hpa.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "dynamoai.fullname" . }}-{{ .Values.dynamoai.hallucinationEntailment.name }}
+    name: {{ include "dynamoai.fullname" . }}-{{ .Values.hallucinationEntailment.name }}
   minReplicas: {{ .Values.hallucinationEntailment.hpa.minReplicas }}
   maxReplicas: {{ .Values.hallucinationEntailment.hpa.maxReplicas }}
   metrics:

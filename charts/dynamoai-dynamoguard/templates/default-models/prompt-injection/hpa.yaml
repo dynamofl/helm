@@ -1,21 +1,21 @@
-{{- if .Values.promptInjection.hpa.enabled }}
+{{- if and .Values.promptInjection.enabled .Values.promptInjection.hpa.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "dynamoai.fullname" . }}-{{ .Values.dynamoai.promptInjection.name }}
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.promptInjection.name }}
   labels:
-    app: {{ .Values.dynamoai.promptInjection.name }}
+    app: {{ .Values.promptInjection.name }}
     {{- include "dynamoai.labels" . | nindent 4 }}
-    {{- with .Values.dynamoai.promptInjection.hpa.labels }}
+    {{- with .Values.promptInjection.hpa.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "dynamoai.fullname" . }}-{{ .Values.dynamoai.promptInjection.name }}
+    name: {{ include "dynamoai.fullname" . }}-{{ .Values.promptInjection.name }}
   minReplicas: {{ .Values.promptInjection.hpa.minReplicas }}
-  maxReplicas: {{ .Values.hpa.maxReplicas }}
+  maxReplicas: {{ .Values.promptInjection.hpa.maxReplicas }}
   metrics:
     {{- if .Values.promptInjection.hpa.targetCPUUtilizationPercentage }}
     - type: Resource

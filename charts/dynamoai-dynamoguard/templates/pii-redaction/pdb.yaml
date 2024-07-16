@@ -1,4 +1,4 @@
-{{- if .Values.piiRedaction.podDisruptionBudget.enabled }}
+{{- if and .Values.piiRedaction.enabled .Values.piiRedaction.podDisruptionBudget.enabled }}
 apiVersion: {{ include "dynamoai.pdb.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
@@ -21,4 +21,3 @@ spec:
       app: {{ .Values.piiRedaction.name }}
       {{- include "dynamoai.selectorLabels" . | nindent 6 }}
 {{- end }}
-
