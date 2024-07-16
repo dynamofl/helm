@@ -663,6 +663,16 @@ entries:
   dynamoai-dynamoguard:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2024-07-16T17:41:25.161897888Z"
+    description: A Helm chart for Kubernetes
+    digest: b48ca4de9ca4ae9cc3b6f7cce0a776ad4f4ddce63e2e2745aa4b366a3644ef41
+    name: dynamoai-dynamoguard
+    type: application
+    urls:
+    - https://github.com/dynamofl/helm/releases/download/dynamoai-dynamoguard-0.1.13/dynamoai-dynamoguard-0.1.13.tgz
+    version: 0.1.13
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2024-06-28T11:07:51.261610435Z"
     description: A Helm chart for Kubernetes
     digest: 89511bd15a17eccfe0c11f6aff240fa6a48a1f48864c715af04e5463cbea7fe3
@@ -824,4 +834,4 @@ entries:
     urls:
     - https://github.com/dynamofl/helm/releases/download/dynamoai-ui-0.1.1/dynamoai-ui-0.1.1.tgz
     version: 0.1.1
-generated: "2024-07-04T08:48:27.638301828Z"
+generated: "2024-07-16T17:41:25.161992564Z"
