@@ -52,4 +52,13 @@ spec:
         scalerAddress: {{ .Values.metricsServer.address }}
         listName: {{ .Values.finetuning.name }}
         listLength: '1'
+    - type: nats-jetstream
+      metadata:
+        natsServerMonitoringEndpoint: "dynamoai-base-nats-headless.{{ $.Release.Namespace }}.svc.cluster.local:8222"
+        account: '$G'
+        stream: {{ $.Values.nats.stream.name }}
+        consumer: finetuning-nats-consumer
+        lagThreshold: '5'
+        activationLagThreshold: '1'
+        useHttps: 'false'
 {{- end }}

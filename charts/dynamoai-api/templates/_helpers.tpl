@@ -123,6 +123,12 @@ Common environment variables used in all Dynamo AI services, including secrets a
   value: dynamofl-projects
 - name: PORT
   value: "{{ .Values.api.port }}"
+{{- if .Values.api.natsEnv.enabled }}
+- name: NATS_ENABLED
+  value: "true"
+- name: NATS_SERVER
+  value: {{ .Values.api.natsEnv.serverUrl }}
+{{- end }}
 {{- if .Values.global.secrets.postgres }}
 - name: PG_DB_HOST
   valueFrom:
@@ -267,5 +273,6 @@ Common environment variables used in all Dynamo AI services, including secrets a
 - name: AWS_DEFAULT_REGION
   value: "{{ .Values.global.awsRegion }}"
 - name: MODERATOR_WORKER_ASYNC_ENDPOINT
-  value:  "{{ include "dynamoai.fullname" . }}-moderation.{{ .Release.Namespace }}.svc.cluster.local:2344"
+  value: "{{ include "dynamoai.fullname" . }}-moderation.{{ if and .Values.global.dynamoguardnamespace (ne .Values.global.dynamoguardnamespace "") }}{{ .Values.global.dynamoguardnamespace }}{{ else }}{{ .Release.Namespace }}{{ end }}.svc.cluster.local:2344"
+
 {{- end }}
