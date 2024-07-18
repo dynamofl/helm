@@ -656,6 +656,14 @@ keycloak:
       value: ""
     - name: POST_LOGOUT_REDIRECT_URI
       value: ""
+    - name: OKTA_BASE_URL
+      value: ""
+    - name: OKTA_CLIENT_ID
+      value: ""
+    - name: OKTA_CLIENT_SECRET
+      value: ""
+    - name: OKTA_IDP_ENABLED
+      value: ""
 
   postgresql:
     enabled: true
