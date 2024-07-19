@@ -26,7 +26,7 @@
   "oauth2DeviceCodeLifespan": 600,
   "oauth2DevicePollingInterval": 5,
   "enabled": true,
-  "sslRequired": "external",
+  "sslRequired": "${DYNAMOAI_SSL_REQUIRED}",
   "registrationAllowed": false,
   "registrationEmailAsUsername": true,
   "rememberMe": false,
