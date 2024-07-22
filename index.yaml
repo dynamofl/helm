@@ -94,6 +94,57 @@ entries:
   dynamoai-base:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2024-07-22T16:40:43.525561448Z"
+    dependencies:
+    - condition: mongodb.enabled
+      name: mongodb
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.1.16
+    - condition: minio.enabled
+      name: minio
+      repository: https://charts.bitnami.com/bitnami
+      version: 14.6.5
+    - condition: keycloak.enabled
+      name: keycloak
+      repository: https://charts.bitnami.com/bitnami
+      version: 21.4.0
+    - condition: nats.enabled
+      name: nats
+      repository: https://nats-io.github.io/k8s/helm/charts/
+      version: 1.1.11
+    - condition: nats.enabled
+      name: nack
+      repository: https://nats-io.github.io/k8s/helm/charts/
+      version: 0.25.2
+    - condition: dynamoai-core.enabled
+      name: dynamoai-core
+      repository: https://documentation.dynamofl.com/helm
+      version: 0.1.5
+    - condition: dynamoai-api.enabled
+      name: dynamoai-api
+      repository: https://documentation.dynamofl.com/helm
+      version: 0.1.8
+    - condition: dynamoai-ui.enabled
+      name: dynamoai-ui
+      repository: https://documentation.dynamofl.com/helm
+      version: 0.1.5
+    - condition: dynamoai-redis.enabled
+      name: dynamoai-redis
+      repository: https://documentation.dynamofl.com/helm
+      version: 0.1.1
+    - condition: dynamoai-metrics-server.enabled
+      name: dynamoai-metrics-server
+      repository: https://documentation.dynamofl.com/helm
+      version: 0.1.1
+    description: A Helm chart for Kubernetes
+    digest: 9cc61909b1ce8a6d78b819f269c5ecc208e8423cc7df7751cafc71d79785a114
+    name: dynamoai-base
+    type: application
+    urls:
+    - https://github.com/dynamofl/helm/releases/download/dynamoai-base-0.1.19/dynamoai-base-0.1.19.tgz
+    version: 0.1.19
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2024-07-22T14:27:01.272775672Z"
     dependencies:
     - condition: mongodb.enabled
@@ -895,4 +946,4 @@ entries:
     urls:
     - https://github.com/dynamofl/helm/releases/download/dynamoai-ui-0.1.1/dynamoai-ui-0.1.1.tgz
     version: 0.1.1
-generated: "2024-07-22T16:20:27.529898953Z"
+generated: "2024-07-22T16:40:43.525712401Z"
