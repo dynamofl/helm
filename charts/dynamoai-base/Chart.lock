@@ -16,7 +16,7 @@ dependencies:
   version: 0.25.2
 - name: dynamoai-core
   repository: https://documentation.dynamofl.com/helm
-  version: 0.1.4
+  version: 0.1.5
 - name: dynamoai-api
   repository: https://documentation.dynamofl.com/helm
   version: 0.1.8
@@ -29,5 +29,5 @@ dependencies:
 - name: dynamoai-metrics-server
   repository: https://documentation.dynamofl.com/helm
   version: 0.1.1
-digest: sha256:f03757f71f1deabef64630f28a8a0e63e6d254e346a68ea8bc65a738673a5493
-generated: "2024-07-01T15:11:41.447817-07:00"
+digest: sha256:2b6d3e545135a6869c1acff80f2d4dc2fbc86e58a32900d45e7c166af7e92105
+generated: "2024-07-22T09:29:00.056949-07:00"
