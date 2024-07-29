@@ -310,15 +310,15 @@ Common environment variables used in all Dynamo AI services, including secrets a
 
 {{- define "dynamoai.init.apiEnv" -}}
 {
-  {{- if .Values.dbMigrationJob }} #todo
+  {{- if .Values.dbMigrationsJob }}
   "pgDB": {
     "host": "$(PG_DB_HOST)",
     "user": "$(PG_DB_USERNAME)",
     "password": "$(PG_DB_PASSWORD)",
     "database": "$(PG_DB_NAME)",
     "port": "$(PG_DB_PORT)",
-    "dbMigrationJobName": "{{ .Values.dbMigrationJob }}", #todo
-    "namespace": "${NAMESPACE}"
+    "dbMigrationJobName": "{{ .Values.dbMigrationsJob.name }}",
+    "namespace": "$(NAMESPACE)"
   },
   {{- end }}
   {{- if .Values.api.keycloakEnv }}
