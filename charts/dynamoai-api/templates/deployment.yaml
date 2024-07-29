@@ -80,6 +80,14 @@ spec:
             {{- with .Values.api.extraVolumeMounts }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
+      initContainers:
+        - name: {{ (index .Values.api.initContainers 0).name | quote }}
+          env:
+            - name: INIT_COMPONENTS_CONFIG
+              valueFrom:
+                configMapKeyRef:
+                  name: init-components-config
+                  key: init-config-json
       restartPolicy: Always
       volumes:
         {{- with .Values.api.extraVolumes }}

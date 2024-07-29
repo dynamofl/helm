@@ -151,7 +151,8 @@ api:
 
   ## Init containers to run before the main container starts.
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
-  initContainers: []
+  initContainers:
+    - name: init-container-api
 
   topologySpreadConstraints:
     - maxSkew: 1
@@ -160,3 +161,49 @@ api:
       labelSelector:
         matchLabels:
           app: dynamoai-api
+
+dbMigrationsJob:
+  name: "db-migrations-job"
+  enabled: true
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/db-migration"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+  backoffLimit: 4
+  restartPolicy: "OnFailure"
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
+  extraEnv: []
+
+
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector: {}
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations: []
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
