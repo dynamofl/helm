@@ -81,13 +81,15 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
       initContainers:
-        - name: {{ (index .Values.api.initContainers 0).name | quote }}
+      {{- range .Values.api.initContainers }}
+        - name: {{ .name }}
           env:
-            - name: INIT_COMPONENTS_CONFIG
-              valueFrom:
-                configMapKeyRef:
-                  name: init-components-config
-                  key: init-config-json
+          {{- with .env }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: {{ .image.registry }}/{{ .image.repository }}:{{ .image.tag }}
+          imagePullPolicy: {{ .image.pullPolicy }}
+      {{- end }}
       restartPolicy: Always
       volumes:
         {{- with .Values.api.extraVolumes }}
