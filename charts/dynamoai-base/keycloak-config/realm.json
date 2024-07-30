@@ -44,6 +44,504 @@
   "quickLoginCheckMilliSeconds": 1000,
   "maxDeltaTimeSeconds": 43200,
   "failureFactor": 30,
+  "roles": {
+    "realm": [
+      {
+        "id": "9eb99b33-3290-41c4-a87f-bbeb03cf0438",
+        "name": "default-roles-dynamo-ai",
+        "description": "${role_default-roles}",
+        "composite": true,
+        "composites": {
+          "realm": ["offline_access", "uma_authorization"]
+        },
+        "clientRole": false,
+        "containerId": "2c7e00b2-907d-46f5-9f5e-9cd3a8747228",
+        "attributes": {}
+      },
+      {
+        "name": "org:viewer",
+        "description": "Viewer role at the org level",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {
+          "model_scopes_mapping": [],
+          "dataset_scopes_mapping": [],
+          "policy_scopes_mapping": [],
+          "user_scopes_mapping": []
+        }
+      },
+      {
+        "id": "97f10427-029a-46f2-a75e-215d5445b759",
+        "name": "uma_authorization",
+        "description": "${role_uma_authorization}",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "2c7e00b2-907d-46f5-9f5e-9cd3a8747228",
+        "attributes": {}
+      },
+      {
+        "name": "org:admin",
+        "description": "Admin role in the org",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {
+          "model_scopes_mapping": [
+            "model:get",
+            "model:edit",
+            "model:delete",
+            "model:create",
+            "model:share",
+            "model:createTest",
+            "model:getTest",
+            "model:getAllTests",
+            "model:getTestReport",
+            "model:getTestReportDeepDive",
+            "model:getMetricsFromTests",
+            "model:deleteTest",
+            "model:getEvalDashboard",
+            "model:getGuardDashboard",
+            "model:getAssociatedPolicies",
+            "model:applyPolicy"
+          ],
+          "dataset_scopes_mapping": [
+            "dataset:get",
+            "dataset:edit",
+            "dataset:create",
+            "dataset:share",
+            "dataset:delete",
+            "dataset:createTest"
+          ],
+          "policy_scopes_mapping": [
+            "policy:create",
+            "policy:get",
+            "policy:edit",
+            "policy:delete",
+            "policy:train"
+          ],
+          "user_scopes_mapping": [
+            "user:create",
+            "user:edit",
+            "user:delete",
+            "user:get",
+            "user:setRole"
+          ]
+        }
+      },
+      {
+        "name": "org:contributor",
+        "description": "Contributor role in the org",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {
+          "model_scopes_mapping": ["model:create"],
+          "dataset_scopes_mapping": ["dataset:create"],
+          "policy_scopes_mapping": ["policy:create"]
+        }
+      },
+      {
+        "id": "f05dca8b-29b3-4374-ac16-32755bf05ff8",
+        "name": "offline_access",
+        "description": "${role_offline-access}",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "2c7e00b2-907d-46f5-9f5e-9cd3a8747228",
+        "attributes": {}
+      }
+    ],
+    "client": {
+      "realm-management": [
+        {
+          "id": "c74c1113-7d71-4d0b-a5c2-ff82a49edba7",
+          "name": "view-authorization",
+          "description": "${role_view-authorization}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "b7f34794-9baa-4066-bf7e-e642e4e2086e",
+          "name": "view-realm",
+          "description": "${role_view-realm}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "1746d88a-1e05-4f29-b45e-7c79e88ddfb3",
+          "name": "manage-users",
+          "description": "${role_manage-users}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "bca899a1-c2de-4d1e-a93a-3d37a9835cdf",
+          "name": "create-client",
+          "description": "${role_create-client}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "0cbb5861-b0c8-4854-97ba-dce32f433a84",
+          "name": "manage-authorization",
+          "description": "${role_manage-authorization}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "ef73d1d3-6818-49e8-af1c-05db455138c7",
+          "name": "query-realms",
+          "description": "${role_query-realms}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "776fdc07-5f27-4c03-9550-877edd2d9650",
+          "name": "query-users",
+          "description": "${role_query-users}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "74569fa6-3557-4e15-83a8-4c5090427835",
+          "name": "view-events",
+          "description": "${role_view-events}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "7effd4f2-e435-48a4-85ae-c4f127696cd8",
+          "name": "view-clients",
+          "description": "${role_view-clients}",
+          "composite": true,
+          "composites": {
+            "client": {
+              "realm-management": ["query-clients"]
+            }
+          },
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "055feb7c-46ed-482c-ab32-ce45095d309c",
+          "name": "realm-admin",
+          "description": "${role_realm-admin}",
+          "composite": true,
+          "composites": {
+            "client": {
+              "realm-management": [
+                "view-authorization",
+                "view-realm",
+                "manage-users",
+                "create-client",
+                "query-realms",
+                "manage-authorization",
+                "query-users",
+                "view-events",
+                "view-clients",
+                "impersonation",
+                "query-clients",
+                "query-groups",
+                "view-identity-providers",
+                "manage-clients",
+                "manage-events",
+                "manage-realm",
+                "manage-identity-providers",
+                "view-users"
+              ]
+            }
+          },
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "0a0c59eb-e2e6-4855-8303-405b64ac0f42",
+          "name": "impersonation",
+          "description": "${role_impersonation}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "cb1fe7b4-a3f7-47a3-ba80-daf661b8c22c",
+          "name": "query-clients",
+          "description": "${role_query-clients}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "26067832-9f4b-4bd0-ad9a-d47a793cb9dc",
+          "name": "query-groups",
+          "description": "${role_query-groups}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "aea7c3db-b40f-4bc3-a93b-ef3737763cf4",
+          "name": "view-identity-providers",
+          "description": "${role_view-identity-providers}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "c650b701-c65a-49a6-86fa-a9b50e73fec9",
+          "name": "manage-clients",
+          "description": "${role_manage-clients}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "83383252-824f-4d2a-ae4a-a1ae8bd5f6be",
+          "name": "manage-events",
+          "description": "${role_manage-events}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "d57877fd-77a5-49bb-a425-28e6875da007",
+          "name": "manage-realm",
+          "description": "${role_manage-realm}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "c871126b-f8c2-4547-bf54-1037de459839",
+          "name": "manage-identity-providers",
+          "description": "${role_manage-identity-providers}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        },
+        {
+          "id": "f2e3f94c-aa4a-4fa3-b2f4-613a34209523",
+          "name": "view-users",
+          "description": "${role_view-users}",
+          "composite": true,
+          "composites": {
+            "client": {
+              "realm-management": ["query-groups", "query-users"]
+            }
+          },
+          "clientRole": true,
+          "containerId": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "attributes": {}
+        }
+      ],
+      "ui": [],
+      "security-admin-console": [],
+      "admin-cli": [],
+      "account-console": [],
+      "api": [
+        {
+          "name": "model:viewer",
+          "description": "Viewer role for the model",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {
+            "scopes_mapping": [
+              "model:get",
+              "model:getTest",
+              "model:getAllTests",
+              "model:getTestReport",
+              "model:getTestReportDeepDive",
+              "model:getMetricsFromTests",
+              "model:getEvalDashboard",
+              "model:getGuardDashboard",
+              "model:getAssociatedPolicies",
+              "model:getMonitoringLogs"
+            ]
+          }
+        },
+        {
+          "name": "model:editor",
+          "description": "Editor role for model",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {
+            "scopes_mapping": [
+              "model:edit",
+              "model:createTest",
+              "model:get",
+              "model:share",
+              "model:getTest",
+              "model:getAllTests",
+              "model:getTestReport",
+              "model:getTestReportDeepDive",
+              "model:getMetricsFromTests",
+              "model:getEvalDashboard",
+              "model:getGuardDashboard",
+              "model:getAssociatedPolicies",
+              "model:getMonitoringLogs",
+              "model:applyPolicy"
+            ]
+          }
+        },
+        {
+          "name": "model:owner",
+          "description": "Owner role for model",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {
+            "scopes_mapping": [
+              "model:delete",
+              "model:edit",
+              "model:createTest",
+              "model:get",
+              "model:share",
+              "model:deleteTest",
+              "model:getTest",
+              "model:getAllTests",
+              "model:getTestReport",
+              "model:getTestReportDeepDive",
+              "model:getMetricsFromTests",
+              "model:getEvalDashboard",
+              "model:getGuardDashboard",
+              "model:getAssociatedPolicies",
+              "model:getMonitoringLogs",
+              "model:applyPolicy"
+            ]
+          }
+        },
+        {
+          "name": "dataset:viewer",
+          "description": "Viewer role for the dataset",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {
+            "scopes_mapping": ["dataset:get", "dataset:createTest"]
+          }
+        },
+        {
+          "name": "dataset:editor",
+          "description": "Editor role for dataset",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {
+            "scopes_mapping": [
+              "dataset:get",
+              "dataset:edit",
+              "dataset:share",
+              "dataset:createTest"
+            ]
+          }
+        },
+        {
+          "name": "dataset:owner",
+          "description": "Owner role for dataset",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {
+            "scopes_mapping": [
+              "dataset:get",
+              "dataset:edit",
+              "dataset:delete",
+              "dataset:share",
+              "dataset:createTest"
+            ]
+          }
+        },
+        {
+          "name": "policy:viewer",
+          "description": "Viewer role for the policy",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {
+            "scopes_mapping": ["policy:get"]
+          }
+        },
+        {
+          "name": "policy:editor",
+          "description": "Editor role for policy",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {
+            "scopes_mapping": ["policy:get", "policy:edit", "policy:train"]
+          }
+        },
+        {
+          "name": "policy:owner",
+          "description": "Owner role for policy",
+          "composite": false,
+          "clientRole": true,
+          "attributes": {
+            "scopes_mapping": [
+              "policy:get",
+              "policy:edit",
+              "policy:delete",
+              "policy:train"
+            ]
+          }
+        }
+      ],
+      "broker": [],
+      "account": [
+        {
+          "id": "de44c282-219d-4dd0-b2ee-66d59eee7db4",
+          "name": "delete-account",
+          "description": "${role_delete-account}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "acd822b2-2d8b-46d3-a01a-81f6bfc65aad",
+          "attributes": {}
+        },
+        {
+          "id": "36f71447-d1b1-415a-9aa8-e8a4aaf484a2",
+          "name": "view-groups",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "acd822b2-2d8b-46d3-a01a-81f6bfc65aad",
+          "attributes": {}
+        },
+        {
+          "id": "8f545824-7868-49f6-8b3a-8637cb1daeec",
+          "name": "manage-account",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "acd822b2-2d8b-46d3-a01a-81f6bfc65aad",
+          "attributes": {}
+        }
+      ]
+    }
+  },
+  "groups": [
+    {
+      "name": "all-users",
+      "path": "/all-users",
+      "subGroups": [],
+      "attributes": {},
+      "realmRoles": [],
+      "clientRoles": {}
+    }
+  ],
   "defaultRole": {
     "id": "9eb99b33-3290-41c4-a87f-bbeb03cf0438",
     "name": "default-roles-dynamo-ai",
@@ -98,6 +596,10 @@
       "totp": false,
       "serviceAccountClientId": "api",
       "disableableCredentialTypes": [],
+      "realmRoles": ["uma_authorization"],
+      "clientRoles": {
+        "realm-management": ["realm-admin"]
+      },
       "requiredActions": [],
       "notBefore": 0
     }
@@ -251,7 +753,7 @@
       ]
     },
     {
-      "id": "1319a712-6308-440f-a584-24fa9cc6bc0d",
+      "id": "${DYNAMOAI_API_CLIENT_UUID}",
       "clientId": "${DYNAMOAI_API_CLIENT_ID}",
       "name": "API",
       "description": "DynamoAI API client",
@@ -304,6 +806,7 @@
           "config": {
             "user.session.note": "clientAddress",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
             "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientAddress",
@@ -319,6 +822,7 @@
           "config": {
             "user.session.note": "clientHost",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
             "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientHost",
@@ -334,6 +838,7 @@
           "config": {
             "user.session.note": "client_id",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
             "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "client_id",
@@ -354,7 +859,228 @@
         "phone",
         "offline_access",
         "microprofile-jwt"
-      ]
+      ],
+      "authorizationSettings": {
+        "allowRemoteResourceManagement": true,
+        "policyEnforcementMode": "ENFORCING",
+        "resources": [],
+        "policies": [
+          {
+            "name": "role:org:admin",
+            "description": "Policy to allow access to role admin",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"org:admin\",\"required\":true}]"
+            }
+          },
+          {
+            "name": "role:org:contributor",
+            "description": "Policy to allow access to role contributor",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"org:contributor\",\"required\":true}]"
+            }
+          },
+          {
+            "name": "role:org:viewer",
+            "description": "Policy to allow access to role viewer",
+            "type": "role",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "roles": "[{\"id\":\"org:viewer\",\"required\":true}]"
+            }
+          },
+          {
+            "name": "group:all-users",
+            "description": "Policy to allow access to all users via the all users group",
+            "type": "group",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "groups": "[{\"path\":\"/all-users\",\"extendChildren\":false}]",
+              "groupsClaim": ""
+            }
+          }
+        ],
+        "scopes": [
+          {
+            "name": "model:create",
+            "iconUri": "",
+            "displayName": "ModelCreate"
+          },
+          {
+            "name": "model:edit",
+            "iconUri": "",
+            "displayName": "ModelEdit"
+          },
+          {
+            "name": "model:delete",
+            "iconUri": "",
+            "displayName": "ModelDelete"
+          },
+          {
+            "name": "model:get",
+            "iconUri": "",
+            "displayName": "ModelGet"
+          },
+          {
+            "name": "model:share",
+            "iconUri": "",
+            "displayName": "ModelShare"
+          },
+          {
+            "name": "model:getTest",
+            "iconUri": "",
+            "displayName": "ModelGetTest"
+          },
+          {
+            "name": "model:getAllTests",
+            "iconUri": "",
+            "displayName": "ModelGetAllTests"
+          },
+          {
+            "name": "model:getTestReport",
+            "iconUri": "",
+            "displayName": "ModelGetTestReport"
+          },
+          {
+            "name": "model:getTestReportDeepDive",
+            "iconUri": "",
+            "displayName": "ModelGetTestReportDeepDive"
+          },
+          {
+            "name": "model:getMetricsFromTests",
+            "iconUri": "",
+            "displayName": "ModelGetMetricsFromTests"
+          },
+          {
+            "name": "model:deleteTest",
+            "iconUri": "",
+            "displayName": "ModelDeleteTest"
+          },
+          {
+            "name": "model:createTest",
+            "iconUri": "",
+            "displayName": "ModelCreateTest"
+          },
+          {
+            "name": "model:getEvalDashboard",
+            "iconUri": "",
+            "displayName": "ModelGetEvalDashboard"
+          },
+          {
+            "name": "model:getGuardDashboard",
+            "iconUri": "",
+            "displayName": "ModelGetGuardDashboard"
+          },
+          {
+            "name": "model:getAssociatedPolicies",
+            "iconUri": "",
+            "displayName": "ModelGetAssociatedPolicies"
+          },
+          {
+            "name": "model:getMonitoringLogs",
+            "iconUri": "",
+            "displayName": "ModelGetMonitoringLogs"
+          },
+          {
+            "name": "model:applyPolicy",
+            "iconUri": "",
+            "displayName": "ModelApplyPolicy"
+          },
+          {
+            "name": "dataset:create",
+            "iconUri": "",
+            "displayName": "DatasetCreate"
+          },
+          {
+            "name": "dataset:edit",
+            "iconUri": "",
+            "displayName": "DatasetEdit"
+          },
+          {
+            "name": "dataset:get",
+            "iconUri": "",
+            "displayName": "DatasetGet"
+          },
+          {
+            "name": "dataset:share",
+            "iconUri": "",
+            "displayName": "DatasetShare"
+          },
+          {
+            "name": "dataset:createTest",
+            "iconUri": "",
+            "displayName": "DatasetCreateTest"
+          },
+          {
+            "name": "dataset:delete",
+            "iconUri": "",
+            "displayName": "DatasetDelete"
+          },
+          {
+            "name": "policy:create",
+            "iconUri": "",
+            "displayName": "PolicyCreate"
+          },
+          {
+            "name": "policy:edit",
+            "iconUri": "",
+            "displayName": "PolicyEdit"
+          },
+          {
+            "name": "policy:get",
+            "iconUri": "",
+            "displayName": "PolicyGet"
+          },
+          {
+            "name": "policy:share",
+            "iconUri": "",
+            "displayName": "PolicyShare"
+          },
+          {
+            "name": "policy:delete",
+            "iconUri": "",
+            "displayName": "PolicyDelete"
+          },
+          {
+            "name": "policy:train",
+            "iconUri": "",
+            "displayName": "PolicyTrain"
+          },
+          {
+            "name": "user:create",
+            "iconUri": "",
+            "displayName": "UserCreate"
+          },
+          {
+            "name": "user:edit",
+            "iconUri": "",
+            "displayName": "UserEdit"
+          },
+          {
+            "name": "user:delete",
+            "iconUri": "",
+            "displayName": "UserDelete"
+          },
+          {
+            "name": "user:get",
+            "iconUri": "",
+            "displayName": "UserGet"
+          },
+          {
+            "name": "user:setRole",
+            "iconUri": "",
+            "displayName": "UserSetRole"
+          }
+        ],
+        "decisionStrategy": "AFFIRMATIVE"
+      }
     },
     {
       "id": "2810300d-1ee2-440a-8e0a-262859ab2198",
@@ -602,6 +1328,7 @@
           "config": {
             "introspection.token.claim": "true",
             "multivalued": "true",
+            "userinfo.token.claim": "true",
             "user.attribute": "foo",
             "id.token.claim": "true",
             "access.token.claim": "true",
@@ -630,7 +1357,8 @@
           "config": {
             "id.token.claim": "true",
             "introspection.token.claim": "true",
-            "access.token.claim": "true"
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
           }
         }
       ]
@@ -1135,7 +1863,51 @@
   "enabledEventTypes": [],
   "adminEventsEnabled": false,
   "adminEventsDetailsEnabled": false,
-  "identityProviders": [],
+  "identityProviders": [
+    {
+      "alias": "oktaoidc",
+      "displayName": "Okta OIDC",
+      "providerId": "oidc",
+      "enabled": "${OKTA_IDP_ENABLED}",
+      "updateProfileFirstLoginMode": "on",
+      "trustEmail": false,
+      "storeToken": false,
+      "addReadTokenRoleOnCreate": false,
+      "authenticateByDefault": false,
+      "linkOnly": false,
+      "firstBrokerLoginFlowAlias": "${FIRST_BROKER_LOGIN_FLOW}",
+      "config": {
+        "tokenUrl": "${OKTA_BASE_URL}/oauth/token",
+        "acceptsPromptNoneForwardFromClient": false,
+        "jwksUrl": "${OKTA_BASE_URL}/.well-known/jwks.json",
+        "isAccessTokenJWT": false,
+        "filteredByClaim": false,
+        "backchannelSupported": false,
+        "issuer": "${OKTA_BASE_URL}/",
+        "loginHint": false,
+        "clientAuthMethod": "client_secret_post",
+        "syncMode": "IMPORT",
+        "clientSecret": "${OKTA_CLIENT_SECRET}",
+        "allowedClockSkew": "0",
+        "defaultScope": "openid profile email",
+        "userInfoUrl": "${OKTA_BASE_URL}/userinfo",
+        "validateSignature": "true",
+        "hideOnLoginPage": false,
+        "clientId": "${OKTA_CLIENT_ID}",
+        "uiLocales": false,
+        "disableNonce": false,
+        "useJwksUrl": "true",
+        "sendClientIdOnLogout": false,
+        "metadataDescriptorUrl": "${OKTA_BASE_URL}/.well-known/openid-configuration",
+        "pkceEnabled": false,
+        "authorizationUrl": "${OKTA_BASE_URL}/authorize",
+        "disableUserInfo": false,
+        "logoutUrl": "${OKTA_BASE_URL}/oidc/logout",
+        "sendIdTokenOnLogout": "true",
+        "passMaxAge": false
+      }
+    }
+  ],
   "identityProviderMappers": [],
   "components": {
     "org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy": [
@@ -1430,6 +2202,23 @@
           "authenticatorFlow": false,
           "requirement": "REQUIRED",
           "priority": 20,
+          "autheticatorFlow": false,
+          "userSetupAllowed": false
+        }
+      ]
+    },
+    {
+      "alias": "${FIRST_BROKER_LOGIN_FLOW}",
+      "description": "",
+      "providerId": "basic-flow",
+      "topLevel": true,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "authenticator": "idp-create-user-if-unique",
+          "authenticatorFlow": false,
+          "requirement": "ALTERNATIVE",
+          "priority": 0,
           "autheticatorFlow": false,
           "userSetupAllowed": false
         }
@@ -1926,8 +2715,8 @@
   "attributes": {
     "cibaBackchannelTokenDeliveryMode": "poll",
     "cibaAuthRequestedUserHint": "login_hint",
-    "oauth2DevicePollingInterval": "5",
     "clientOfflineSessionMaxLifespan": "0",
+    "oauth2DevicePollingInterval": "5",
     "clientSessionIdleTimeout": "0",
     "actionTokenGeneratedByUserLifespan.verify-email": "",
     "actionTokenGeneratedByUserLifespan.idp-verify-account-via-email": "",
@@ -1942,7 +2731,7 @@
     "shortVerificationUri": "",
     "actionTokenGeneratedByUserLifespan.reset-credentials": ""
   },
-  "keycloakVersion": "24.0.4",
+  "keycloakVersion": "24.0.5",
   "userManagedAccessAllowed": false,
   "clientProfiles": {
     "profiles": []
