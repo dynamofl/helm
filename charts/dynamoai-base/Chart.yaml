@@ -46,21 +46,21 @@ dependencies:
     condition: nats.enabled
   - name: "dynamoai-core"
     version: "0.1.5"
-    repository: "https://documentation.dynamofl.com/helm"
+    repository: "file://../dynamoai-core"
     condition: dynamoai-core.enabled
   - name: "dynamoai-api"
-    version: "0.1.8"
-    repository: "https://documentation.dynamofl.com/helm"
+    version: "0.1.10"
+    repository: "file://../dynamoai-api"
     condition: dynamoai-api.enabled
   - name: "dynamoai-ui"
-    version: "0.1.5"
-    repository: "https://documentation.dynamofl.com/helm"
+    version: "0.1.6"
+    repository: "file://../dynamoai-ui"
     condition: dynamoai-ui.enabled
   - name: "dynamoai-redis"
     version: "0.1.1"
-    repository: "https://documentation.dynamofl.com/helm"
+    repository: "file://../dynamoai-redis"
     condition: dynamoai-redis.enabled
   - name: "dynamoai-metrics-server"
     version: "0.1.1"
-    repository: "https://documentation.dynamofl.com/helm"
+    repository: "file://../dynamoai-metrics-server"
     condition: dynamoai-metrics-server.enabled

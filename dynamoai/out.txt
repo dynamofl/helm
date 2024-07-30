@@ -1,0 +1,4788 @@
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/charts/postgresql/templates/primary/networkpolicy.yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: release-name-postgresql
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.2
+    app.kubernetes.io/component: primary
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/component: primary
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    - {}
+  ingress:
+    - ports:
+        - port: 5432
+---
+# Source: dynamoai/charts/dynamoai-base/charts/minio/templates/networkpolicy.yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: minio
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: minio
+    app.kubernetes.io/version: 2024.6.4
+    helm.sh/chart: minio-14.6.5
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: minio
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    - {}
+  ingress:
+    # Allow inbound connections
+    - ports:
+        - port: 9001
+        - port: 9000
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-api/templates/pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: dynamoai-api-pdb
+  namespace: default
+  labels:
+    helm.sh/chart: dynamoai-api-0.1.10
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: api
+      app.kubernetes.io/name: dynamoai
+      app.kubernetes.io/instance: release-name
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-metrics-server/templates/pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: dynamoai-metrics-server-pdb
+  namespace: default
+  labels:
+    helm.sh/chart: dynamoai-metrics-server-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: metrics-server
+      app.kubernetes.io/name: dynamoai
+      app.kubernetes.io/instance: release-name
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-redis/templates/pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: dynamoai-redis-pdb
+  namespace: default
+  labels:
+    helm.sh/chart: dynamoai-redis-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: redis
+      app.kubernetes.io/name: dynamoai
+      app.kubernetes.io/instance: release-name
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-ui/templates/ui/pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: dynamoai-ui-pdb
+  namespace: default
+  labels:
+    helm.sh/chart: dynamoai-ui-0.1.6
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: ui
+      app.kubernetes.io/name: dynamoai
+      app.kubernetes.io/instance: release-name
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/charts/postgresql/templates/primary/pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: release-name-postgresql
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.2
+    app.kubernetes.io/component: primary
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/component: primary
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/templates/pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: dynamoai-base-keycloak
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/version: 24.0.5
+    helm.sh/chart: keycloak-21.4.0
+    app.kubernetes.io/component: keycloak
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: keycloak
+      app.kubernetes.io/component: keycloak
+---
+# Source: dynamoai/charts/dynamoai-base/charts/minio/templates/pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: minio
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: minio
+    app.kubernetes.io/version: 2024.6.4
+    helm.sh/chart: minio-14.6.5
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: minio
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/charts/postgresql/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: release-name-postgresql
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.2
+automountServiceAccountToken: false
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dynamoai-base-keycloak
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/version: 24.0.5
+    helm.sh/chart: keycloak-21.4.0
+    app.kubernetes.io/component: keycloak
+automountServiceAccountToken: false
+---
+# Source: dynamoai/charts/dynamoai-base/charts/minio/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: minio
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: minio
+    app.kubernetes.io/version: 2024.6.4
+    helm.sh/chart: minio-14.6.5
+automountServiceAccountToken: false
+secrets:
+  - name: minio
+---
+# Source: dynamoai/charts/dynamoai-base/charts/mongodb/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: release-name-mongodb
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: mongodb
+    helm.sh/chart: mongodb-12.1.16
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "5.0.9"
+secrets:
+  - name: release-name-mongodb
+automountServiceAccountToken: true
+---
+# Source: dynamoai/charts/dynamoai-dynamoguard/templates/jetstream-service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dynamoguard-jetstream-controller
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-core/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dynamoai-common-secret
+type: Opaque
+data:
+  default_user_password: ""
+  default_user_email: ""
+  default_user_api_key: ""
+  platform_admin_password: ""
+  license: ""
+  service_user_api_key_map: ""
+  openai_api_key: "YWJj"
+  mistral_api_key: "ZGVm"
+  pentest_service_user_api_key: ""
+  data_generation_api_key: ""
+  hf_token: ""
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-core/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dynamoai-mongodb-secret
+type: Opaque
+data:
+  host: ""
+  port: ""
+  username: ""
+  password: ""
+  name: ""
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-core/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dynamoai-postgres-secret
+type: Opaque
+data:
+  host: ""
+  port: ""
+  username: ""
+  password: ""
+  name: ""
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-core/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dynamoai-apikeys-secret
+type: Opaque
+data:
+  dynamoai.guard.apikeys: "ZGVm"
+  dynamoai.pentest.apikeys.mistral: "ZGVm"
+  dynamoai.pentest.apikeys.openai: "YWJj"
+  dynamoai.pentest.apikeys.azure_openai: ""
+  dynamoai.pentest.apikeys.azure_mistral: ""
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-redis/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dynamoai-redis-secret
+  labels:
+    helm.sh/chart: dynamoai-redis-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  host: "ZHluYW1vYWktcmVkaXMuZGVmYXVsdC5zdmMuY2x1c3Rlci5sb2NhbA=="
+  port: "NjM3OQ=="
+  address: "ZHluYW1vYWktcmVkaXMuZGVmYXVsdC5zdmMuY2x1c3Rlci5sb2NhbDoiNjM3OSI="
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/charts/postgresql/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: release-name-postgresql
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.2
+type: Opaque
+data:
+  postgres-password: "a2V5Y2xvYWtfZGJfcGFzc3dvcmQ="
+  password: "ZHluYW1vYWk="
+  # We don't auto-generate LDAP password when it's not provided as we do for other passwords
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dynamoai-base-keycloak
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/version: 24.0.5
+    helm.sh/chart: keycloak-21.4.0
+    app.kubernetes.io/component: keycloak
+type: Opaque
+data:
+  admin-password: "MzFsYjRFSzh1NGt2"
+---
+# Source: dynamoai/charts/dynamoai-base/charts/minio/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: minio
+    app.kubernetes.io/version: 2024.6.4
+    helm.sh/chart: minio-14.6.5
+type: Opaque
+data:
+  root-user: "cm9vdA=="
+  root-password: "MzFsYjRFSzh1NGt2"
+---
+# Source: dynamoai/charts/dynamoai-base/charts/mongodb/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: release-name-mongodb
+  namespace: default
+  labels:
+    app.kubernetes.io/name: mongodb
+    helm.sh/chart: mongodb-12.1.16
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "5.0.9"
+    app.kubernetes.io/component: mongodb
+type: Opaque
+data:
+  mongodb-root-password: "MzFsYjRFSzh1NGt2"
+  mongodb-replica-set-key: "RHluYW0wRkw="
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-api/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dynamoai-api-config
+  labels:
+    helm.sh/chart: dynamoai-api-0.1.10
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-api-0.1.10
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+data:
+  host: "dynamoai-api.default.svc.cluster.local"
+  domain: "http:///api"
+  port: "80"
+  address: "dynamoai-api.default.svc.cluster.local:80"
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-core/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dynamoai-common-config
+  labels:
+    helm.sh/chart: dynamoai-core-0.1.5
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-core-0.1.5
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+data:
+  testReportGenerationEnabled: "true"
+  remoteModelConfigValidationApiEnabled: "true"
+  huggingfaceApiRequestsEnabled: "true"
+  rateLimitDynamoGuard: "true"
+  rateLimitDynamoEval: "true"
+  pbacSafetyModeEnabled: "true"
+  cognitoUserPoolId: "us-east-1_UOtQLkXD6"
+  cognitoClientId: "2p281p75qqg1upcng26ngarvrn"
+  bucketName: "pentest-bucket20240514055444794800000001"
+  corsRule: "allow-all"
+  awsRegion: "us-east-1"
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-core/templates/proxy-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dynamoai-proxy-config
+  labels:
+    helm.sh/chart: dynamoai-core-0.1.5
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-core-0.1.5
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+data:
+  http_proxy: ""
+  https_proxy: ""
+  no_proxy: ""
+  HTTP_PROXY: ""
+  HTTPS_PROXY: ""
+  NO_PROXY: ""
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-metrics-server/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dynamoai-metrics-server-config
+  labels:
+    helm.sh/chart: dynamoai-metrics-server-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-metrics-server-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+data:
+  host: "dynamoai-metrics-server.default.svc.cluster.local"
+  port: "9090"
+  address: "dynamoai-metrics-server.default.svc.cluster.local:9090"
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-redis/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dynamoai-redis-config
+  labels:
+    helm.sh/chart: dynamoai-redis-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-redis-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+data:
+  host: "dynamoai-redis.default.svc.cluster.local"
+  port: "6379"
+  address: "dynamoai-redis.default.svc.cluster.local:6379"
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/templates/configmap-env-vars.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dynamoai-base-keycloak-env-vars
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/version: 24.0.5
+    helm.sh/chart: keycloak-21.4.0
+    app.kubernetes.io/component: keycloak
+data:
+  KEYCLOAK_ADMIN: "admin"
+  KEYCLOAK_HTTP_PORT: "8080"
+  KEYCLOAK_PROXY: "passthrough"
+  KEYCLOAK_ENABLE_STATISTICS: "false"
+  KEYCLOAK_DATABASE_HOST: "release-name-postgresql"
+  KEYCLOAK_DATABASE_PORT: "5432"
+  KEYCLOAK_DATABASE_NAME: "keycloak"
+  KEYCLOAK_DATABASE_USER: "dynamoai"
+  KEYCLOAK_PRODUCTION:  "false"
+  KEYCLOAK_ENABLE_HTTPS: "false"
+  KEYCLOAK_CACHE_TYPE: "ispn"
+  KEYCLOAK_CACHE_STACK: "kubernetes"
+  JAVA_OPTS_APPEND: "-Djgroups.dns.query=dynamoai-base-keycloak-headless.default.svc.cluster.local"
+  KEYCLOAK_LOG_OUTPUT: "default"
+  KEYCLOAK_LOG_LEVEL: "INFO"
+---
+# Source: dynamoai/charts/dynamoai-base/charts/mongodb/templates/common-scripts-cm.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-name-mongodb-common-scripts
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: mongodb
+    helm.sh/chart: mongodb-12.1.16
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "5.0.9"
+    app.kubernetes.io/component: mongodb
+data:
+  startup-probe.sh: |
+    #!/bin/bash
+    mongosh  $TLS_OPTIONS --port $MONGODB_PORT_NUMBER --eval 'db.hello().isWritablePrimary || db.hello().secondary' | grep -q 'true'
+  readiness-probe.sh: |
+    #!/bin/bash
+    # Run the proper check depending on the version
+    [[ $(mongod -version | grep "db version") =~ ([0-9]+\.[0-9]+\.[0-9]+) ]] && VERSION=${BASH_REMATCH[1]}
+    . /opt/bitnami/scripts/libversion.sh
+    VERSION_MAJOR="$(get_sematic_version "$VERSION" 1)"
+    VERSION_MINOR="$(get_sematic_version "$VERSION" 2)"
+    VERSION_PATCH="$(get_sematic_version "$VERSION" 3)"
+    if [[ "$VERSION_MAJOR" -ge 5 ]] || [[ "$VERSION_MAJOR" -ge 4 ]] && [[ "$VERSION_MINOR" -ge 4 ]] && [[ "$VERSION_PATCH" -ge 2 ]]; then
+        mongosh $TLS_OPTIONS --port $MONGODB_PORT_NUMBER --eval 'db.hello().isWritablePrimary || db.hello().secondary' | grep -q 'true'
+    else
+        mongosh  $TLS_OPTIONS --port $MONGODB_PORT_NUMBER --eval 'db.isMaster().ismaster || db.isMaster().secondary' | grep -q 'true'
+    fi
+  ping-mongodb.sh: |
+    #!/bin/bash
+    mongosh  $TLS_OPTIONS --port $MONGODB_PORT_NUMBER --eval "db.adminCommand('ping')"
+---
+# Source: dynamoai/charts/dynamoai-base/charts/mongodb/templates/replicaset/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-name-mongodb-scripts
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: mongodb
+    helm.sh/chart: mongodb-12.1.16
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "5.0.9"
+    app.kubernetes.io/component: mongodb
+data:
+  setup.sh: |-
+    #!/bin/bash
+
+    . /opt/bitnami/scripts/mongodb-env.sh
+    . /opt/bitnami/scripts/libfs.sh
+    . /opt/bitnami/scripts/liblog.sh
+    . /opt/bitnami/scripts/libvalidations.sh
+
+    if is_empty_value "$MONGODB_ADVERTISED_PORT_NUMBER"; then
+      export MONGODB_ADVERTISED_PORT_NUMBER="$MONGODB_PORT_NUMBER"
+    fi
+
+    info "Advertised Hostname: $MONGODB_ADVERTISED_HOSTNAME"
+    info "Advertised Port: $MONGODB_ADVERTISED_PORT_NUMBER"
+
+    # Check for existing replica set in case there is no data in the PVC
+    # This is for cases where the PVC is lost or for MongoDB caches without
+    # persistence
+    current_primary=""
+    if is_dir_empty "${MONGODB_DATA_DIR}/db"; then
+      info "Data dir empty, checking if the replica set already exists"
+      current_primary=$(mongosh admin --host "release-name-mongodb-0.release-name-mongodb-headless.default.svc.cluster.local:27017,release-name-mongodb-1.release-name-mongodb-headless.default.svc.cluster.local:27017,release-name-mongodb-2.release-name-mongodb-headless.default.svc.cluster.local:27017" --authenticationDatabase admin -u root -p $MONGODB_ROOT_PASSWORD --eval 'db.runCommand("ismaster")' | awk -F\' '/primary/ {print $2}')
+
+      if ! is_empty_value "$current_primary"; then
+        info "Detected existing primary: ${current_primary}"
+      fi
+    fi
+
+    if ! is_empty_value "$current_primary" && [[ "$MONGODB_ADVERTISED_HOSTNAME:$MONGODB_ADVERTISED_PORT_NUMBER" == "$current_primary" ]]; then
+        info "Advertised name matches current primary, configuring node as a primary"
+        export MONGODB_REPLICA_SET_MODE="primary"
+    elif ! is_empty_value "$current_primary" && [[ "$MONGODB_ADVERTISED_HOSTNAME:$MONGODB_ADVERTISED_PORT_NUMBER" != "$current_primary" ]]; then
+        info "Current primary is different from this node. Configuring the node as replica of ${current_primary}"
+        export MONGODB_REPLICA_SET_MODE="secondary"
+        export MONGODB_INITIAL_PRIMARY_HOST="${current_primary%:*}"
+        export MONGODB_INITIAL_PRIMARY_PORT_NUMBER="${current_primary#*:}"
+        export MONGODB_SET_SECONDARY_OK="yes"
+    elif [[ "$MY_POD_NAME" = "release-name-mongodb-0" ]]; then
+        info "Pod name matches initial primary pod name, configuring node as a primary"
+        export MONGODB_REPLICA_SET_MODE="primary"
+    else
+        info "Pod name doesn't match initial primary pod name, configuring node as a secondary"
+        export MONGODB_REPLICA_SET_MODE="secondary"
+        export MONGODB_INITIAL_PRIMARY_PORT_NUMBER="$MONGODB_PORT_NUMBER"
+    fi
+
+    if [[ "$MONGODB_REPLICA_SET_MODE" == "secondary" ]]; then
+        export MONGODB_INITIAL_PRIMARY_ROOT_USER="$MONGODB_ROOT_USER"
+        export MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD="$MONGODB_ROOT_PASSWORD"
+        export MONGODB_ROOT_PASSWORD=""
+        export MONGODB_EXTRA_USERNAMES=""
+        export MONGODB_EXTRA_DATABASES=""
+        export MONGODB_EXTRA_PASSWORDS=""
+        export MONGODB_ROOT_PASSWORD_FILE=""
+        export MONGODB_EXTRA_USERNAMES_FILE=""
+        export MONGODB_EXTRA_DATABASES_FILE=""
+        export MONGODB_EXTRA_PASSWORDS_FILE=""
+    fi
+
+    exec /opt/bitnami/scripts/mongodb/entrypoint.sh /opt/bitnami/scripts/mongodb/run.sh
+  setup-hidden.sh: |-
+    #!/bin/bash
+
+    . /opt/bitnami/scripts/mongodb-env.sh
+
+    echo "Advertised Hostname: $MONGODB_ADVERTISED_HOSTNAME"
+    echo "Advertised Port: $MONGODB_ADVERTISED_PORT_NUMBER"
+    echo "Configuring node as a hidden node"
+    export MONGODB_REPLICA_SET_MODE="hidden"
+    export MONGODB_INITIAL_PRIMARY_ROOT_USER="$MONGODB_ROOT_USER"
+    export MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD="$MONGODB_ROOT_PASSWORD"
+    export MONGODB_INITIAL_PRIMARY_PORT_NUMBER="$MONGODB_PORT_NUMBER"
+    export MONGODB_ROOT_PASSWORD=""
+    export MONGODB_EXTRA_USERNAMES=""
+    export MONGODB_EXTRA_DATABASES=""
+    export MONGODB_EXTRA_PASSWORDS=""
+    export MONGODB_ROOT_PASSWORD_FILE=""
+    export MONGODB_EXTRA_USERNAMES_FILE=""
+    export MONGODB_EXTRA_DATABASES_FILE=""
+    export MONGODB_EXTRA_PASSWORDS_FILE=""
+    exec /opt/bitnami/scripts/mongodb/entrypoint.sh /opt/bitnami/scripts/mongodb/run.sh
+---
+# Source: dynamoai/charts/dynamoai-base/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-realm
+data:
+  realm.json: |
+    {
+      "id": "2c7e00b2-907d-46f5-9f5e-9cd3a8747228",
+      "realm": "${DYNAMOAI_REALM_NAME}",
+      "notBefore": 0,
+      "defaultSignatureAlgorithm": "RS256",
+      "revokeRefreshToken": false,
+      "refreshTokenMaxReuse": 0,
+      "accessTokenLifespan": 300,
+      "accessTokenLifespanForImplicitFlow": 900,
+      "ssoSessionIdleTimeout": 1800,
+      "ssoSessionMaxLifespan": 36000,
+      "ssoSessionIdleTimeoutRememberMe": 0,
+      "ssoSessionMaxLifespanRememberMe": 0,
+      "offlineSessionIdleTimeout": 2592000,
+      "offlineSessionMaxLifespanEnabled": false,
+      "offlineSessionMaxLifespan": 5184000,
+      "clientSessionIdleTimeout": 0,
+      "clientSessionMaxLifespan": 0,
+      "clientOfflineSessionIdleTimeout": 0,
+      "clientOfflineSessionMaxLifespan": 0,
+      "accessCodeLifespan": 60,
+      "accessCodeLifespanUserAction": 300,
+      "accessCodeLifespanLogin": 1800,
+      "actionTokenGeneratedByAdminLifespan": 43200,
+      "actionTokenGeneratedByUserLifespan": 18000,
+      "oauth2DeviceCodeLifespan": 600,
+      "oauth2DevicePollingInterval": 5,
+      "enabled": true,
+      "sslRequired": "${DYNAMOAI_SSL_REQUIRED}",
+      "registrationAllowed": false,
+      "registrationEmailAsUsername": true,
+      "rememberMe": false,
+      "verifyEmail": false,
+      "loginWithEmailAllowed": true,
+      "duplicateEmailsAllowed": false,
+      "resetPasswordAllowed": false,
+      "editUsernameAllowed": false,
+      "bruteForceProtected": false,
+      "permanentLockout": false,
+      "maxTemporaryLockouts": 0,
+      "maxFailureWaitSeconds": 900,
+      "minimumQuickLoginWaitSeconds": 60,
+      "waitIncrementSeconds": 60,
+      "quickLoginCheckMilliSeconds": 1000,
+      "maxDeltaTimeSeconds": 43200,
+      "failureFactor": 30,
+      "defaultRole": {
+        "id": "9eb99b33-3290-41c4-a87f-bbeb03cf0438",
+        "name": "default-roles-dynamo-ai",
+        "description": "${role_default-roles}",
+        "composite": true,
+        "clientRole": false,
+        "containerId": "2c7e00b2-907d-46f5-9f5e-9cd3a8747228"
+      },
+      "requiredCredentials": ["password"],
+      "otpPolicyType": "totp",
+      "otpPolicyAlgorithm": "HmacSHA1",
+      "otpPolicyInitialCounter": 0,
+      "otpPolicyDigits": 6,
+      "otpPolicyLookAheadWindow": 1,
+      "otpPolicyPeriod": 30,
+      "otpPolicyCodeReusable": false,
+      "otpSupportedApplications": [
+        "totpAppFreeOTPName",
+        "totpAppGoogleName",
+        "totpAppMicrosoftAuthenticatorName"
+      ],
+      "localizationTexts": {},
+      "webAuthnPolicyRpEntityName": "keycloak",
+      "webAuthnPolicySignatureAlgorithms": ["ES256"],
+      "webAuthnPolicyRpId": "",
+      "webAuthnPolicyAttestationConveyancePreference": "not specified",
+      "webAuthnPolicyAuthenticatorAttachment": "not specified",
+      "webAuthnPolicyRequireResidentKey": "not specified",
+      "webAuthnPolicyUserVerificationRequirement": "not specified",
+      "webAuthnPolicyCreateTimeout": 0,
+      "webAuthnPolicyAvoidSameAuthenticatorRegister": false,
+      "webAuthnPolicyAcceptableAaguids": [],
+      "webAuthnPolicyExtraOrigins": [],
+      "webAuthnPolicyPasswordlessRpEntityName": "keycloak",
+      "webAuthnPolicyPasswordlessSignatureAlgorithms": ["ES256"],
+      "webAuthnPolicyPasswordlessRpId": "",
+      "webAuthnPolicyPasswordlessAttestationConveyancePreference": "not specified",
+      "webAuthnPolicyPasswordlessAuthenticatorAttachment": "not specified",
+      "webAuthnPolicyPasswordlessRequireResidentKey": "not specified",
+      "webAuthnPolicyPasswordlessUserVerificationRequirement": "not specified",
+      "webAuthnPolicyPasswordlessCreateTimeout": 0,
+      "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister": false,
+      "webAuthnPolicyPasswordlessAcceptableAaguids": [],
+      "webAuthnPolicyPasswordlessExtraOrigins": [],
+      "users": [
+        {
+          "id": "324beacf-1aed-410c-b309-5b053de80c70",
+          "username": "service-account-api",
+          "emailVerified": false,
+          "createdTimestamp": 1717048690670,
+          "enabled": true,
+          "totp": false,
+          "serviceAccountClientId": "api",
+          "disableableCredentialTypes": [],
+          "requiredActions": [],
+          "notBefore": 0
+        }
+      ],
+      "scopeMappings": [
+        {
+          "clientScope": "offline_access",
+          "roles": ["offline_access"]
+        }
+      ],
+      "clientScopeMappings": {
+        "account": [
+          {
+            "client": "account-console",
+            "roles": ["manage-account", "view-groups"]
+          }
+        ]
+      },
+      "clients": [
+        {
+          "id": "acd822b2-2d8b-46d3-a01a-81f6bfc65aad",
+          "clientId": "account",
+          "name": "${client_account}",
+          "rootUrl": "${authBaseUrl}",
+          "baseUrl": "/realms/dynamo-ai/account/",
+          "surrogateAuthRequired": false,
+          "enabled": true,
+          "alwaysDisplayInConsole": false,
+          "clientAuthenticatorType": "client-secret",
+          "redirectUris": ["/realms/dynamo-ai/account/*"],
+          "webOrigins": [],
+          "notBefore": 0,
+          "bearerOnly": false,
+          "consentRequired": false,
+          "standardFlowEnabled": true,
+          "implicitFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "serviceAccountsEnabled": false,
+          "publicClient": true,
+          "frontchannelLogout": false,
+          "protocol": "openid-connect",
+          "attributes": {
+            "post.logout.redirect.uris": "+"
+          },
+          "authenticationFlowBindingOverrides": {},
+          "fullScopeAllowed": false,
+          "nodeReRegistrationTimeout": 0,
+          "defaultClientScopes": [
+            "web-origins",
+            "acr",
+            "profile",
+            "roles",
+            "email"
+          ],
+          "optionalClientScopes": [
+            "address",
+            "phone",
+            "offline_access",
+            "microprofile-jwt"
+          ]
+        },
+        {
+          "id": "f6a109b2-da88-402b-b5db-074a062d6d20",
+          "clientId": "account-console",
+          "name": "${client_account-console}",
+          "rootUrl": "${authBaseUrl}",
+          "baseUrl": "/realms/dynamo-ai/account/",
+          "surrogateAuthRequired": false,
+          "enabled": true,
+          "alwaysDisplayInConsole": false,
+          "clientAuthenticatorType": "client-secret",
+          "redirectUris": ["/realms/dynamo-ai/account/*"],
+          "webOrigins": [],
+          "notBefore": 0,
+          "bearerOnly": false,
+          "consentRequired": false,
+          "standardFlowEnabled": true,
+          "implicitFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "serviceAccountsEnabled": false,
+          "publicClient": true,
+          "frontchannelLogout": false,
+          "protocol": "openid-connect",
+          "attributes": {
+            "post.logout.redirect.uris": "+",
+            "pkce.code.challenge.method": "S256"
+          },
+          "authenticationFlowBindingOverrides": {},
+          "fullScopeAllowed": false,
+          "nodeReRegistrationTimeout": 0,
+          "protocolMappers": [
+            {
+              "id": "69ae9434-64a2-4075-9e67-4ddf2925c7d2",
+              "name": "audience resolve",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-audience-resolve-mapper",
+              "consentRequired": false,
+              "config": {}
+            }
+          ],
+          "defaultClientScopes": [
+            "web-origins",
+            "acr",
+            "profile",
+            "roles",
+            "email"
+          ],
+          "optionalClientScopes": [
+            "address",
+            "phone",
+            "offline_access",
+            "microprofile-jwt"
+          ]
+        },
+        {
+          "id": "ad2fb405-81e8-4505-bb65-a9f7d7893de3",
+          "clientId": "admin-cli",
+          "name": "${client_admin-cli}",
+          "surrogateAuthRequired": false,
+          "enabled": true,
+          "alwaysDisplayInConsole": false,
+          "clientAuthenticatorType": "client-secret",
+          "redirectUris": [],
+          "webOrigins": [],
+          "notBefore": 0,
+          "bearerOnly": false,
+          "consentRequired": false,
+          "standardFlowEnabled": false,
+          "implicitFlowEnabled": false,
+          "directAccessGrantsEnabled": true,
+          "serviceAccountsEnabled": false,
+          "publicClient": true,
+          "frontchannelLogout": false,
+          "protocol": "openid-connect",
+          "attributes": {},
+          "authenticationFlowBindingOverrides": {},
+          "fullScopeAllowed": false,
+          "nodeReRegistrationTimeout": 0,
+          "defaultClientScopes": [
+            "web-origins",
+            "acr",
+            "profile",
+            "roles",
+            "email"
+          ],
+          "optionalClientScopes": [
+            "address",
+            "phone",
+            "offline_access",
+            "microprofile-jwt"
+          ]
+        },
+        {
+          "id": "1319a712-6308-440f-a584-24fa9cc6bc0d",
+          "clientId": "${DYNAMOAI_API_CLIENT_ID}",
+          "name": "API",
+          "description": "DynamoAI API client",
+          "rootUrl": "",
+          "adminUrl": "",
+          "baseUrl": "",
+          "surrogateAuthRequired": false,
+          "enabled": true,
+          "alwaysDisplayInConsole": false,
+          "clientAuthenticatorType": "client-secret",
+          "secret": "${DYNAMOAI_API_CLIENT_SECRET}",
+          "redirectUris": ["/*"],
+          "webOrigins": ["/*"],
+          "notBefore": 0,
+          "bearerOnly": false,
+          "consentRequired": false,
+          "standardFlowEnabled": true,
+          "implicitFlowEnabled": false,
+          "directAccessGrantsEnabled": true,
+          "serviceAccountsEnabled": true,
+          "authorizationServicesEnabled": true,
+          "publicClient": false,
+          "frontchannelLogout": true,
+          "protocol": "openid-connect",
+          "attributes": {
+            "client.secret.creation.time": "1717048690",
+            "oauth2.device.authorization.grant.enabled": "false",
+            "backchannel.logout.revoke.offline.tokens": "false",
+            "use.refresh.tokens": "true",
+            "oidc.ciba.grant.enabled": "false",
+            "client.use.lightweight.access.token.enabled": "false",
+            "backchannel.logout.session.required": "true",
+            "client_credentials.use_refresh_token": "false",
+            "acr.loa.map": "{}",
+            "require.pushed.authorization.requests": "false",
+            "tls.client.certificate.bound.access.tokens": "false",
+            "display.on.consent.screen": "false",
+            "token.response.type.bearer.lower-case": "false"
+          },
+          "authenticationFlowBindingOverrides": {},
+          "fullScopeAllowed": true,
+          "nodeReRegistrationTimeout": -1,
+          "protocolMappers": [
+            {
+              "id": "c4816560-ffe0-43ac-9059-7f2835ba6286",
+              "name": "Client IP Address",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usersessionmodel-note-mapper",
+              "consentRequired": false,
+              "config": {
+                "user.session.note": "clientAddress",
+                "introspection.token.claim": "true",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "clientAddress",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "cd935c9b-3f53-40bc-87fe-b9c1c6db9853",
+              "name": "Client Host",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usersessionmodel-note-mapper",
+              "consentRequired": false,
+              "config": {
+                "user.session.note": "clientHost",
+                "introspection.token.claim": "true",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "clientHost",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "f2c945ff-d6e2-4568-8d01-0cddca7ac80f",
+              "name": "Client ID",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usersessionmodel-note-mapper",
+              "consentRequired": false,
+              "config": {
+                "user.session.note": "client_id",
+                "introspection.token.claim": "true",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "client_id",
+                "jsonType.label": "String"
+              }
+            }
+          ],
+          "defaultClientScopes": [
+            "web-origins",
+            "acr",
+            "openid",
+            "profile",
+            "roles",
+            "email"
+          ],
+          "optionalClientScopes": [
+            "address",
+            "phone",
+            "offline_access",
+            "microprofile-jwt"
+          ]
+        },
+        {
+          "id": "2810300d-1ee2-440a-8e0a-262859ab2198",
+          "clientId": "broker",
+          "name": "${client_broker}",
+          "surrogateAuthRequired": false,
+          "enabled": true,
+          "alwaysDisplayInConsole": false,
+          "clientAuthenticatorType": "client-secret",
+          "redirectUris": [],
+          "webOrigins": [],
+          "notBefore": 0,
+          "bearerOnly": true,
+          "consentRequired": false,
+          "standardFlowEnabled": true,
+          "implicitFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "serviceAccountsEnabled": false,
+          "publicClient": false,
+          "frontchannelLogout": false,
+          "protocol": "openid-connect",
+          "attributes": {},
+          "authenticationFlowBindingOverrides": {},
+          "fullScopeAllowed": false,
+          "nodeReRegistrationTimeout": 0,
+          "defaultClientScopes": [
+            "web-origins",
+            "acr",
+            "profile",
+            "roles",
+            "email"
+          ],
+          "optionalClientScopes": [
+            "address",
+            "phone",
+            "offline_access",
+            "microprofile-jwt"
+          ]
+        },
+        {
+          "id": "fbdc5de6-5697-42a3-a2b1-b6d006c12dd7",
+          "clientId": "realm-management",
+          "name": "${client_realm-management}",
+          "surrogateAuthRequired": false,
+          "enabled": true,
+          "alwaysDisplayInConsole": false,
+          "clientAuthenticatorType": "client-secret",
+          "redirectUris": [],
+          "webOrigins": [],
+          "notBefore": 0,
+          "bearerOnly": true,
+          "consentRequired": false,
+          "standardFlowEnabled": true,
+          "implicitFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "serviceAccountsEnabled": false,
+          "publicClient": false,
+          "frontchannelLogout": false,
+          "protocol": "openid-connect",
+          "attributes": {},
+          "authenticationFlowBindingOverrides": {},
+          "fullScopeAllowed": false,
+          "nodeReRegistrationTimeout": 0,
+          "defaultClientScopes": [
+            "web-origins",
+            "acr",
+            "profile",
+            "roles",
+            "email"
+          ],
+          "optionalClientScopes": [
+            "address",
+            "phone",
+            "offline_access",
+            "microprofile-jwt"
+          ]
+        },
+        {
+          "id": "103cc78d-5335-46fe-bfbb-59e065f0d225",
+          "clientId": "security-admin-console",
+          "name": "${client_security-admin-console}",
+          "rootUrl": "${authAdminUrl}",
+          "baseUrl": "/admin/dynamo-ai/console/",
+          "surrogateAuthRequired": false,
+          "enabled": true,
+          "alwaysDisplayInConsole": false,
+          "clientAuthenticatorType": "client-secret",
+          "redirectUris": ["/admin/dynamo-ai/console/*"],
+          "webOrigins": ["+"],
+          "notBefore": 0,
+          "bearerOnly": false,
+          "consentRequired": false,
+          "standardFlowEnabled": true,
+          "implicitFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "serviceAccountsEnabled": false,
+          "publicClient": true,
+          "frontchannelLogout": false,
+          "protocol": "openid-connect",
+          "attributes": {
+            "post.logout.redirect.uris": "+",
+            "pkce.code.challenge.method": "S256"
+          },
+          "authenticationFlowBindingOverrides": {},
+          "fullScopeAllowed": false,
+          "nodeReRegistrationTimeout": 0,
+          "protocolMappers": [
+            {
+              "id": "79a231db-680c-4c20-95fb-77446e89f181",
+              "name": "locale",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "locale",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "locale",
+                "jsonType.label": "String"
+              }
+            }
+          ],
+          "defaultClientScopes": [
+            "web-origins",
+            "acr",
+            "profile",
+            "roles",
+            "email"
+          ],
+          "optionalClientScopes": [
+            "address",
+            "phone",
+            "offline_access",
+            "microprofile-jwt"
+          ]
+        },
+        {
+          "id": "9a2781e8-d1f8-4b7a-98f3-06a12e1d44be",
+          "clientId": "${DYNAMOAI_UI_CLIENT_ID}",
+          "name": "Dynamo AI UI",
+          "description": "Keycloak Client for DynamoAI UI",
+          "rootUrl": "",
+          "adminUrl": "",
+          "baseUrl": "",
+          "surrogateAuthRequired": false,
+          "enabled": true,
+          "alwaysDisplayInConsole": false,
+          "clientAuthenticatorType": "client-secret",
+          "redirectUris": [
+            "http://localhost:3000/*",
+            "${REDIRECT_URL_DYNAMOAI_UI}"
+          ],
+          "webOrigins": ["*"],
+          "notBefore": 0,
+          "bearerOnly": false,
+          "consentRequired": false,
+          "standardFlowEnabled": true,
+          "implicitFlowEnabled": false,
+          "directAccessGrantsEnabled": true,
+          "serviceAccountsEnabled": false,
+          "publicClient": true,
+          "frontchannelLogout": true,
+          "protocol": "openid-connect",
+          "attributes": {
+            "post.logout.redirect.uris": "${POST_LOGOUT_REDIRECT_URI}",
+            "oauth2.device.authorization.grant.enabled": "false",
+            "backchannel.logout.revoke.offline.tokens": "false",
+            "use.refresh.tokens": "true",
+            "oidc.ciba.grant.enabled": "false",
+            "client.use.lightweight.access.token.enabled": "false",
+            "backchannel.logout.session.required": "true",
+            "client_credentials.use_refresh_token": "false",
+            "acr.loa.map": "{}",
+            "require.pushed.authorization.requests": "false",
+            "tls.client.certificate.bound.access.tokens": "false",
+            "display.on.consent.screen": "false",
+            "token.response.type.bearer.lower-case": "false"
+          },
+          "authenticationFlowBindingOverrides": {},
+          "fullScopeAllowed": true,
+          "nodeReRegistrationTimeout": -1,
+          "defaultClientScopes": [
+            "web-origins",
+            "acr",
+            "openid",
+            "profile",
+            "roles",
+            "email"
+          ],
+          "optionalClientScopes": [
+            "address",
+            "phone",
+            "offline_access",
+            "microprofile-jwt"
+          ]
+        }
+      ],
+      "clientScopes": [
+        {
+          "id": "81127016-85f5-4d1b-85fe-7bb78ff680a7",
+          "name": "openid",
+          "description": "open id scope",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "true",
+            "gui.order": "",
+            "consent.screen.text": ""
+          }
+        },
+        {
+          "id": "49692dcc-bf1a-42fb-803e-64d939b9602a",
+          "name": "microprofile-jwt",
+          "description": "Microprofile - JWT built-in scope",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "false"
+          },
+          "protocolMappers": [
+            {
+              "id": "5d1ad13d-3e88-43f1-abca-34443ad1a08c",
+              "name": "upn",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "username",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "upn",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "6a3c6cad-0627-4a02-9e91-485fd5cb18a3",
+              "name": "groups",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-realm-role-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "multivalued": "true",
+                "user.attribute": "foo",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "groups",
+                "jsonType.label": "String"
+              }
+            }
+          ]
+        },
+        {
+          "id": "47b9673b-df47-49aa-95c5-5a716a79d5fd",
+          "name": "acr",
+          "description": "OpenID Connect scope for add acr (authentication context class reference) to the token",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "false",
+            "display.on.consent.screen": "false"
+          },
+          "protocolMappers": [
+            {
+              "id": "e280436c-1936-4524-a631-db9be50adea3",
+              "name": "acr loa level",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-acr-mapper",
+              "consentRequired": false,
+              "config": {
+                "id.token.claim": "true",
+                "introspection.token.claim": "true",
+                "access.token.claim": "true"
+              }
+            }
+          ]
+        },
+        {
+          "id": "059806f3-4784-472e-a30e-24afbd34a016",
+          "name": "offline_access",
+          "description": "OpenID Connect built-in scope: offline_access",
+          "protocol": "openid-connect",
+          "attributes": {
+            "consent.screen.text": "${offlineAccessScopeConsentText}",
+            "display.on.consent.screen": "true"
+          }
+        },
+        {
+          "id": "61343360-ef59-428b-946c-daf10b857738",
+          "name": "email",
+          "description": "OpenID Connect built-in scope: email",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "true",
+            "consent.screen.text": "${emailScopeConsentText}"
+          },
+          "protocolMappers": [
+            {
+              "id": "0fcc7645-1385-4122-bc04-c479c4aebafb",
+              "name": "email verified",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-property-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "emailVerified",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "email_verified",
+                "jsonType.label": "boolean"
+              }
+            },
+            {
+              "id": "0494a75a-d55f-4f58-9406-68e97aee678e",
+              "name": "email",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "email",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "email",
+                "jsonType.label": "String"
+              }
+            }
+          ]
+        },
+        {
+          "id": "892eeb7a-aef6-44c6-9345-089cfc02dab0",
+          "name": "web-origins",
+          "description": "OpenID Connect scope for add allowed web origins to the access token",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "false",
+            "display.on.consent.screen": "false",
+            "consent.screen.text": ""
+          },
+          "protocolMappers": [
+            {
+              "id": "46b1179f-bdc4-493a-b9e7-7c098588131d",
+              "name": "allowed web origins",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-allowed-origins-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "access.token.claim": "true"
+              }
+            }
+          ]
+        },
+        {
+          "id": "a8a8e254-23ff-4280-9241-e87f36dd7032",
+          "name": "phone",
+          "description": "OpenID Connect built-in scope: phone",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "true",
+            "consent.screen.text": "${phoneScopeConsentText}"
+          },
+          "protocolMappers": [
+            {
+              "id": "28c1708c-9960-4b59-8c2b-3eaa52c2efd4",
+              "name": "phone number verified",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "phoneNumberVerified",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "phone_number_verified",
+                "jsonType.label": "boolean"
+              }
+            },
+            {
+              "id": "e38d2f53-c364-40b0-baf0-34838394885c",
+              "name": "phone number",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "phoneNumber",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "phone_number",
+                "jsonType.label": "String"
+              }
+            }
+          ]
+        },
+        {
+          "id": "9c319960-c06e-4c7c-b11e-a1783093cf45",
+          "name": "profile",
+          "description": "OpenID Connect built-in scope: profile",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "true",
+            "consent.screen.text": "${profileScopeConsentText}"
+          },
+          "protocolMappers": [
+            {
+              "id": "f4af6536-7fc7-448a-a04c-5f1cf3875841",
+              "name": "picture",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "picture",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "picture",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "e123de19-a939-4d50-a1af-fc7b5f91b7dc",
+              "name": "locale",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "locale",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "locale",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "d06679ff-f592-4c20-a244-11e5379b4b6f",
+              "name": "zoneinfo",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "zoneinfo",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "zoneinfo",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "16fc9459-73a3-4c0c-8c86-a7f5af310675",
+              "name": "updated at",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "updatedAt",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "updated_at",
+                "jsonType.label": "long"
+              }
+            },
+            {
+              "id": "b4d76dcc-839f-4f54-9eaa-0004077c549b",
+              "name": "full name",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-full-name-mapper",
+              "consentRequired": false,
+              "config": {
+                "id.token.claim": "true",
+                "introspection.token.claim": "true",
+                "access.token.claim": "true",
+                "userinfo.token.claim": "true"
+              }
+            },
+            {
+              "id": "a3fa0601-0606-41eb-b05a-0d018b6c7564",
+              "name": "username",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "username",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "preferred_username",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "5d64d6d8-105c-4aed-aeba-f7a6fdbe06b4",
+              "name": "given name",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "firstName",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "given_name",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "78c00e51-c901-4c94-8dee-77f0276f2de5",
+              "name": "profile",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "profile",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "profile",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "8a262715-f0fe-477c-80a6-5724ae471a3e",
+              "name": "gender",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "gender",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "gender",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "aa401a3a-6e9f-4cdb-8355-229bfdf7ecfa",
+              "name": "birthdate",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "birthdate",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "birthdate",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "c1d3eec1-eef5-4cb7-ab0a-0f67b6ec33e0",
+              "name": "middle name",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "middleName",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "middle_name",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "d6a1b520-bac4-4570-8047-1d76f73d9aee",
+              "name": "website",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "website",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "website",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "53dae6e1-a85e-4ed0-a0f0-fe52acd76559",
+              "name": "nickname",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "nickname",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "nickname",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "c8e9caa1-132d-4ce6-a67c-302bc29a1228",
+              "name": "family name",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-attribute-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "user.attribute": "lastName",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "family_name",
+                "jsonType.label": "String"
+              }
+            }
+          ]
+        },
+        {
+          "id": "bc2ffb15-9210-48f2-b173-0e9f64f5244b",
+          "name": "role_list",
+          "description": "SAML role list",
+          "protocol": "saml",
+          "attributes": {
+            "consent.screen.text": "${samlRoleListScopeConsentText}",
+            "display.on.consent.screen": "true"
+          },
+          "protocolMappers": [
+            {
+              "id": "913754b3-a688-4467-96ea-f23a85161905",
+              "name": "role list",
+              "protocol": "saml",
+              "protocolMapper": "saml-role-list-mapper",
+              "consentRequired": false,
+              "config": {
+                "single": "false",
+                "attribute.nameformat": "Basic",
+                "attribute.name": "Role"
+              }
+            }
+          ]
+        },
+        {
+          "id": "b5c8cb5b-0401-4a45-a702-946d0e3e179f",
+          "name": "address",
+          "description": "OpenID Connect built-in scope: address",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "true",
+            "consent.screen.text": "${addressScopeConsentText}"
+          },
+          "protocolMappers": [
+            {
+              "id": "e7e98ef9-e7ff-4534-bfa0-3223f47a0860",
+              "name": "address",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-address-mapper",
+              "consentRequired": false,
+              "config": {
+                "user.attribute.formatted": "formatted",
+                "user.attribute.country": "country",
+                "introspection.token.claim": "true",
+                "user.attribute.postal_code": "postal_code",
+                "userinfo.token.claim": "true",
+                "user.attribute.street": "street",
+                "id.token.claim": "true",
+                "user.attribute.region": "region",
+                "access.token.claim": "true",
+                "user.attribute.locality": "locality"
+              }
+            }
+          ]
+        },
+        {
+          "id": "8df6e461-b913-4390-8062-7206e5fba153",
+          "name": "roles",
+          "description": "OpenID Connect scope for add user roles to the access token",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "false",
+            "display.on.consent.screen": "true",
+            "consent.screen.text": "${rolesScopeConsentText}"
+          },
+          "protocolMappers": [
+            {
+              "id": "ce8e0bc4-dc48-494c-b719-330850693747",
+              "name": "audience resolve",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-audience-resolve-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "access.token.claim": "true"
+              }
+            },
+            {
+              "id": "ead0cb10-1a4d-4946-bda2-3a96114e49ad",
+              "name": "realm roles",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-realm-role-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "multivalued": "true",
+                "user.attribute": "foo",
+                "access.token.claim": "true",
+                "claim.name": "realm_access.roles",
+                "jsonType.label": "String"
+              }
+            },
+            {
+              "id": "2f03e93a-4c1f-4c09-8bd8-9d05aa9701d0",
+              "name": "client roles",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-client-role-mapper",
+              "consentRequired": false,
+              "config": {
+                "introspection.token.claim": "true",
+                "multivalued": "true",
+                "user.attribute": "foo",
+                "access.token.claim": "true",
+                "claim.name": "resource_access.${client_id}.roles",
+                "jsonType.label": "String"
+              }
+            }
+          ]
+        }
+      ],
+      "defaultDefaultClientScopes": [
+        "role_list",
+        "profile",
+        "email",
+        "roles",
+        "web-origins",
+        "acr",
+        "openid"
+      ],
+      "defaultOptionalClientScopes": [
+        "offline_access",
+        "address",
+        "phone",
+        "microprofile-jwt"
+      ],
+      "browserSecurityHeaders": {
+        "contentSecurityPolicyReportOnly": "",
+        "xContentTypeOptions": "nosniff",
+        "referrerPolicy": "no-referrer",
+        "xRobotsTag": "none",
+        "xFrameOptions": "SAMEORIGIN",
+        "contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self'; object-src 'none';",
+        "xXSSProtection": "1; mode=block",
+        "strictTransportSecurity": "max-age=31536000; includeSubDomains"
+      },
+      "smtpServer": {},
+      "eventsEnabled": false,
+      "eventsListeners": ["jboss-logging"],
+      "enabledEventTypes": [],
+      "adminEventsEnabled": false,
+      "adminEventsDetailsEnabled": false,
+      "identityProviders": [],
+      "identityProviderMappers": [],
+      "components": {
+        "org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy": [
+          {
+            "id": "7d7f37a8-aac1-48a5-b934-21005f320900",
+            "name": "Allowed Protocol Mapper Types",
+            "providerId": "allowed-protocol-mappers",
+            "subType": "anonymous",
+            "subComponents": {},
+            "config": {
+              "allowed-protocol-mapper-types": [
+                "saml-user-property-mapper",
+                "oidc-usermodel-attribute-mapper",
+                "oidc-sha256-pairwise-sub-mapper",
+                "oidc-full-name-mapper",
+                "oidc-usermodel-property-mapper",
+                "saml-role-list-mapper",
+                "saml-user-attribute-mapper",
+                "oidc-address-mapper"
+              ]
+            }
+          },
+          {
+            "id": "12e20a42-3d31-49ca-bf5e-e3885bd217f2",
+            "name": "Max Clients Limit",
+            "providerId": "max-clients",
+            "subType": "anonymous",
+            "subComponents": {},
+            "config": {
+              "max-clients": ["200"]
+            }
+          },
+          {
+            "id": "6dba162a-cb95-4ce8-ad78-37543aeef315",
+            "name": "Allowed Client Scopes",
+            "providerId": "allowed-client-templates",
+            "subType": "authenticated",
+            "subComponents": {},
+            "config": {
+              "allow-default-scopes": ["true"]
+            }
+          },
+          {
+            "id": "12c2fb02-a96c-4971-8f17-4ee162c13b4a",
+            "name": "Allowed Protocol Mapper Types",
+            "providerId": "allowed-protocol-mappers",
+            "subType": "authenticated",
+            "subComponents": {},
+            "config": {
+              "allowed-protocol-mapper-types": [
+                "oidc-sha256-pairwise-sub-mapper",
+                "oidc-usermodel-attribute-mapper",
+                "saml-role-list-mapper",
+                "oidc-address-mapper",
+                "oidc-usermodel-property-mapper",
+                "saml-user-property-mapper",
+                "saml-user-attribute-mapper",
+                "oidc-full-name-mapper"
+              ]
+            }
+          },
+          {
+            "id": "0365b801-4d85-4854-b47e-e61da2b1a9ed",
+            "name": "Consent Required",
+            "providerId": "consent-required",
+            "subType": "anonymous",
+            "subComponents": {},
+            "config": {}
+          },
+          {
+            "id": "9bc8b254-9310-49fd-a440-a5a103d6d809",
+            "name": "Trusted Hosts",
+            "providerId": "trusted-hosts",
+            "subType": "anonymous",
+            "subComponents": {},
+            "config": {
+              "host-sending-registration-request-must-match": ["true"],
+              "client-uris-must-match": ["true"]
+            }
+          },
+          {
+            "id": "7c3bda42-9805-4ca3-84f9-dd5ee482ad57",
+            "name": "Allowed Client Scopes",
+            "providerId": "allowed-client-templates",
+            "subType": "anonymous",
+            "subComponents": {},
+            "config": {
+              "allow-default-scopes": ["true"]
+            }
+          },
+          {
+            "id": "cbef51c2-ffa7-4321-94b2-a0f79170db99",
+            "name": "Full Scope Disabled",
+            "providerId": "scope",
+            "subType": "anonymous",
+            "subComponents": {},
+            "config": {}
+          }
+        ],
+        "org.keycloak.keys.KeyProvider": [
+          {
+            "id": "32877ebc-84f0-477c-a06b-193da54de639",
+            "name": "aes-generated",
+            "providerId": "aes-generated",
+            "subComponents": {},
+            "config": {
+              "priority": ["100"]
+            }
+          },
+          {
+            "id": "6575d7d8-02a4-41d9-94cc-8b83b27a68af",
+            "name": "rsa-generated",
+            "providerId": "rsa-generated",
+            "subComponents": {},
+            "config": {
+              "priority": ["100"]
+            }
+          },
+          {
+            "id": "50fb607c-9ab1-4154-93e0-f9ee5903b89c",
+            "name": "rsa-enc-generated",
+            "providerId": "rsa-enc-generated",
+            "subComponents": {},
+            "config": {
+              "priority": ["100"],
+              "algorithm": ["RSA-OAEP"]
+            }
+          },
+          {
+            "id": "4f99a013-c0f8-463e-8fbf-f41b4e8879a8",
+            "name": "hmac-generated-hs512",
+            "providerId": "hmac-generated",
+            "subComponents": {},
+            "config": {
+              "priority": ["100"],
+              "algorithm": ["HS512"]
+            }
+          }
+        ]
+      },
+      "internationalizationEnabled": false,
+      "supportedLocales": [],
+      "authenticationFlows": [
+        {
+          "id": "74fd51e1-7e7a-417e-b074-fe47657c0c2d",
+          "alias": "Account verification options",
+          "description": "Method with which to verity the existing account",
+          "providerId": "basic-flow",
+          "topLevel": false,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "idp-email-verification",
+              "authenticatorFlow": false,
+              "requirement": "ALTERNATIVE",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticatorFlow": true,
+              "requirement": "ALTERNATIVE",
+              "priority": 20,
+              "autheticatorFlow": true,
+              "flowAlias": "Verify Existing Account by Re-authentication",
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "b24ba919-c036-4dc3-b60d-58c415364732",
+          "alias": "Browser - Conditional OTP",
+          "description": "Flow to determine if the OTP is required for the authentication",
+          "providerId": "basic-flow",
+          "topLevel": false,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "conditional-user-configured",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "auth-otp-form",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "7b60b61c-e396-46fa-98ae-74958a728e87",
+          "alias": "Direct Grant - Conditional OTP",
+          "description": "Flow to determine if the OTP is required for the authentication",
+          "providerId": "basic-flow",
+          "topLevel": false,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "conditional-user-configured",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "direct-grant-validate-otp",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "10d8bd84-d993-4669-9ff8-70f9bb67a4f6",
+          "alias": "First broker login - Conditional OTP",
+          "description": "Flow to determine if the OTP is required for the authentication",
+          "providerId": "basic-flow",
+          "topLevel": false,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "conditional-user-configured",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "auth-otp-form",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "003628be-86ef-4248-a029-ce84ae03ea6a",
+          "alias": "Handle Existing Account",
+          "description": "Handle what to do if there is existing account with same email/username like authenticated identity provider",
+          "providerId": "basic-flow",
+          "topLevel": false,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "idp-confirm-link",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticatorFlow": true,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "autheticatorFlow": true,
+              "flowAlias": "Account verification options",
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "6c3fc521-1cbd-4066-8f8e-a68684227a7a",
+          "alias": "Reset - Conditional OTP",
+          "description": "Flow to determine if the OTP should be reset or not. Set to REQUIRED to force.",
+          "providerId": "basic-flow",
+          "topLevel": false,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "conditional-user-configured",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "reset-otp",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "f77ed5a2-49f4-4635-a07f-d972ab80a854",
+          "alias": "User creation or linking",
+          "description": "Flow for the existing/non-existing user alternatives",
+          "providerId": "basic-flow",
+          "topLevel": false,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticatorConfig": "create unique user config",
+              "authenticator": "idp-create-user-if-unique",
+              "authenticatorFlow": false,
+              "requirement": "ALTERNATIVE",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticatorFlow": true,
+              "requirement": "ALTERNATIVE",
+              "priority": 20,
+              "autheticatorFlow": true,
+              "flowAlias": "Handle Existing Account",
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "399870a4-2378-42e3-a076-d21fddcf0607",
+          "alias": "Verify Existing Account by Re-authentication",
+          "description": "Reauthentication of existing account",
+          "providerId": "basic-flow",
+          "topLevel": false,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "idp-username-password-form",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticatorFlow": true,
+              "requirement": "CONDITIONAL",
+              "priority": 20,
+              "autheticatorFlow": true,
+              "flowAlias": "First broker login - Conditional OTP",
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "9bc4d43a-5415-4528-8514-754f8507b14d",
+          "alias": "browser",
+          "description": "browser based authentication",
+          "providerId": "basic-flow",
+          "topLevel": true,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "auth-cookie",
+              "authenticatorFlow": false,
+              "requirement": "ALTERNATIVE",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "auth-spnego",
+              "authenticatorFlow": false,
+              "requirement": "DISABLED",
+              "priority": 20,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "identity-provider-redirector",
+              "authenticatorFlow": false,
+              "requirement": "ALTERNATIVE",
+              "priority": 25,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticatorFlow": true,
+              "requirement": "ALTERNATIVE",
+              "priority": 30,
+              "autheticatorFlow": true,
+              "flowAlias": "forms",
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "d46ab841-2530-4823-b1bf-46c90b0213df",
+          "alias": "clients",
+          "description": "Base authentication for clients",
+          "providerId": "client-flow",
+          "topLevel": true,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "client-secret",
+              "authenticatorFlow": false,
+              "requirement": "ALTERNATIVE",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "client-jwt",
+              "authenticatorFlow": false,
+              "requirement": "ALTERNATIVE",
+              "priority": 20,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "client-secret-jwt",
+              "authenticatorFlow": false,
+              "requirement": "ALTERNATIVE",
+              "priority": 30,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "client-x509",
+              "authenticatorFlow": false,
+              "requirement": "ALTERNATIVE",
+              "priority": 40,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "2ee5cd63-9788-4b2d-99df-02bd3adab544",
+          "alias": "direct grant",
+          "description": "OpenID Connect Resource Owner Grant",
+          "providerId": "basic-flow",
+          "topLevel": true,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "direct-grant-validate-username",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "direct-grant-validate-password",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticatorFlow": true,
+              "requirement": "CONDITIONAL",
+              "priority": 30,
+              "autheticatorFlow": true,
+              "flowAlias": "Direct Grant - Conditional OTP",
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "d126236f-35ec-4d90-ab44-aa633459da12",
+          "alias": "docker auth",
+          "description": "Used by Docker clients to authenticate against the IDP",
+          "providerId": "basic-flow",
+          "topLevel": true,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "docker-http-basic-authenticator",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "ed1f3771-3eda-46a7-81f0-e8a489a700b9",
+          "alias": "first broker login",
+          "description": "Actions taken after first broker login with identity provider account, which is not yet linked to any Keycloak account",
+          "providerId": "basic-flow",
+          "topLevel": true,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticatorConfig": "review profile config",
+              "authenticator": "idp-review-profile",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticatorFlow": true,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "autheticatorFlow": true,
+              "flowAlias": "User creation or linking",
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "34cc4a59-b651-4da9-a4c7-03bb17432bf6",
+          "alias": "forms",
+          "description": "Username, password, otp and other auth forms.",
+          "providerId": "basic-flow",
+          "topLevel": false,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "auth-username-password-form",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticatorFlow": true,
+              "requirement": "CONDITIONAL",
+              "priority": 20,
+              "autheticatorFlow": true,
+              "flowAlias": "Browser - Conditional OTP",
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "4b7ce02b-493c-43e6-919c-912c01d0acd2",
+          "alias": "registration",
+          "description": "registration flow",
+          "providerId": "basic-flow",
+          "topLevel": true,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "registration-page-form",
+              "authenticatorFlow": true,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": true,
+              "flowAlias": "registration form",
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "ed388ddb-b2bd-4ea9-9a09-767f27e43224",
+          "alias": "registration form",
+          "description": "registration form",
+          "providerId": "form-flow",
+          "topLevel": false,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "registration-user-creation",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "registration-password-action",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 50,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "registration-recaptcha-action",
+              "authenticatorFlow": false,
+              "requirement": "DISABLED",
+              "priority": 60,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "registration-terms-and-conditions",
+              "authenticatorFlow": false,
+              "requirement": "DISABLED",
+              "priority": 70,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "99d7fcdd-810d-4818-90f3-6b18c813e293",
+          "alias": "reset credentials",
+          "description": "Reset credentials for a user if they forgot their password or something",
+          "providerId": "basic-flow",
+          "topLevel": true,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "reset-credentials-choose-user",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "reset-credential-email",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticator": "reset-password",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 30,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            },
+            {
+              "authenticatorFlow": true,
+              "requirement": "CONDITIONAL",
+              "priority": 40,
+              "autheticatorFlow": true,
+              "flowAlias": "Reset - Conditional OTP",
+              "userSetupAllowed": false
+            }
+          ]
+        },
+        {
+          "id": "d32d9634-0950-4213-a761-863f3160b12f",
+          "alias": "saml ecp",
+          "description": "SAML ECP Profile Authentication Flow",
+          "providerId": "basic-flow",
+          "topLevel": true,
+          "builtIn": true,
+          "authenticationExecutions": [
+            {
+              "authenticator": "http-basic-authenticator",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "autheticatorFlow": false,
+              "userSetupAllowed": false
+            }
+          ]
+        }
+      ],
+      "authenticatorConfig": [
+        {
+          "id": "e9c325fa-c638-4488-aab0-110fc012f9ef",
+          "alias": "create unique user config",
+          "config": {
+            "require.password.update.after.registration": "false"
+          }
+        },
+        {
+          "id": "b1de779f-4f63-4578-bb16-27721b14828b",
+          "alias": "review profile config",
+          "config": {
+            "update.profile.on.first.login": "missing"
+          }
+        }
+      ],
+      "requiredActions": [
+        {
+          "alias": "CONFIGURE_TOTP",
+          "name": "Configure OTP",
+          "providerId": "CONFIGURE_TOTP",
+          "enabled": true,
+          "defaultAction": false,
+          "priority": 10,
+          "config": {}
+        },
+        {
+          "alias": "TERMS_AND_CONDITIONS",
+          "name": "Terms and Conditions",
+          "providerId": "TERMS_AND_CONDITIONS",
+          "enabled": false,
+          "defaultAction": false,
+          "priority": 20,
+          "config": {}
+        },
+        {
+          "alias": "UPDATE_PASSWORD",
+          "name": "Update Password",
+          "providerId": "UPDATE_PASSWORD",
+          "enabled": true,
+          "defaultAction": false,
+          "priority": 30,
+          "config": {}
+        },
+        {
+          "alias": "UPDATE_PROFILE",
+          "name": "Update Profile",
+          "providerId": "UPDATE_PROFILE",
+          "enabled": true,
+          "defaultAction": false,
+          "priority": 40,
+          "config": {}
+        },
+        {
+          "alias": "VERIFY_EMAIL",
+          "name": "Verify Email",
+          "providerId": "VERIFY_EMAIL",
+          "enabled": true,
+          "defaultAction": false,
+          "priority": 50,
+          "config": {}
+        },
+        {
+          "alias": "delete_account",
+          "name": "Delete Account",
+          "providerId": "delete_account",
+          "enabled": false,
+          "defaultAction": false,
+          "priority": 60,
+          "config": {}
+        },
+        {
+          "alias": "webauthn-register",
+          "name": "Webauthn Register",
+          "providerId": "webauthn-register",
+          "enabled": true,
+          "defaultAction": false,
+          "priority": 70,
+          "config": {}
+        },
+        {
+          "alias": "webauthn-register-passwordless",
+          "name": "Webauthn Register Passwordless",
+          "providerId": "webauthn-register-passwordless",
+          "enabled": true,
+          "defaultAction": false,
+          "priority": 80,
+          "config": {}
+        },
+        {
+          "alias": "VERIFY_PROFILE",
+          "name": "Verify Profile",
+          "providerId": "VERIFY_PROFILE",
+          "enabled": true,
+          "defaultAction": false,
+          "priority": 90,
+          "config": {}
+        },
+        {
+          "alias": "delete_credential",
+          "name": "Delete Credential",
+          "providerId": "delete_credential",
+          "enabled": true,
+          "defaultAction": false,
+          "priority": 100,
+          "config": {}
+        },
+        {
+          "alias": "update_user_locale",
+          "name": "Update User Locale",
+          "providerId": "update_user_locale",
+          "enabled": true,
+          "defaultAction": false,
+          "priority": 1000,
+          "config": {}
+        }
+      ],
+      "browserFlow": "browser",
+      "registrationFlow": "registration",
+      "directGrantFlow": "direct grant",
+      "resetCredentialsFlow": "reset credentials",
+      "clientAuthenticationFlow": "clients",
+      "dockerAuthenticationFlow": "docker auth",
+      "firstBrokerLoginFlow": "first broker login",
+      "attributes": {
+        "cibaBackchannelTokenDeliveryMode": "poll",
+        "cibaAuthRequestedUserHint": "login_hint",
+        "oauth2DevicePollingInterval": "5",
+        "clientOfflineSessionMaxLifespan": "0",
+        "clientSessionIdleTimeout": "0",
+        "actionTokenGeneratedByUserLifespan.verify-email": "",
+        "actionTokenGeneratedByUserLifespan.idp-verify-account-via-email": "",
+        "clientOfflineSessionIdleTimeout": "0",
+        "actionTokenGeneratedByUserLifespan.execute-actions": "",
+        "cibaInterval": "5",
+        "realmReusableOtpCode": "false",
+        "cibaExpiresIn": "120",
+        "oauth2DeviceCodeLifespan": "600",
+        "parRequestUriLifespan": "60",
+        "clientSessionMaxLifespan": "0",
+        "shortVerificationUri": "",
+        "actionTokenGeneratedByUserLifespan.reset-credentials": ""
+      },
+      "keycloakVersion": "24.0.4",
+      "userManagedAccessAllowed": false,
+      "clientProfiles": {
+        "profiles": []
+      },
+      "clientPolicies": {
+        "policies": []
+      }
+    }
+---
+# Source: dynamoai/charts/dynamoai-dynamoguard/templates/default-models/toxicity/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dynamoai-dot-1-6b-config
+  labels:
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+data:
+  host: "dynamoai-dot-1-6b.default.svc.cluster.local"
+  port: "80"
+  address: "dynamoai-dot-1-6b.default.svc.cluster.local:80"
+---
+# Source: dynamoai/charts/dynamoai-dynamoguard/templates/moderation/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dynamoai-moderation-config
+  labels:
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+data:
+  host: "dynamoai-moderation.default.svc.cluster.local"
+  port: "2344"
+  address: "dynamoai-moderation.default.svc.cluster.local:2344"
+---
+# Source: dynamoai/charts/dynamoai-base/charts/minio/templates/pvc.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: minio
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: minio
+    app.kubernetes.io/version: 2024.6.4
+    helm.sh/chart: minio-14.6.5
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "10Gi"
+  storageClassName: standard
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-api/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dynamoai-api
+  labels:
+    helm.sh/chart: dynamoai-api-0.1.10
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-api-0.1.10
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: api
+  selector:
+    app: dynamoai-api
+    helm.sh/chart: dynamoai-api-0.1.10
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-metrics-server/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dynamoai-metrics-server
+  labels:
+    helm.sh/chart: dynamoai-metrics-server-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-metrics-server-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9090
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: dynamoai-metrics-server
+    helm.sh/chart: dynamoai-metrics-server-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-redis/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dynamoai-redis
+  labels:
+    helm.sh/chart: dynamoai-redis-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-redis-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
+  selector:
+    app: dynamoai-redis
+    helm.sh/chart: dynamoai-redis-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-ui/templates/ui/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dynamoai-ui
+  labels:
+    helm.sh/chart: dynamoai-ui-0.1.6
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-ui-0.1.6
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: ui
+  selector:
+    app: dynamoai-ui
+    helm.sh/chart: dynamoai-ui-0.1.6
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/charts/postgresql/templates/primary/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-postgresql-hl
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.2
+    app.kubernetes.io/component: primary
+  annotations:
+    # Use this annotation in addition to the actual publishNotReadyAddresses
+    # field below because the annotation will stop being respected soon but the
+    # field is broken in some versions of Kubernetes:
+    # https://github.com/kubernetes/kubernetes/issues/58662
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  # We want all pods in the StatefulSet to have their addresses published for
+  # the sake of the other Postgresql pods even before they're ready, since they
+  # have to be able to talk to each other in order to become ready.
+  publishNotReadyAddresses: true
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/component: primary
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/charts/postgresql/templates/primary/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-postgresql
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.2
+    app.kubernetes.io/component: primary
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+      nodePort: null
+  selector:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/component: primary
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/templates/headless-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dynamoai-base-keycloak-headless
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/version: 24.0.5
+    helm.sh/chart: keycloak-21.4.0
+    app.kubernetes.io/component: keycloak
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: http
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/component: keycloak
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dynamoai-base-keycloak
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/version: 24.0.5
+    helm.sh/chart: keycloak-21.4.0
+    app.kubernetes.io/component: keycloak
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+      nodePort: null
+  selector:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/component: keycloak
+---
+# Source: dynamoai/charts/dynamoai-base/charts/minio/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: minio
+    app.kubernetes.io/version: 2024.6.4
+    helm.sh/chart: minio-14.6.5
+spec:
+  type: ClusterIP
+  ports:
+    - name: minio-api
+      port: 9000
+      targetPort: minio-api
+      nodePort: null
+    - name: minio-console
+      port: 9001
+      targetPort: minio-console
+      nodePort: null
+  selector:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: minio
+---
+# Source: dynamoai/charts/dynamoai-base/charts/mongodb/templates/arbiter/headless-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-mongodb-arbiter-headless
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: mongodb
+    helm.sh/chart: mongodb-12.1.16
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "5.0.9"
+    app.kubernetes.io/component: arbiter
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: tcp-mongodb
+      port: 27017
+      targetPort: mongodb
+  selector:
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: arbiter
+---
+# Source: dynamoai/charts/dynamoai-base/charts/mongodb/templates/replicaset/headless-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dynamoai-mongodb-headless
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: mongodb
+    helm.sh/chart: mongodb-12.1.16
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "5.0.9"
+    app.kubernetes.io/component: mongodb
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: "mongodb"
+      port: 27017
+      targetPort: mongodb
+  selector:
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: mongodb
+---
+# Source: dynamoai/charts/dynamoai-dynamoguard/templates/default-models/toxicity/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dynamoai-dot-1-6b
+  labels:
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8000
+      protocol: TCP
+      name: toxicity
+  selector:
+    app: dynamoai-dot-1-6b
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: dynamoai/charts/dynamoai-dynamoguard/templates/moderation/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dynamoai-moderation
+  labels:
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 2344
+      targetPort: 2344
+      protocol: TCP
+      name: moderation
+  selector:
+    app: dynamoai-moderation
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-api/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dynamoai-api
+  labels:
+    app: dynamoai-api
+    helm.sh/chart: dynamoai-api-0.1.10
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-api-0.1.10
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+spec:
+  selector:
+    matchLabels:
+      app: dynamoai-api
+      app.kubernetes.io/name: dynamoai
+      app.kubernetes.io/instance: release-name
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dynamoai-api
+        helm.sh/chart: dynamoai-api-0.1.10
+        app.kubernetes.io/name: dynamoai
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/part-of: dynamoai
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        helm.sh/chart: dynamoai-api-0.1.10
+        app.kubernetes.io/name: dynamoai
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/part-of: dynamoai
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/owned-by: "dynamoai"
+    spec:
+      serviceAccountName: dynamoai-service-account
+      containers:
+        - name: api
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: 'metadata.name'
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: 'metadata.namespace'
+            - name: PROJECTS_BUCKET
+              value: dynamofl-projects
+            - name: PORT
+              value: "3000"
+            - name: NATS_ENABLED
+              value: "true"
+            - name: NATS_SERVER
+              value: nats://dynamoai-base-nats:4222
+            - name: PG_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-postgres-secret
+                  key: host
+            - name: PG_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-postgres-secret
+                  key: name
+            - name: PG_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-postgres-secret
+                  key: username
+            - name: PG_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-postgres-secret
+                  key: password
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-mongodb-secret
+                  key: host
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-mongodb-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-mongodb-secret
+                  key: password
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-mongodb-secret
+                  key: port
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-common-secret
+                  key: openai_api_key
+            - name: DEFAULT_USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-common-secret
+                  key: default_user_password
+            - name: DEFAULT_USER_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-common-secret
+                  key: default_user_email
+            - name: DEFAULT_USER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-common-secret
+                  key: default_user_api_key
+            - name: PLATFORM_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-common-secret
+                  key: platform_admin_password
+            - name: LICENSE
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-common-secret
+                  key: license
+            - name: SERVICE_USER_API_KEY_MAP
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-common-secret
+                  key: service_user_api_key_map
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-redis-secret
+                  key: host
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-redis-secret
+                  key: port
+            - name: TEST_REPORT_GENERATION_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: dynamoai-common-config
+                  key: testReportGenerationEnabled
+            - name: REMOTE_MODEL_CONFIG_VALIDATION_API_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: dynamoai-common-config
+                  key: remoteModelConfigValidationApiEnabled
+            - name: HUGGINGFACE_API_REQUESTS_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: dynamoai-common-config
+                  key: huggingfaceApiRequestsEnabled
+            - name: RATE_LIMIT_DYNAMO_GUARD
+              valueFrom:
+                configMapKeyRef:
+                  name: dynamoai-common-config
+                  key: rateLimitDynamoGuard
+            - name: RATE_LIMIT_DYNAMO_EVAL
+              valueFrom:
+                configMapKeyRef:
+                  name: dynamoai-common-config
+                  key: rateLimitDynamoEval
+            - name: PBAC_SAFETY_MODE_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: dynamoai-common-config
+                  key: pbacSafetyModeEnabled
+            - name: COGNITO_USER_POOL_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: dynamoai-common-config
+                  key: cognitoUserPoolId
+            - name: COGNITO_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: dynamoai-common-config
+                  key: cognitoClientId
+            - name: PENTEST_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: dynamoai-common-config
+                  key: bucketName
+            - name: CORS_RULE
+              valueFrom:
+                configMapKeyRef:
+                  name: dynamoai-common-config
+                  key: corsRule
+            - name: AWS_DEFAULT_REGION
+              value: "us-east-1"
+            - name: MODERATOR_WORKER_ASYNC_ENDPOINT
+              value: "dynamoai-moderation.default.svc.cluster.local:2344"
+            # TODO: move the below env vars to _helpers.tpl
+            - name: PROJECTS_BUCKET
+              value: dynamofl-projects
+            - name: KEYCLOAK_REALM
+              value: dynamo-ai
+            - name: KEYCLOAK_API_CLIENT_ID
+              value: api
+            - name: KEYCLOAK_BASE_URL
+              value: http://dynamoai-base-keycloak
+            - name: KEYCLOAK_API_CLIENT_SECRET
+              value: g9ooZUkCOaiHfrnCBPvkrUQejSJfMd9p
+            - name: API_AUTH_MODE
+              value: keycloak-and-key
+            - name: S3_ENDPOINT
+              value: http://3.236.212.119:8083
+            - name: AWS_ENDPOINT_URL_S3
+              value: http://3.236.212.119:8083
+            - name: AWS_ACCESS_KEY_ID
+              value: root
+            - name: AWS_SECRET_ACCESS_KEY
+              value: 31lb4EK8u4kv
+            - name: CORS_RULE
+              value: allow-all
+          envFrom:
+            - configMapRef:
+                name: dynamoai-proxy-config
+          image: "docker-cto-dev.artifactrepo-dev.nam.nsroot.net/icg_msst_eap_ee/dynamofl_v4/api:80de73a"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              ephemeral-storage: 20Gi
+              memory: 1000Mi
+            requests:
+              cpu: 500m
+              ephemeral-storage: 20Gi
+              memory: 1000Mi
+          volumeMounts:
+      restartPolicy: Always
+      volumes:
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              app: dynamoai-api
+          maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-metrics-server/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dynamoai-metrics-server
+  labels:
+    app: dynamoai-metrics-server
+    helm.sh/chart: dynamoai-metrics-server-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-metrics-server-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+spec:
+  selector:
+    matchLabels:
+      app: dynamoai-metrics-server
+      app.kubernetes.io/name: dynamoai
+      app.kubernetes.io/instance: release-name
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dynamoai-metrics-server
+        helm.sh/chart: dynamoai-metrics-server-0.1.1
+        app.kubernetes.io/name: dynamoai
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/part-of: dynamoai
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        helm.sh/chart: dynamoai-metrics-server-0.1.1
+        app.kubernetes.io/name: dynamoai
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/part-of: dynamoai
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/owned-by: "dynamoai"
+    spec:
+      serviceAccountName: dynamoai-service-account
+      containers:
+        - name: metrics-server
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: 'metadata.name'
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: 'metadata.namespace'
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-redis-secret
+                  key: host
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-redis-secret
+                  key: port
+          envFrom:
+            - configMapRef:
+                name: dynamoai-proxy-config
+          image: "docker-cto-dev.artifactrepo-dev.nam.nsroot.net/icg_msst_eap_ee/dynamofl_v4/metrics:80de73a"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 9090
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              memory: 32Mi
+          volumeMounts:
+      volumes:
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              app: dynamoai-metrics-server
+          maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-redis/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dynamoai-redis
+  labels:
+    app: dynamoai-redis
+    helm.sh/chart: dynamoai-redis-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-redis-0.1.1
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+spec:
+  selector:
+    matchLabels:
+      app: dynamoai-redis
+      app.kubernetes.io/name: dynamoai
+      app.kubernetes.io/instance: release-name
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dynamoai-redis
+        helm.sh/chart: dynamoai-redis-0.1.1
+        app.kubernetes.io/name: dynamoai
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/part-of: dynamoai
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        helm.sh/chart: dynamoai-redis-0.1.1
+        app.kubernetes.io/name: dynamoai
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/part-of: dynamoai
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/owned-by: "dynamoai"
+    spec:
+      serviceAccountName: dynamoai-service-account
+      containers:
+        - name: redis
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: 'metadata.name'
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: 'metadata.namespace'
+          envFrom:
+            - configMapRef:
+                name: dynamoai-proxy-config
+          image: "docker-cto-dev.artifactrepo-dev.nam.nsroot.net/icg_msst_eap_ee/dynamofl_v5/redis:7.2-alpine"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 6379
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 20m
+              memory: 64Mi
+            requests:
+              cpu: 10m
+              memory: 32Mi
+          volumeMounts:
+      volumes:
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              app: dynamoai-redis
+          maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+---
+# Source: dynamoai/charts/dynamoai-base/charts/dynamoai-ui/templates/ui/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dynamoai-ui
+  labels:
+    app: dynamoai-ui
+    helm.sh/chart: dynamoai-ui-0.1.6
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-ui-0.1.6
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+spec:
+  selector:
+    matchLabels:
+      app: dynamoai-ui
+      app.kubernetes.io/name: dynamoai
+      app.kubernetes.io/instance: release-name
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dynamoai-ui
+        helm.sh/chart: dynamoai-ui-0.1.6
+        app.kubernetes.io/name: dynamoai
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/part-of: dynamoai
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        helm.sh/chart: dynamoai-ui-0.1.6
+        app.kubernetes.io/name: dynamoai
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/part-of: dynamoai
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/owned-by: "dynamoai"
+    spec:
+      serviceAccountName: dynamoai-service-account
+      containers:
+        - name: ui
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: 'metadata.name'
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: 'metadata.namespace'
+            - name: DFL_UI_USERPOOL_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: dynamoai-common-config
+                  key: cognitoUserPoolId
+            - name: DFL_UI_USERPOOL_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: dynamoai-common-config
+                  key: cognitoClientId
+            - name: DFL_UI_BASEURL
+              value: http://3.236.212.119:8082
+            - name: DFL_KEYCLOAK_REALM
+              value: 'dynamo-ai'
+            - name: DFL_KEYCLOAK_UI_CLIENT_ID
+              value: 'ui'
+            - name: DFL_KEYCLOAK_BASE_URL
+              value: http://3.236.212.119:8081
+          image: "docker-cto-dev.artifactrepo-dev.nam.nsroot.net/icg_msst_eap_ee/dynamofl_v4/ui:80de73a"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 200m
+              memory: 500Mi
+            requests:
+              cpu: 200m
+              memory: 500Mi
+          volumeMounts:
+      volumes:
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              app: dynamoai-ui
+          maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+---
+# Source: dynamoai/charts/dynamoai-base/charts/minio/templates/standalone/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: minio
+    app.kubernetes.io/version: 2024.6.4
+    helm.sh/chart: minio-14.6.5
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: minio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: minio
+        app.kubernetes.io/version: 2024.6.4
+        helm.sh/chart: minio-14.6.5
+      annotations:
+        checksum/credentials-secret: c392802c9c2f21c64f44a1af7d4724ab29d20e7d312204c00c087173c608c6f0
+    spec:
+      
+      imagePullSecrets:
+        - name: citi-docker
+      serviceAccountName: minio
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: release-name
+                    app.kubernetes.io/name: minio
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      automountServiceAccountToken: false
+      containers:
+        - name: minio
+          image: docker-cto-dev.artifactrepo-dev.nam.nsroot.net/icg_msst_eap_ee/dynamofl_v4/minio:80de73a
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MINIO_SCHEME
+              value: "http"
+            - name: MINIO_FORCE_NEW_KEYS
+              value: "no"
+            - name: MINIO_API_PORT_NUMBER
+              value: "9000"
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: minio
+                  key: root-user
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: minio
+                  key: root-password
+            - name: MINIO_DEFAULT_BUCKETS
+              value: pentest-bucketprojects-bucket
+            - name: MINIO_BROWSER
+              value: "on"
+            - name: MINIO_PROMETHEUS_AUTH_TYPE
+              value: "public"
+            - name: MINIO_CONSOLE_PORT_NUMBER
+              value: "9001"
+            - name: MINIO_DATA_DIR
+              value: "/bitnami/minio/data"
+            - name: MINIO_SERVER_URL
+              value: http://3.236.212.119:8083
+            - name: MINIO_BROWSER_REDIRECT_URL
+              value: http://3.236.212.119:8083
+          envFrom:
+          ports:
+            - name: minio-api
+              containerPort: 9000
+              protocol: TCP
+            - name: minio-console
+              containerPort: 9001
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: minio-api
+              scheme: "HTTP"
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            tcpSocket:
+              port: minio-api
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+          resources:
+            limits:
+              cpu: 375m
+              ephemeral-storage: 1024Mi
+              memory: 384Mi
+            requests:
+              cpu: 250m
+              ephemeral-storage: 50Mi
+              memory: 256Mi
+          volumeMounts:
+            - name: empty-dir
+              mountPath: /tmp
+              subPath: tmp-dir
+            - name: empty-dir
+              mountPath: /opt/bitnami/minio/tmp
+              subPath: app-tmp-dir
+            - name: empty-dir
+              mountPath: /.mc
+              subPath: app-mc-dir
+            - name: data
+              mountPath: /bitnami/minio/data
+      volumes:
+        - name: empty-dir
+          emptyDir: {}
+        - name: data
+          persistentVolumeClaim:
+            claimName: minio
+---
+# Source: dynamoai/charts/dynamoai-dynamoguard/templates/default-models/toxicity/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dynamoai-dot-1-6b
+  labels:
+    app: dynamoai-dot-1-6b
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+    has_metrics_endpoint: "true"
+spec:
+  selector:
+    matchLabels:
+      app: dynamoai-dot-1-6b
+      app.kubernetes.io/name: dynamoai
+      app.kubernetes.io/instance: release-name
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dynamoai-dot-1-6b
+        helm.sh/chart: dynamoai-dynamoguard-0.1.13
+        app.kubernetes.io/name: dynamoai
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/part-of: dynamoai
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        helm.sh/chart: dynamoai-dynamoguard-0.1.13
+        app.kubernetes.io/name: dynamoai
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/part-of: dynamoai
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/owned-by: "dynamoai"
+        has_metrics_endpoint: "true"
+    spec:
+      serviceAccountName: dynamoai-service-account
+      containers:
+        - name: dot-1-6b
+          args: []
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: 'metadata.name'
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: 'metadata.namespace'
+            - name: MODEL_PATH
+              value: "dynamofl/Llama-2-7b-chat-hf-toxicity-mv3-pv3-fv2-kto"
+            - name: MODEL_NAME
+              value: "dynamofl/Llama-2-7b-chat-hf-toxicity-mv3-pv3-fv2-kto"
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-common-secret
+                  key: hf_token
+            - name: NUM_GPUS
+              value: "1"
+            - name: MAX_MODEL_LEN
+              value: "16384"
+          envFrom:
+            - configMapRef:
+                name: dynamoai-proxy-config
+          image: "docker-cto-dev.artifactrepo-dev.nam.nsroot.net/icg_msst_eap_ee/dynamofl_v5/dfl_vllm:release-3169-dev"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "8"
+              ephemeral-storage: 50Gi
+              memory: 30Gi
+              nvidia.com/gpu: "1"
+            requests:
+              cpu: "6"
+              ephemeral-storage: 30Gi
+              memory: 20Gi
+              nvidia.com/gpu: "1"
+          volumeMounts:
+            - name: api-key-secret-volume
+              mountPath: /var/secrets
+              readOnly: true
+          startupProbe: 
+            failureThreshold: 120
+            httpGet: 
+              path: '/health'
+              port: 'http'
+              scheme: 'HTTP'
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+      restartPolicy: Always
+      volumes:
+        - name: api-key-secret-volume
+          secret:
+            secretName: dynamoai-apikeys-secret
+      tolerations:
+        - effect: NoSchedule
+          key: nvidia.com/gpu
+          operator: Exists
+        - effect: NoSchedule
+          key: gpu-type
+          operator: Equal
+          value: a10g
+      nodeSelector:
+        beta.kubernetes.io/instance-type: g5.2xlarge
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              app: dynamoai-api
+          maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+---
+# Source: dynamoai/charts/dynamoai-dynamoguard/templates/moderation/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dynamoai-moderation
+  labels:
+    app: dynamoai-moderation
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    helm.sh/chart: dynamoai-dynamoguard-0.1.13
+    app.kubernetes.io/name: dynamoai
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/part-of: dynamoai
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/owned-by: "dynamoai"
+spec:
+  selector:
+    matchLabels:
+      app: dynamoai-moderation
+      app.kubernetes.io/name: dynamoai
+      app.kubernetes.io/instance: release-name
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dynamoai-moderation
+        helm.sh/chart: dynamoai-dynamoguard-0.1.13
+        app.kubernetes.io/name: dynamoai
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/part-of: dynamoai
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        helm.sh/chart: dynamoai-dynamoguard-0.1.13
+        app.kubernetes.io/name: dynamoai
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/part-of: dynamoai
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/owned-by: "dynamoai"
+    spec:
+      serviceAccountName: dynamoai-service-account
+      containers:
+        - name: moderation
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: 'metadata.name'
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: 'metadata.namespace'
+            - name: NUM_WORKERS
+              value: "1"
+            - name: K8_MODELS_NAMESPACE
+              value: default
+            - name: LEGAL_ADVICE_MODEL
+              value: "dynamofl/Llama-2-7b-chat-hf-legal-advice-mv3-pv2-fv2"
+            - name: PROMPT_INJECTION_MODEL
+              value: "dynamofl/Llama-2-7b-chat-hf-prompt-injection-mv3-pv1-fv2"
+            - name: INPUT_TOXICITY_MODEL
+              value: "dynamofl/Llama-2-7b-chat-hf-toxicity-mv3-pv3-fv2-kto"
+            - name: DYNAMO_DATA_GENERATION_MODEL
+              value: "mistral/open-mixtral-8x22b"
+            - name: PROMPT_INJECTION_HOST
+              value: dynamoai-prompt-injection.default.svc.cluster.local
+            - name: LEGAL_ADVICE_HOST
+              value: dynamoai-legal-advice.default.svc.cluster.local
+            - name: HALLUCINATION_ENTAILMENT_HOST
+              value: dynamoai-hallucination-entailment.default.svc.cluster.local
+            - name: HALLUCINATION_RAG_HOST
+              value: dynamoai-hallucination-rag.default.svc.cluster.local
+            - name: PII_REDACTION_HOST
+              value: dynamoai-pii-redaction.default.svc.cluster.local
+            - name: TOXICITY_HOST
+              value: dynamoai-dot-1-6b.default.svc.cluster.local
+            - name: LORAX_HOST
+              value: dynamoai-lorax.default.svc.cluster.local
+            - name: AZURE_API_VERSION
+              value: "2024-02-01"
+            - name: DYNAMO_DATA_GENERATION_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-common-secret
+                  key: data_generation_api_key
+            - name: OTEL_METRIC_EXPORT_INTERVAL
+              value: "10000"
+          image: "docker-cto-dev.artifactrepo-dev.nam.nsroot.net/icg_msst_eap_ee/dynamofl_v5/moderation:release-3169-dev"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 2344
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 1
+              memory: 2000Mi
+              ephemeral-storage: 10Gi
+            limits:
+              cpu: 2
+              memory: 2000Mi
+              ephemeral-storage: 20Gi
+          volumeMounts:
+            - name: api-key-secret-volume
+              mountPath: /var/secrets
+              readOnly: true
+          startupProbe: 
+            failureThreshold: 120
+            httpGet: 
+              path: '/ping'
+              port: 'http'
+              scheme: 'HTTP'
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+      restartPolicy: Always
+      volumes:
+        - name: api-key-secret-volume
+          secret:
+            secretName: dynamoai-apikeys-secret
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              app: dynamoai-api
+          maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/charts/postgresql/templates/primary/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: release-name-postgresql
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.2
+    app.kubernetes.io/component: primary
+spec:
+  replicas: 1
+  serviceName: release-name-postgresql-hl
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/component: primary
+  template:
+    metadata:
+      name: release-name-postgresql
+      labels:
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: postgresql
+        app.kubernetes.io/version: 16.3.0
+        helm.sh/chart: postgresql-15.5.2
+        app.kubernetes.io/component: primary
+    spec:
+      serviceAccountName: release-name-postgresql
+      
+      imagePullSecrets:
+        - name: citi-docker
+      automountServiceAccountToken: false
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: release-name
+                    app.kubernetes.io/name: postgresql
+                    app.kubernetes.io/component: primary
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      hostNetwork: false
+      hostIPC: false
+      containers:
+        - name: postgresql
+          image: docker-cto-dev.artifactrepo-dev.nam.nsroot.net/icg_msst_eap_ee/dynamofl_v5/postgres:16.2
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: POSTGRESQL_PORT_NUMBER
+              value: "5432"
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/bitnami/postgresql"
+            - name: PGDATA
+              value: "/bitnami/postgresql/data"
+            # Authentication
+            - name: POSTGRES_USER
+              value: "dynamoai"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-postgresql
+                  key: password
+            - name: POSTGRES_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-postgresql
+                  key: postgres-password
+            - name: POSTGRES_DATABASE
+              value: "keycloak"
+            # Replication
+            # Initdb
+            # Standby
+            # LDAP
+            - name: POSTGRESQL_ENABLE_LDAP
+              value: "no"
+            # TLS
+            - name: POSTGRESQL_ENABLE_TLS
+              value: "no"
+            # Audit
+            - name: POSTGRESQL_LOG_HOSTNAME
+              value: "false"
+            - name: POSTGRESQL_LOG_CONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_LOG_DISCONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+              value: "off"
+            # Others
+            - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+              value: "error"
+            - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+              value: "pgaudit"
+          ports:
+            - name: tcp-postgresql
+              containerPort: 5432
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "dynamoai" -d "dbname=keycloak" -h 127.0.0.1 -p 5432
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                - |
+                  exec pg_isready -U "dynamoai" -d "dbname=keycloak" -h 127.0.0.1 -p 5432
+          resources:
+            limits:
+              cpu: 150m
+              ephemeral-storage: 1024Mi
+              memory: 192Mi
+            requests:
+              cpu: 100m
+              ephemeral-storage: 50Mi
+              memory: 128Mi
+          volumeMounts:
+            - name: empty-dir
+              mountPath: /tmp
+              subPath: tmp-dir
+            - name: empty-dir
+              mountPath: /opt/bitnami/postgresql/conf
+              subPath: app-conf-dir
+            - name: empty-dir
+              mountPath: /opt/bitnami/postgresql/tmp
+              subPath: app-tmp-dir
+            - name: dshm
+              mountPath: /dev/shm
+            - name: data
+              mountPath: /bitnami/postgresql
+      volumes:
+        - name: empty-dir
+          emptyDir: {}
+        - name: dshm
+          emptyDir:
+            medium: Memory
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: dynamoai-base-keycloak
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/version: 24.0.5
+    helm.sh/chart: keycloak-21.4.0
+    app.kubernetes.io/component: keycloak
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  podManagementPolicy: Parallel
+  serviceName: dynamoai-base-keycloak-headless
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: keycloak
+      app.kubernetes.io/component: keycloak
+  template:
+    metadata:
+      annotations:
+        checksum/configmap-env-vars: 6c357fec525a72a20c0920bf0e532b2645dfefee8f38972f6593089ff8af6d01
+        checksum/secrets: 695d9fc5800f6c64c406b4ac948d9c7ab19b99c4756355a52ba14d09ec0c4d0d
+      labels:
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: keycloak
+        app.kubernetes.io/version: 24.0.5
+        helm.sh/chart: keycloak-21.4.0
+        app.kubernetes.io/component: keycloak
+    spec:
+      serviceAccountName: dynamoai-base-keycloak
+      
+      imagePullSecrets:
+        - name: citi-docker
+      automountServiceAccountToken: true
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: release-name
+                    app.kubernetes.io/name: keycloak
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      enableServiceLinks: true
+      initContainers:
+        - name: init-quarkus-directory
+          image: docker-cto-dev.artifactrepo-dev.nam.nsroot.net/icg_msst_eap_ee/dynamofl_v4/keycloak:80de73a
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+          args:
+            - -ec
+            - |
+              #!/bin/bash
+              cp -r /opt/bitnami/keycloak/lib/quarkus/* /quarkus
+          resources:
+            limits:
+              cpu: 750m
+              ephemeral-storage: 1024Mi
+              memory: 768Mi
+            requests:
+              cpu: 500m
+              ephemeral-storage: 50Mi
+              memory: 512Mi
+          volumeMounts:
+            - name: empty-dir
+              mountPath: /tmp
+              subPath: tmp-dir
+            - name: empty-dir
+              mountPath: /quarkus
+              subPath: app-quarkus-dir
+      containers:
+        - name: keycloak
+          image: docker-cto-dev.artifactrepo-dev.nam.nsroot.net/icg_msst_eap_ee/dynamofl_v4/keycloak:80de73a
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dynamoai-base-keycloak
+                  key: admin-password
+            - name: KEYCLOAK_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-postgresql
+                  key: password
+            - name: KEYCLOAK_HTTP_RELATIVE_PATH
+              value: "/"
+            - name: KC_HOSTNAME_ADMIN_URL
+              value: "http://dev.dynamofl.com"
+            - name: KC_HOSTNAME_URL
+              value: "http://dev.dynamofl.com"
+            - name: DYNAMOAI_REALM_NAME
+              value: dynamo-ai
+            - name: DYNAMOAI_API_CLIENT_ID
+              value: api
+            - name: DYNAMOAI_UI_CLIENT_ID
+              value: ui
+            - name: DYNAMOAI_SSL_REQUIRED
+              value: none
+            - name: DYNAMOAI_API_CLIENT_SECRET
+              value: g9ooZUkCOaiHfrnCBPvkrUQejSJfMd9p
+            - name: DYNAMOAI_UI_DOMAIN
+              value: http://3.236.212.119:8080
+            - name: REDIRECT_URL_DYNAMOAI_UI
+              value: http://3.236.212.119:8080/*
+            - name: POST_LOGOUT_REDIRECT_URI
+              value: http://3.236.212.119:8080/*
+            - name: KEYCLOAK_EXTRA_ARGS
+              value: --hostname-url=http://3.236.212.119:8081 --hostname-admin-url=http://3.236.212.119:8081
+                --import-realm
+          envFrom:
+            - configMapRef:
+                name: dynamoai-base-keycloak-env-vars
+          resources:
+            limits:
+              cpu: 750m
+              ephemeral-storage: 1024Mi
+              memory: 768Mi
+            requests:
+              cpu: 500m
+              ephemeral-storage: 50Mi
+              memory: 512Mi
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: discovery
+              containerPort: 7800
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 300
+            periodSeconds: 1
+            successThreshold: 1
+            timeoutSeconds: 5
+            tcpSocket:
+              port: http
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+            httpGet:
+              path: /realms/master
+              port: http
+          volumeMounts:
+            - name: empty-dir
+              mountPath: /tmp
+              subPath: tmp-dir
+            - name: empty-dir
+              mountPath: /opt/bitnami/keycloak/conf
+              subPath: app-conf-dir
+            - name: empty-dir
+              mountPath: /opt/bitnami/keycloak/lib/quarkus
+              subPath: app-quarkus-dir
+            - name: empty-dir
+              mountPath: /opt/bitnami/keycloak/data
+              subPath: app-data-dir
+            - mountPath: /opt/bitnami/keycloak/data/import
+              name: keycloak-realm-config
+              readOnly: true
+      volumes:
+        - name: empty-dir
+          emptyDir: {}
+        - configMap:
+            items:
+            - key: realm.json
+              path: realm.json
+            name: keycloak-realm
+          name: keycloak-realm-config
+---
+# Source: dynamoai/charts/dynamoai-base/charts/mongodb/templates/arbiter/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: release-name-mongodb-arbiter
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: mongodb
+    helm.sh/chart: mongodb-12.1.16
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "5.0.9"
+    app.kubernetes.io/component: arbiter
+spec:
+  serviceName: release-name-mongodb-arbiter-headless
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mongodb
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/component: arbiter
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mongodb
+        helm.sh/chart: mongodb-12.1.16
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/version: "5.0.9"
+        app.kubernetes.io/component: arbiter
+    spec:
+      
+      imagePullSecrets:
+        - name: citi-docker
+      serviceAccountName: release-name-mongodb
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: release-name
+                    app.kubernetes.io/name: mongodb
+                    app.kubernetes.io/component: arbiter
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      
+      initContainers:
+      containers:
+        - name: mongodb-arbiter
+          image: docker-cto-dev.artifactrepo-dev.nam.nsroot.net/icg_msst_eap_ee/dynamofl_v5/mongodb:5.0
+          imagePullPolicy: "Always"
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: K8S_SERVICE_NAME
+              value: "release-name-mongodb-arbiter-headless"
+            - name: MONGODB_REPLICA_SET_MODE
+              value: "arbiter"
+            - name: MONGODB_INITIAL_PRIMARY_HOST
+              value: release-name-mongodb-0.dynamoai-mongodb-headless.$(MY_POD_NAMESPACE).svc.cluster.local
+            - name: MONGODB_REPLICA_SET_NAME
+              value: "rs0"
+            - name: MONGODB_ADVERTISED_HOSTNAME
+              value: "$(MY_POD_NAME).$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local"
+            - name: MONGODB_PORT_NUMBER
+              value: "27017"
+            - name: MONGODB_INITIAL_PRIMARY_ROOT_USER
+              value: "root"
+            - name: MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-mongodb
+                  key: mongodb-root-password
+            - name: MONGODB_REPLICA_SET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-mongodb
+                  key: mongodb-replica-set-key
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "no"
+          ports:
+            - containerPort: 27017
+              name: mongodb
+          livenessProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 10
+            tcpSocket:
+              port: mongodb
+          readinessProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 10
+            tcpSocket:
+              port: mongodb
+          resources:
+            limits: {}
+            requests: {}
+---
+# Source: dynamoai/charts/dynamoai-base/charts/mongodb/templates/replicaset/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: release-name-mongodb
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: mongodb
+    helm.sh/chart: mongodb-12.1.16
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "5.0.9"
+    app.kubernetes.io/component: mongodb
+spec:
+  serviceName: dynamoai-mongodb-headless
+  podManagementPolicy: OrderedReady
+  replicas: 3
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mongodb
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/component: mongodb
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mongodb
+        helm.sh/chart: mongodb-12.1.16
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/version: "5.0.9"
+        app.kubernetes.io/component: mongodb
+    spec:
+      
+      imagePullSecrets:
+        - name: citi-docker
+      serviceAccountName: release-name-mongodb
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: release-name
+                    app.kubernetes.io/name: mongodb
+                    app.kubernetes.io/component: mongodb
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: mongodb
+          maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+      
+      containers:
+        - name: mongodb
+          image: docker-cto-dev.artifactrepo-dev.nam.nsroot.net/icg_msst_eap_ee/dynamofl_v5/mongodb:5.0
+          imagePullPolicy: "Always"
+          command:
+            - /scripts/setup.sh
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: MY_POD_HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: K8S_SERVICE_NAME
+              value: "dynamoai-mongodb-headless"
+            - name: MONGODB_INITIAL_PRIMARY_HOST
+              value: release-name-mongodb-0.$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local
+            - name: MONGODB_REPLICA_SET_NAME
+              value: "rs0"
+            - name: MONGODB_ADVERTISED_HOSTNAME
+              value: "$(MY_POD_NAME).$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local"
+            - name: MONGODB_ROOT_USER
+              value: "root"
+            - name: MONGODB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-mongodb
+                  key: mongodb-root-password
+            - name: MONGODB_REPLICA_SET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-mongodb
+                  key: mongodb-replica-set-key
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "no"
+            - name: MONGODB_SYSTEM_LOG_VERBOSITY
+              value: "0"
+            - name: MONGODB_DISABLE_SYSTEM_LOG
+              value: "no"
+            - name: MONGODB_DISABLE_JAVASCRIPT
+              value: "no"
+            - name: MONGODB_ENABLE_JOURNAL
+              value: "yes"
+            - name: MONGODB_PORT_NUMBER
+              value: "27017"
+            - name: MONGODB_ENABLE_IPV6
+              value: "no"
+            - name: MONGODB_ENABLE_DIRECTORY_PER_DB
+              value: "no"
+          ports:
+            - name: mongodb
+              containerPort: 27017
+          livenessProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 10
+            exec:
+              command:
+                - /bitnami/scripts/ping-mongodb.sh
+          readinessProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 10
+            exec:
+              command:
+                - /bitnami/scripts/readiness-probe.sh
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+            requests:
+              cpu: 500m
+              memory: 1000Mi
+          volumeMounts:
+            - name: datadir
+              mountPath: /bitnami/mongodb
+              subPath: 
+            - name: common-scripts
+              mountPath: /bitnami/scripts
+            - name: scripts
+              mountPath: /scripts/setup.sh
+              subPath: setup.sh
+            
+      volumes:
+        - name: common-scripts
+          configMap:
+            name: release-name-mongodb-common-scripts
+            defaultMode: 0550
+        - name: scripts
+          configMap:
+            name: release-name-mongodb-scripts
+            defaultMode: 0755
+  volumeClaimTemplates:
+    - metadata:
+        name: datadir
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+        storageClassName: standard
+---
+# Source: dynamoai/charts/dynamoai-base/charts/keycloak/templates/admin-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dynamoai-base-keycloak-admin
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/version: 24.0.5
+    helm.sh/chart: keycloak-21.4.0
+    app.kubernetes.io/component: keycloak
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - host: "dev.dynamofl.com"
+      http:
+        paths:
+          - path: /keycloak/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: dynamoai-base-keycloak
+                port:
+                  name: http
