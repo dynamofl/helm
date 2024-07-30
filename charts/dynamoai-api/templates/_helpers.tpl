@@ -153,7 +153,7 @@ Common environment variables used in all Dynamo AI services, including secrets a
   valueFrom:
     secretKeyRef:
       name: {{ .Values.global.secrets.postgres }}
-      key: keycloackDbName
+      key: keycloakDbName
 - name: KEYCLOAK_DB_USERNAME
   valueFrom:
     secretKeyRef:
