@@ -86,9 +86,9 @@ spec:
           env:
             {{- include "dynamoai.commonEnv" $ | nindent 12 }}
             {{- include "dynamoai.dbMigrationsJobEnv" $ | nindent 12 }}
-            {{- with .env }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: init-components-config
           image: {{ .image.registry }}/{{ .image.repository }}:{{ .image.tag }}
           imagePullPolicy: {{ .image.pullPolicy }}
       {{- end }}
