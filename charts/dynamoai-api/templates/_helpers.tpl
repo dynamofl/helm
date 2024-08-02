@@ -118,18 +118,7 @@ Common environment variables used in all Dynamo AI services.
 {{/*
 Common environment variables used in all Dynamo AI services, including secrets and config map values.
 */}}
-{{- define "dynamoai.apiEnv" -}}
-- name: PROJECTS_BUCKET
-  value: dynamofl-projects
-- name: PORT
-  value: "{{ .Values.api.port }}"
-{{- if .Values.api.natsEnv.enabled }}
-- name: NATS_ENABLED
-  value: "true"
-- name: NATS_SERVER
-  value: {{ .Values.api.natsEnv.serverUrl }}
-{{- end }}
-{{- if .Values.global.secrets.postgres }}
+{{- define "dynamoai.dbMigrationsJobEnv" -}}
 - name: PG_DB_HOST
   valueFrom:
     secretKeyRef:
@@ -150,7 +139,49 @@ Common environment variables used in all Dynamo AI services, including secrets a
     secretKeyRef:
       name: {{ .Values.global.secrets.postgres }}
       key: password
+- name: PG_DB_PORT
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: port
+- name: KEYCLOAK_DB_HOST
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: host
+- name: KEYCLOAK_DB_NAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: keycloakDbName
+- name: KEYCLOAK_DB_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: username
+- name: KEYCLOAK_DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: password
+- name: KEYCLOAK_DB_PORT
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: port
 {{- end }}
+{{- define "dynamoai.apiEnv" -}}
+- name: PROJECTS_BUCKET
+  value: dynamofl-projects
+- name: PORT
+  value: "{{ .Values.api.port }}"
+{{- if .Values.api.natsEnv.enabled }}
+- name: NATS_ENABLED
+  value: "true"
+- name: NATS_SERVER
+  value: {{ .Values.api.natsEnv.serverUrl }}
+{{- end }}
+{{ include "dynamoai.dbMigrationsJobEnv" . }}
 {{- if .Values.global.secrets.mongodb }}
 - name: DB_HOST
   valueFrom:
@@ -275,4 +306,25 @@ Common environment variables used in all Dynamo AI services, including secrets a
 - name: MODERATOR_WORKER_ASYNC_ENDPOINT
   value: "{{ include "dynamoai.fullname" . }}-moderation.{{ if and .Values.global.dynamoguardnamespace (ne .Values.global.dynamoguardnamespace "") }}{{ .Values.global.dynamoguardnamespace }}{{ else }}{{ .Release.Namespace }}{{ end }}.svc.cluster.local:2344"
 
+{{- end }}
+
+{{- define "dynamoai.init.apiEnv" -}}
+{
+  {{- if .Values.dbMigrationsJob }}
+  "pgDB": {
+    "host": "$(PG_DB_HOST)",
+    "user": "$(PG_DB_USERNAME)",
+    "password": "$(PG_DB_PASSWORD)",
+    "database": "$(PG_DB_NAME)",
+    "port": "$(PG_DB_PORT)",
+    "dbMigrationJobName": "{{ .Values.dbMigrationsJob.name }}",
+    "namespace": "$(NAMESPACE)"
+  },
+  {{- end }}
+  {{- if .Values.api.keycloakEnv }}
+  "keycloak": {
+    "baseUrl": "{{- range .Values.api.keycloakEnv }}{{ if eq .name "KEYCLOAK_BASE_URL" }}{{ .value }}{{ end }}{{- end }}"
+  }
+  {{- end }}
+}
 {{- end }}

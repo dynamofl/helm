@@ -670,26 +670,26 @@ keycloak:
       value: "true"
 
   postgresql:
-    enabled: true
-    auth:
-      username: dynamoai
-      password: ''
-      database: keycloak
-      postgresPassword: '' # psql admin password
-      # existingSecret: dynamoai-keycloak-psql-db-secret # password for "postgres" admin user
-      architecture: standalone
+    enabled: false
+  #   auth:
+  #     username: dynamoai
+  #     password: ''
+  #     database: keycloak
+  #     postgresPassword: '' # psql admin password
+  #     # existingSecret: dynamoai-keycloak-psql-db-secret # password for "postgres" admin user
+  #     architecture: standalone
 
 
   ####
   # To use an existing psql DB in cluster, uncomment the following:
   ####
-  # externalDatabase:
-  #   database: keycloak # DB name for keycloak
-  #   existingSecret: dynamoai-postgres-secret
-  #   existingSecretHostKey: host
-  #   existingSecretPortKey: port
-  #   existingSecretUserKey: username
-  #   existingSecretPasswordKey: password
+  externalDatabase:
+    database: keycloak # DB name for keycloak
+    existingSecret: dynamoai-postgres-secret
+    existingSecretHostKey: host
+    existingSecretPortKey: port
+    existingSecretUserKey: username
+    existingSecretPasswordKey: password
 
 nats:
   enabled: false
