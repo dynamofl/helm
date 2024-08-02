@@ -169,19 +169,23 @@ Common environment variables used in all Dynamo AI services, including secrets a
     secretKeyRef:
       name: {{ .Values.global.secrets.postgres }}
       key: port
+- name: IS_KEYCLOAK_ENABLED
+  value: {{ if eq .Values.api.authProvider "keycloak" }}"true"{{ else }}"false"{{ end }}
 {{- end }}
 {{- define "dynamoai.apiEnv" -}}
 - name: PROJECTS_BUCKET
   value: dynamofl-projects
 - name: PORT
   value: "{{ .Values.api.port }}"
+- name: IS_AUDIT_LOGGING_ENABLED
+  value: "true"
+{{ include "dynamoai.dbMigrationsJobEnv" . }}
 {{- if .Values.api.natsEnv.enabled }}
 - name: NATS_ENABLED
   value: "true"
 - name: NATS_SERVER
   value: {{ .Values.api.natsEnv.serverUrl }}
 {{- end }}
-{{ include "dynamoai.dbMigrationsJobEnv" . }}
 {{- if .Values.global.secrets.mongodb }}
 - name: DB_HOST
   valueFrom:
