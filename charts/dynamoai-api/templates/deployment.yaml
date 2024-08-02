@@ -84,9 +84,11 @@ spec:
       {{- range .Values.api.initContainers }}
         - name: {{ .name }}
           env:
-          {{- with .env }}
+            {{- include "dynamoai.commonEnv" $ | nindent 12 }}
+            {{- include "dynamoai.dbMigrationsJobEnv" $ | nindent 12 }}
+            {{- with .env }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- end }}
           image: {{ .image.registry }}/{{ .image.repository }}:{{ .image.tag }}
           imagePullPolicy: {{ .image.pullPolicy }}
       {{- end }}
