@@ -17,4 +17,5 @@ kind: ConfigMap
 metadata:
   name: init-components-config
 data:
-  init-config-json: {{ include "dynamoai.init.apiEnv" . | indent 4 }}
+  init-config-json: |-
+    {{ include "dynamoai.init.apiEnv" . | indent 4 }}
