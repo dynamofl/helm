@@ -171,6 +171,8 @@ Common environment variables used in all Dynamo AI services, including secrets a
       key: port
 - name: IS_KEYCLOAK_ENABLED
   value: {{ if eq .Values.api.authProvider "keycloak" }}"true"{{ else }}"false"{{ end }}
+- name: DB_MIGRATION_JOB_NAME
+  value: "{{ include "dynamoai.fullname" . }}-{{ .Values.dbMigrationsJob.name }}"
 {{- end }}
 {{- define "dynamoai.apiEnv" -}}
 - name: PROJECTS_BUCKET
@@ -310,25 +312,4 @@ Common environment variables used in all Dynamo AI services, including secrets a
 - name: MODERATOR_WORKER_ASYNC_ENDPOINT
   value: "{{ include "dynamoai.fullname" . }}-moderation.{{ if and .Values.global.dynamoguardnamespace (ne .Values.global.dynamoguardnamespace "") }}{{ .Values.global.dynamoguardnamespace }}{{ else }}{{ .Release.Namespace }}{{ end }}.svc.cluster.local:2344"
 
-{{- end }}
-
-{{- define "dynamoai.init.apiEnv" -}}
-{
-  {{- if .Values.dbMigrationsJob }}
-  "pgDB": {
-    "host": "$(PG_DB_HOST)",
-    "user": "$(PG_DB_USERNAME)",
-    "password": "$(PG_DB_PASSWORD)",
-    "database": "$(PG_DB_NAME)",
-    "port": "$(PG_DB_PORT)",
-    "dbMigrationJobName": "{{ .Values.dbMigrationsJob.name }}",
-    "namespace": "$(NAMESPACE)"
-  },
-  {{- end }}
-  {{- if .Values.api.keycloakEnv }}
-  "keycloak": {
-    "baseUrl": "{{- range .Values.api.keycloakEnv }}{{ if eq .name "KEYCLOAK_BASE_URL" }}{{ .value }}{{ end }}{{- end }}"
-  }
-  {{- end }}
-}
 {{- end }}
