@@ -80,6 +80,16 @@ spec:
             {{- with .Values.api.extraVolumeMounts }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
+      initContainers:
+      {{- range .Values.api.initContainers }}
+        - name: {{ .name }}
+          env:
+          {{- with .env }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: {{ .image.registry }}/{{ .image.repository }}:{{ .image.tag }}
+          imagePullPolicy: {{ .image.pullPolicy }}
+      {{- end }}
       restartPolicy: Always
       volumes:
         {{- with .Values.api.extraVolumes }}
