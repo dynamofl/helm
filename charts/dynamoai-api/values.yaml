@@ -153,12 +153,6 @@ api:
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
   initContainers:
     - name: init-checkers
-      env:
-        - name: INIT_COMPONENTS_CONFIG
-          valueFrom:
-            configMapKeyRef:
-              name: init-components-config
-              key: init-config-json
       image:
         registry: "docker.io"
         repository: "dynamoai/init-checkers"
