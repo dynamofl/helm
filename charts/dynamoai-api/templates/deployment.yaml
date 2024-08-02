@@ -86,8 +86,8 @@ spec:
           env:
             {{- include "dynamoai.commonEnv" $ | nindent 12 }}
             {{- include "dynamoai.dbMigrationsJobEnv" $ | nindent 12 }}
-            {{- if eq .Values.api.authProvider "keycloak" }}
-              {{- with .Values.api.keycloakEnv }}
+            {{- if eq $.Values.api.authProvider "keycloak" }}
+              {{- with $.Values.api.keycloakEnv }}
               {{- toYaml . | nindent 12 }}
               {{- end }}
             {{- end }}
