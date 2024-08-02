@@ -18,4 +18,4 @@ metadata:
   name: init-components-config
 data:
   init-config-json: |-
-    {{ include "dynamoai.init.apiEnv" . | indent 4 }}
+    {{ include "dynamoai.init.apiEnv" . | nindent 4 }}
