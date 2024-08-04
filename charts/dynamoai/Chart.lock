@@ -1,0 +1,12 @@
+dependencies:
+- name: dynamoai-base
+  repository: file://../charts/dynamoai-base
+  version: 0.1.19
+- name: dynamoai-dynamoguard
+  repository: file://../charts/dynamoai-dynamoguard
+  version: 0.1.13
+- name: dynamoai-dynamoeval
+  repository: file://../charts/dynamoai-dynamoeval
+  version: 0.1.3
+digest: sha256:540b07962da8a3a8a8378f757ab11489f5e049513c7050028735e1b646f3f505
+generated: "2024-07-29T20:50:49.002059-07:00"

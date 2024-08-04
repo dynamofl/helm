@@ -15,19 +15,19 @@ dependencies:
   repository: https://nats-io.github.io/k8s/helm/charts/
   version: 0.25.2
 - name: dynamoai-core
-  repository: https://documentation.dynamofl.com/helm
+  repository: file://../dynamoai-core
   version: 0.1.5
 - name: dynamoai-api
-  repository: https://documentation.dynamofl.com/helm
-  version: 0.1.8
+  repository: file://../dynamoai-api
+  version: 0.1.10
 - name: dynamoai-ui
-  repository: https://documentation.dynamofl.com/helm
-  version: 0.1.5
+  repository: file://../dynamoai-ui
+  version: 0.1.6
 - name: dynamoai-redis
-  repository: https://documentation.dynamofl.com/helm
+  repository: file://../dynamoai-redis
   version: 0.1.1
 - name: dynamoai-metrics-server
-  repository: https://documentation.dynamofl.com/helm
+  repository: file://../dynamoai-metrics-server
   version: 0.1.1
-digest: sha256:2b6d3e545135a6869c1acff80f2d4dc2fbc86e58a32900d45e7c166af7e92105
-generated: "2024-07-22T09:29:00.056949-07:00"
+digest: sha256:811c99750910fbb1e8db23620e867da024db0728927a3b28ec61a5f123c257bd
+generated: "2024-07-29T20:41:13.873437-07:00"
