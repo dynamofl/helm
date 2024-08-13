@@ -118,18 +118,7 @@ Common environment variables used in all Dynamo AI services.
 {{/*
 Common environment variables used in all Dynamo AI services, including secrets and config map values.
 */}}
-{{- define "dynamoai.apiEnv" -}}
-- name: PROJECTS_BUCKET
-  value: dynamofl-projects
-- name: PORT
-  value: "{{ .Values.api.port }}"
-{{- if .Values.api.natsEnv.enabled }}
-- name: NATS_ENABLED
-  value: "true"
-- name: NATS_SERVER
-  value: {{ .Values.api.natsEnv.serverUrl }}
-{{- end }}
-{{- if .Values.global.secrets.postgres }}
+{{- define "dynamoai.dbMigrationsJobEnv" -}}
 - name: PG_DB_HOST
   valueFrom:
     secretKeyRef:
@@ -150,6 +139,54 @@ Common environment variables used in all Dynamo AI services, including secrets a
     secretKeyRef:
       name: {{ .Values.global.secrets.postgres }}
       key: password
+- name: PG_DB_PORT
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: port
+- name: KEYCLOAK_DB_HOST
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: host
+- name: KEYCLOAK_DB_NAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: keycloakDbName
+- name: KEYCLOAK_DB_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: username
+- name: KEYCLOAK_DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: password
+- name: KEYCLOAK_DB_PORT
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.postgres }}
+      key: port
+- name: IS_KEYCLOAK_ENABLED
+  value: {{ if eq .Values.api.authProvider "keycloak" }}"true"{{ else }}"false"{{ end }}
+- name: DB_MIGRATION_JOB_NAME
+  value: "{{ include "dynamoai.fullname" . }}-{{ .Values.dbMigrationsJob.name }}"
+{{- end }}
+{{- define "dynamoai.apiEnv" -}}
+- name: PROJECTS_BUCKET
+  value: dynamofl-projects
+- name: PORT
+  value: "{{ .Values.api.port }}"
+- name: IS_AUDIT_LOGGING_ENABLED
+  value: "true"
+{{ include "dynamoai.dbMigrationsJobEnv" . }}
+{{- if .Values.api.natsEnv.enabled }}
+- name: NATS_ENABLED
+  value: "true"
+- name: NATS_SERVER
+  value: {{ .Values.api.natsEnv.serverUrl }}
 {{- end }}
 {{- if .Values.global.secrets.mongodb }}
 - name: DB_HOST

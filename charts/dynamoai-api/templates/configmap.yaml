@@ -11,4 +11,3 @@ data:
   domain: "http://{{ .Values.api.ingress.host }}/api"
   port: "{{ .Values.api.service.port }}"
   address: "{{ include "dynamoai.fullname" . }}-{{ .Values.api.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.api.service.port }}"
-

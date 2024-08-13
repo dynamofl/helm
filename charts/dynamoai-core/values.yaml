@@ -64,6 +64,8 @@ secrets:
     username: ""
     password: ""
     name: ""
+    keycloakDbName: ""
+
   mongodb:
     host: ""
     port: ""
