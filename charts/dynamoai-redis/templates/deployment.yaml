@@ -52,7 +52,7 @@ spec:
             - configMapRef:
                 name: {{ .Values.global.config.proxy }}
           {{- end }}
-          image: "{{ .Values.redis.image.registry }}/{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}"
+          image: "{{ if .Values.global.azure.images.redis.registry }}{{ .Values.global.azure.images.redis.registry }}/{{ .Values.global.azure.images.redis.image }}:{{ .Values.global.azure.images.redis.tag }}{{ else }}{{ .Values.redis.image.registry }}/{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}{{ end }}"
           imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
           ports:
             - name: http

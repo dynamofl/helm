@@ -2,6 +2,20 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 global:
+  azure:
+    images:
+      apiInitCheckers:
+        registry: "abc"
+        image: "def"
+        tag: "123"
+      api:
+        registry: "abc"
+        image: "def"
+        tag: "123"
+      dbMigrations:
+        registry: "abc"
+        image: "def"
+        tag: "123"
   dynamoguardnamespace: ""
   nameOverride: "dynamoai"
   fullnameOverride: "dynamoai"
@@ -16,6 +30,13 @@ global:
     common: dynamoai-common-config
     proxy: dynamoai-proxy-config
   awsRegion: "us-east-1"
+
+initCheckers:
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/api"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
 
 api:
   enabled: true
@@ -151,20 +172,7 @@ api:
 
   ## Init containers to run before the main container starts.
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
-  initContainers:
-    - name: init-checkers
-      image:
-        registry: "docker.io"
-        repository: "dynamoai/init-checkers"
-        tag: "0.0.1"
-        pullPolicy: "IfNotPresent"
-  topologySpreadConstraints:
-    - maxSkew: 1
-      topologyKey: "kubernetes.io/hostname"
-      whenUnsatisfiable: "ScheduleAnyway"
-      labelSelector:
-        matchLabels:
-          app: dynamoai-api
+  initContainers: []
 
 dbMigrationsJob:
   name: "db-migrations-job"

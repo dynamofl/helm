@@ -68,7 +68,7 @@ spec:
             - configMapRef:
                 name: {{ .Values.global.config.proxy }}
           {{- end }}
-          image: "{{ .Values.api.image.registry }}/{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
+          image: "{{ if .Values.global.azure.images.api.registry }}{{ .Values.global.azure.images.api.registry }}/{{ .Values.global.azure.images.api.image }}:{{ .Values.global.azure.images.api.tag }}{{ else }}{{ .Values.api.image.registry }}/{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}{{ end }}"
           imagePullPolicy: {{ .Values.api.image.pullPolicy }}
           ports:
             - name: http
@@ -81,6 +81,15 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
       initContainers:
+        - name: init-checkers
+          env:
+            - name: INIT_COMPONENTS_CONFIG
+              valueFrom:
+                configMapKeyRef:
+                  name: init-components-config
+                  key: init-config-json
+          image: "{{ if .Values.global.azure.images.apiInitCheckers.registry }}{{ .Values.global.azure.images.apiInitCheckers.registry }}/{{ .Values.global.azure.images.apiInitCheckers.image }}:{{ .Values.global.azure.images.apiInitCheckers.tag }}{{ else }}{{ .Values.initCheckers.image.registry }}/{{ .Values.initCheckers.image.repository }}:{{ .Values.initCheckers.image.tag }}{{ end }}"
+          imagePullPolicy: {{ .Values.initCheckers.image.pullPolicy | default "IfNotPresent" }}
       {{- range .Values.api.initContainers }}
         - name: {{ .name }}
           env:

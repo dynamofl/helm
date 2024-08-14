@@ -53,7 +53,7 @@ spec:
             - configMapRef:
                 name: {{ .Values.global.config.proxy }}
           {{- end }}
-          image: "{{ .Values.metricsServer.image.registry }}/{{ .Values.metricsServer.image.repository }}:{{ .Values.metricsServer.image.tag }}"
+          image: "{{ if .Values.global.azure.images.metricsServer.registry }}{{ .Values.global.azure.images.metricsServer.registry }}/{{ .Values.global.azure.images.metricsServer.image }}:{{ .Values.global.azure.images.metricsServer.tag }}{{ else }}{{ .Values.metricsServer.image.registry }}/{{ .Values.metricsServer.image.repository }}:{{ .Values.metricsServer.image.tag }}{{ end }}"
           imagePullPolicy: {{ .Values.metricsServer.image.pullPolicy }}
           ports:
             - name: http
