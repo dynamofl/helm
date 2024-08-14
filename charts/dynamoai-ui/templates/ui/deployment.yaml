@@ -48,7 +48,7 @@ spec:
             {{- with .Values.ui.extraEnv }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
-          image: "{{ .Values.ui.image.registry }}/{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}"
+          image: "{{ if .Values.global.azure.images.ui.registry }}{{ .Values.global.azure.images.ui.registry }}/{{ .Values.global.azure.images.ui.image }}:{{ .Values.global.azure.images.ui.tag }}{{ else }}{{ .Values.ui.image.registry }}/{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}{{ end }}"
           imagePullPolicy: {{ .Values.ui.image.pullPolicy }}
           ports:
             - name: http
