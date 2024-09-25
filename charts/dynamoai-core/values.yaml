@@ -51,6 +51,8 @@ secrets:
     dataGenerationApiKey: ""
     hfToken: ""
   apikeys:
+    guard:
+      - "abc"
     openai:
       - "abc"
     mistral: 
