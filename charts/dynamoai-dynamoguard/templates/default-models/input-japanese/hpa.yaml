@@ -1,0 +1,36 @@
+{{- if and .Values.inputJapanese.enabled .Values.inputJapanese.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "dynamoai.fullname" . }}-{{ .Values.inputJapanese.name }}
+  labels:
+    app: {{ .Values.inputJapanese.name }}
+    {{- include "dynamoai.labels" . | nindent 4 }}
+    {{- with .Values.inputJapanese.hpa.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "dynamoai.fullname" . }}-{{ .Values.inputJapanese.name }}
+  minReplicas: {{ .Values.inputJapanese.hpa.minReplicas }}
+  maxReplicas: {{ .Values.inputJapanese.hpa.maxReplicas }}
+  metrics:
+    {{- if .Values.inputJapanese.hpa.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.inputJapanese.hpa.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.inputJapanese.hpa.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.inputJapanese.hpa.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}

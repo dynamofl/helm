@@ -16,13 +16,16 @@ global:
     common: dynamoai-common-config
     proxy: dynamoai-proxy-config
     api: dynamoai-api-config
-  awsRegion:  "us-east-1"
+  awsRegion: "us-east-1"
 
 models:
   legalAdvice:
     name: ""
     path: ""
   promptInjection:
+    name: ""
+    path: ""
+  inputJapanese:
     name: ""
     path: ""
   piiRedaction:
@@ -57,7 +60,8 @@ promptInjection:
   podAnnotations: {}
   podLabels: {}
 
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
 
   containerArgs: []
@@ -72,16 +76,15 @@ promptInjection:
 
   resources:
     limits:
-      cpu: '8'
-      memory: '30Gi'
-      ephemeral-storage: '50Gi'
-      'nvidia.com/gpu': '1'
+      cpu: "8"
+      memory: "30Gi"
+      ephemeral-storage: "50Gi"
+      "nvidia.com/gpu": "1"
     requests:
-      cpu: '6'
-      memory: '20Gi'
-      ephemeral-storage: '30Gi'
-      'nvidia.com/gpu': '1'
-
+      cpu: "6"
+      memory: "20Gi"
+      ephemeral-storage: "30Gi"
+      "nvidia.com/gpu": "1"
 
   podDisruptionBudget:
     enabled: true
@@ -104,6 +107,114 @@ promptInjection:
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
   extraEnv: []
 
+  # Extra volumes to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
+  extraVolumes: []
+
+  # Extra volume mounts to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumemount-v1-core
+  extraVolumeMounts: []
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector:
+    "beta.kubernetes.io/instance-type": "g5.2xlarge"
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations:
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "gpu-type"
+      operator: "Equal"
+      value: a10g
+      effect: "NoSchedule"
+
+  ## Affinity for pod assignment (evaluated as template)
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  affinity: {}
+
+  ## Init containers to run before the main container starts.
+  ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+  initContainers: []
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "ScheduleAnyway"
+      labelSelector:
+        matchLabels:
+          app: dynamoai-api
+
+inputJapanese:
+  enabled: true
+  name: input-japanese
+  maxLength: 16384
+  replicaCount: 1
+  numWorkers: 8
+  port: 8000
+  useShm: false
+
+  image:
+    registry: "docker.io"
+    repository: "dynamoai/vllm"
+    tag: "0.0.1"
+    pullPolicy: "IfNotPresent"
+
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext:
+    {}
+    # fsGroup: 2000
+
+  containerArgs: []
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  annotations:
+    has_metrics_endpoint: "true"
+  labels: {}
+
+  resources:
+    limits:
+      cpu: "8"
+      memory: "30Gi"
+      ephemeral-storage: "50Gi"
+      "nvidia.com/gpu": "1"
+    requests:
+      cpu: "6"
+      memory: "20Gi"
+      ephemeral-storage: "30Gi"
+      "nvidia.com/gpu": "1"
+
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+    maxUnavailable: ""
+
+  hpa:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+  # SecurityContext to add to the deployment. Default is just set to not run as root.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+  securityContext: {}
+
+  # Extra env variables to add to the deployment. Make sure these don't
+  # conflict with the ones already defined in the deployment.
+  # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
+  extraEnv: []
 
   # Extra volumes to add to the deployment. Make sure these don't
   # conflict with the ones already defined in the deployment.
@@ -118,18 +229,18 @@ promptInjection:
   ## Node labels for pod assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector:
-    'beta.kubernetes.io/instance-type': 'g5.2xlarge'
+    "beta.kubernetes.io/instance-type": "g5.2xlarge"
 
   ## Tolerations for pod assignment
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations:
-    - key: 'nvidia.com/gpu'
-      operator: 'Exists'
-      effect: 'NoSchedule'
-    - key: 'gpu-type'
-      operator: 'Equal'
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "gpu-type"
+      operator: "Equal"
       value: a10g
-      effect: 'NoSchedule'
+      effect: "NoSchedule"
 
   ## Affinity for pod assignment (evaluated as template)
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
@@ -167,7 +278,8 @@ legalAdvice:
   podAnnotations: {}
   podLabels: {}
 
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
 
   containerArgs: []
@@ -182,16 +294,15 @@ legalAdvice:
 
   resources:
     limits:
-      cpu: '8'
-      memory: '30Gi'
-      ephemeral-storage: '50Gi'
-      'nvidia.com/gpu': '1'
+      cpu: "8"
+      memory: "30Gi"
+      ephemeral-storage: "50Gi"
+      "nvidia.com/gpu": "1"
     requests:
-      cpu: '6'
-      memory: '20Gi'
-      ephemeral-storage: '30Gi'
-      'nvidia.com/gpu': '1'
-
+      cpu: "6"
+      memory: "20Gi"
+      ephemeral-storage: "30Gi"
+      "nvidia.com/gpu": "1"
 
   podDisruptionBudget:
     enabled: true
@@ -214,7 +325,6 @@ legalAdvice:
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
   extraEnv: []
 
-
   # Extra volumes to add to the deployment. Make sure these don't
   # conflict with the ones already defined in the deployment.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
@@ -228,18 +338,18 @@ legalAdvice:
   ## Node labels for pod assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector:
-    'beta.kubernetes.io/instance-type': 'g5.2xlarge'
+    "beta.kubernetes.io/instance-type": "g5.2xlarge"
 
   ## Tolerations for pod assignment
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations:
-    - key: 'nvidia.com/gpu'
-      operator: 'Exists'
-      effect: 'NoSchedule'
-    - key: 'gpu-type'
-      operator: 'Equal'
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "gpu-type"
+      operator: "Equal"
       value: a10g
-      effect: 'NoSchedule'
+      effect: "NoSchedule"
 
   ## Affinity for pod assignment (evaluated as template)
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
@@ -277,7 +387,8 @@ toxicity:
   podAnnotations: {}
   podLabels: {}
 
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
 
   containerArgs: []
@@ -292,16 +403,15 @@ toxicity:
 
   resources:
     limits:
-      cpu: '8'
-      memory: '30Gi'
-      ephemeral-storage: '50Gi'
-      'nvidia.com/gpu': '1'
+      cpu: "8"
+      memory: "30Gi"
+      ephemeral-storage: "50Gi"
+      "nvidia.com/gpu": "1"
     requests:
-      cpu: '6'
-      memory: '20Gi'
-      ephemeral-storage: '30Gi'
-      'nvidia.com/gpu': '1'
-
+      cpu: "6"
+      memory: "20Gi"
+      ephemeral-storage: "30Gi"
+      "nvidia.com/gpu": "1"
 
   podDisruptionBudget:
     enabled: true
@@ -324,7 +434,6 @@ toxicity:
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
   extraEnv: []
 
-
   # Extra volumes to add to the deployment. Make sure these don't
   # conflict with the ones already defined in the deployment.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
@@ -338,18 +447,18 @@ toxicity:
   ## Node labels for pod assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector:
-    'beta.kubernetes.io/instance-type': 'g5.2xlarge'
+    "beta.kubernetes.io/instance-type": "g5.2xlarge"
 
   ## Tolerations for pod assignment
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations:
-    - key: 'nvidia.com/gpu'
-      operator: 'Exists'
-      effect: 'NoSchedule'
-    - key: 'gpu-type'
-      operator: 'Equal'
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "gpu-type"
+      operator: "Equal"
       value: a10g
-      effect: 'NoSchedule'
+      effect: "NoSchedule"
 
   ## Affinity for pod assignment (evaluated as template)
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
@@ -385,9 +494,9 @@ moderation:
   podAnnotations: {}
   podLabels: {}
 
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-
 
   service:
     type: ClusterIP
@@ -405,7 +514,6 @@ moderation:
   #     cpu: "500m"
   #     memory: "1000Mi"
   #     ephemeral-storage: "20Gi"
-
 
   podDisruptionBudget:
     enabled: true
@@ -427,7 +535,6 @@ moderation:
   # conflict with the ones already defined in the deployment.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
   extraEnv: []
-
 
   # Extra volumes to add to the deployment. Make sure these don't
   # conflict with the ones already defined in the deployment.
@@ -463,7 +570,6 @@ moderation:
         matchLabels:
           app: dynamoai-api
 
-
 hallucinationEntailment:
   enabled: true
   name: hallucination-entailment
@@ -482,9 +588,9 @@ hallucinationEntailment:
   podAnnotations: {}
   podLabels: {}
 
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-
 
   service:
     type: ClusterIP
@@ -502,7 +608,6 @@ hallucinationEntailment:
   #     cpu: "500m"
   #     memory: "1000Mi"
   #     ephemeral-storage: "20Gi"
-
 
   podDisruptionBudget:
     enabled: true
@@ -525,7 +630,6 @@ hallucinationEntailment:
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
   extraEnv: []
 
-
   # Extra volumes to add to the deployment. Make sure these don't
   # conflict with the ones already defined in the deployment.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
@@ -543,13 +647,13 @@ hallucinationEntailment:
   ## Tolerations for pod assignment
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations:
-    - key: 'nvidia.com/gpu'
-      operator: 'Exists'
-      effect: 'NoSchedule'
-    - key: 'gpu-type'
-      operator: 'Equal'
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "gpu-type"
+      operator: "Equal"
       value: a10g
-      effect: 'NoSchedule'
+      effect: "NoSchedule"
 
   ## Affinity for pod assignment (evaluated as template)
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
@@ -585,9 +689,9 @@ hallucinationRag:
   podAnnotations: {}
   podLabels: {}
 
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-
 
   service:
     type: ClusterIP
@@ -605,7 +709,6 @@ hallucinationRag:
   #     cpu: "500m"
   #     memory: "1000Mi"
   #     ephemeral-storage: "20Gi"
-
 
   podDisruptionBudget:
     enabled: true
@@ -628,7 +731,6 @@ hallucinationRag:
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
   extraEnv: []
 
-
   # Extra volumes to add to the deployment. Make sure these don't
   # conflict with the ones already defined in the deployment.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
@@ -646,13 +748,13 @@ hallucinationRag:
   ## Tolerations for pod assignment
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations:
-    - key: 'nvidia.com/gpu'
-      operator: 'Exists'
-      effect: 'NoSchedule'
-    - key: 'gpu-type'
-      operator: 'Equal'
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "gpu-type"
+      operator: "Equal"
       value: a10g
-      effect: 'NoSchedule'
+      effect: "NoSchedule"
 
   ## Affinity for pod assignment (evaluated as template)
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
@@ -687,9 +789,9 @@ piiRedaction:
   podAnnotations: {}
   podLabels: {}
 
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-
 
   service:
     type: ClusterIP
@@ -703,12 +805,12 @@ piiRedaction:
       cpu: "8"
       memory: "30Gi"
       ephemeral-storage: "50Gi"
-      'nvidia.com/gpu': '1'
+      "nvidia.com/gpu": "1"
     requests:
       cpu: "4"
       memory: "20Gi"
       ephemeral-storage: "30Gi"
-      'nvidia.com/gpu': '1'
+      "nvidia.com/gpu": "1"
 
   podDisruptionBudget:
     enabled: true
@@ -731,7 +833,6 @@ piiRedaction:
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
   extraEnv: []
 
-
   # Extra volumes to add to the deployment. Make sure these don't
   # conflict with the ones already defined in the deployment.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
@@ -749,13 +850,13 @@ piiRedaction:
   ## Tolerations for pod assignment
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations:
-    - key: 'nvidia.com/gpu'
-      operator: 'Exists'
-      effect: 'NoSchedule'
-    - key: 'gpu-type'
-      operator: 'Equal'
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "gpu-type"
+      operator: "Equal"
       value: a10g
-      effect: 'NoSchedule'
+      effect: "NoSchedule"
 
   ## Affinity for pod assignment (evaluated as template)
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
@@ -790,14 +891,15 @@ lorax:
   podAnnotations: {}
   podLabels: {}
 
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
 
   containerArgs:
-    - '--model-id'
-    - 'somepath'
-    - '--source'
-    - 's33'
+    - "--model-id"
+    - "somepath"
+    - "--source"
+    - "s33"
 
   service:
     type: ClusterIP
@@ -812,13 +914,12 @@ lorax:
       cpu: "8"
       memory: "30Gi"
       ephemeral-storage: "50Gi"
-      'nvidia.com/gpu': '1'
+      "nvidia.com/gpu": "1"
     requests:
       cpu: "6"
       memory: "20Gi"
       ephemeral-storage: "30Gi"
-      'nvidia.com/gpu': '1'
-
+      "nvidia.com/gpu": "1"
 
   podDisruptionBudget:
     enabled: true
@@ -841,7 +942,6 @@ lorax:
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
   extraEnv: []
 
-
   # Extra volumes to add to the deployment. Make sure these don't
   # conflict with the ones already defined in the deployment.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#volumedevice-v1-core
@@ -855,18 +955,18 @@ lorax:
   ## Node labels for pod assignment
   ## ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector:
-    'beta.kubernetes.io/instance-type': 'g5.2xlarge'
+    "beta.kubernetes.io/instance-type": "g5.2xlarge"
 
   ## Tolerations for pod assignment
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations:
-    - key: 'nvidia.com/gpu'
-      operator: 'Exists'
-      effect: 'NoSchedule'
-    - key: 'gpu-type'
-      operator: 'Equal'
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "gpu-type"
+      operator: "Equal"
       value: a10g
-      effect: 'NoSchedule'
+      effect: "NoSchedule"
 
   ## Affinity for pod assignment (evaluated as template)
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
@@ -901,22 +1001,22 @@ finetuning:
 
   resources:
     limits:
-      'nvidia.com/gpu': '4'
+      "nvidia.com/gpu": "4"
     requests:
-      'nvidia.com/gpu': '4'
+      "nvidia.com/gpu": "4"
   ## Tolerations for pod assignment
   ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations:
-    - key: 'nvidia.com/gpu'
-      operator: 'Exists'
-      effect: 'NoSchedule'
-    - key: 'gpu-type'
-      operator: 'Equal'
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "gpu-type"
+      operator: "Equal"
       value: a10g
-      effect: 'NoSchedule'
+      effect: "NoSchedule"
 
   nats:
-    subjectFilter: 'dynamo.guard.finetuning'
+    subjectFilter: "dynamo.guard.finetuning"
 
 dataProcessing:
   name: data-processing
@@ -934,7 +1034,8 @@ dataProcessing:
   podAnnotations: {}
   podLabels: {}
 
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
 
   annotations: {}
@@ -950,7 +1051,7 @@ dataProcessing:
       ephemeral-storage: "20Gi"
 
   nats:
-    subjectFilter: 'dynamo.guard.dataprocessing'
+    subjectFilter: "dynamo.guard.dataprocessing"
 
   # SecurityContext to add to the deployment. Default is just set to not run as root.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
@@ -960,7 +1061,6 @@ dataProcessing:
   # conflict with the ones already defined in the deployment.
   # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#envvar-v1-core
   extraEnv: []
-
 
   # Extra volumes to add to the deployment. Make sure these don't
   # conflict with the ones already defined in the deployment.
@@ -1002,19 +1102,19 @@ metricsServer:
 minio:
   enabled: false
   aws:
-    endpoint: ''
-    accessKeyId: ''
-    secretAccessKey: ''
+    endpoint: ""
+    accessKeyId: ""
+    secretAccessKey: ""
 
 nats:
   enabled: false
-  serverUrl: 'nats://dynamoai-base-nats:4222'
+  serverUrl: "nats://dynamoai-base-nats:4222"
   stream:
-    name: 'dynamo-guard'
-    subjects: ['dynamo.guard.>']
+    name: "dynamo-guard"
+    subjects: ["dynamo.guard.>"]
     retention: workqueue
     maxConsumers: -1
     maxMsgs: -1
     maxBytes: -1
-    storage: 'file'
+    storage: "file"
     replicas: 1
