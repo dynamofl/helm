@@ -119,6 +119,31 @@ Common environment variables used in all Dynamo AI services.
 Common environment variables used in all Dynamo AI services, including secrets and config map values.
 */}}
 {{- define "dynamoai.dbMigrationsJobEnv" -}}
+- name: MONGODB_HOST
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.mongodb }}
+      key: host
+- name: MONGODB_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.mongodb }}
+      key: username
+- name: MONGODB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.mongodb }}
+      key: password
+- name: MONGODB_PORT
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.mongodb }}
+      key: port
+- name: MONGODB_NAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.global.secrets.mongodb }}
+      key: name
 - name: PG_DB_HOST
   valueFrom:
     secretKeyRef:
